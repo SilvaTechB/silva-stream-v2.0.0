@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Series Details - SilvaStream</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/details.css">
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-play-circle logo-icon"></i>
+                    <span class="logo-text">SilvaStream</span>
+                    <span class="logo-subtext">powered by gifted tech</span>
+                </a>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">Movies</a>
+                    <a href="#" class="nav-link">TV Shows</a>
+                    <a href="sports.html" class="nav-link">sports</a>
+                    <a href="#" class="nav-link">My List</a>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search for movies or TV shows...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-actions">
+                    <span class="vip-badge">VIP</span>
+                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Error Message -->
+        <div class="error-message" id="error-message" style="display: none;"></div>
+
+        <!-- Series Details Section -->
+        <section class="movie-details" id="series-details">
+            <div class="details-header">
+                <img src="" alt="" class="details-backdrop" id="details-backdrop">
+                <div class="header-overlay">
+                    <button class="back-btn" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+            <div class="details-content">
+                <img src="" alt="" class="details-poster" id="details-poster">
+                <div class="details-info">
+                    <h1 class="details-title" id="details-title">Series Title</h1>
+                    <div class="details-meta">
+                        <span id="details-year">2023</span>
+                        <span id="details-seasons">3 Seasons</span>
+                        <span id="details-genre">Drama, Action</span>
+                        <span class="rating" id="details-rating"><i class="fas fa-star"></i> 8.2/10</span>
+                    </div>
+                    <p class="details-overview" id="details-overview">Series description goes here...</p>
+                    <div class="details-actions">
+                        <button class="watch-btn" id="watch-btn"><i class="fas fa-play"></i> Watch Now</button>
+                        <button class="trailer-btn" id="trailer-btn"><i class="fas fa-film"></i> Watch Trailer</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seasons Section -->
+        <section class="seasons-section" id="seasons-section">
+            <h2 class="section-title"><i class="fas fa-list"></i> Seasons & Episodes</h2>
+            <div class="seasons-container" id="seasons-container">
+                <!-- Seasons will be populated here -->
+            </div>
+        </section>
+
+        <!-- Quality Selection Modal for Streaming -->
+        <div class="modal" id="stream-quality-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Select Streaming Quality</h3>
+                    <button class="close-modal" data-modal="stream-quality-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="quality-options" id="stream-quality-options">
+                        <!-- Quality options will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quality Selection Modal for Download -->
+        <div class="modal" id="download-quality-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Select Download Quality</h3>
+                    <button class="close-modal" data-modal="download-quality-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="quality-options" id="download-quality-options">
+                        <!-- Quality options will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Section -->
+        <section class="player-container" id="player-container">
+            <div class="player-header">
+                <h3 class="player-title" id="player-title">Episode Title</h3>
+                <button class="close-player" id="close-player">&times;</button>
+            </div>
+            <video controls class="video-player" id="video-player">
+                Your browser does not support the video tag.
+            </video>
+        </section>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading series details...</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="#" class="footer-link">Movies</a></li>
+                        <li><a href="#" class="footer-link">TV Shows</a></li>
+                        <li><a href="#" class="footer-link">New & Popular</a></li>
+                        <li><a href="#" class="footer-link">My List</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Action</a></li>
+                        <li><a href="#" class="footer-link">Comedy</a></li>
+                        <li><a href="#" class="footer-link">Drama</a></li>
+                        <li><a href="#" class="footer-link">Horror</a></li>
+                        <li><a href="#" class="footer-link">Romance</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Account</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Account</a></li>
+                        <li><a href="#" class="footer-link">Redeem Gift</a></li>
+                        <li><a href="#" class="footer-link">Privacy</a></li>
+                        <li><a href="#" class="footer-link">Speed Test</a></li>
+                        <li><a href="#" class="footer-link">Legal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Help Center</a></li>
+                        <li><a href="#" class="footer-link">Careers</a></li>
+                        <li><a href="#" class="footer-link">Contact Us</a></li>
+                        <li><a href="#" class="footer-link">Media Center</a></li>
+                        <li><a href="#" class="footer-link">Corporate Info</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 SilvaStream. All rights reserved. <span class="powered-by">Powered by Gifted Tech & Ibrahim Adams</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="install-prompt">📲 Install SilvaStream</button>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/player.js"></script>
+    <script src="scripts/series-details.js"></script>
+    <script src="scripts/pwa.js"></script>
+</body>
+</html>

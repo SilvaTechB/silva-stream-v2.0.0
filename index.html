@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilvaStream - Premium Movie Streaming</title>
+    <!-- Open Graph Meta Tags -->
+<meta property="og:title" content="SilvaStream - Premium Movie Streaming">
+<meta property="og:description" content="Silva Tech Nexus - Leading in software development, innovation, and creativity">
+<meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
+<meta property="og:url" content="https://stream.silvatech.top">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:title" content="SilvaStream - Premium Movie Streaming">
+<meta name="twitter:description" content="Silva Tech Nexus - Leading in software development, innovation, and creativity">
+<meta name="twitter:image" content="https://imgur.com/a/AogAcnj.png">
+<meta name="twitter:card" content="summary_large_image">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e50914">
+
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-play-circle logo-icon"></i>
+                    <span class="logo-text">SilvaStream</span>
+                    <span class="logo-subtext">powered by gifted tech</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">Movies</a>
+                    <a href="#" class="nav-link">TV Shows</a>
+                    <a href="sports.html" class="nav-link">sport</a>
+                    <a href="#" class="nav-link">My List</a>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search for movies or TV shows...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-actions">
+                    <span class="vip-badge">VIP</span>
+                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Unlimited Movies, TV Shows, and More</h1>
+                <p class="hero-description">Stream anywhere. Cancel anytime. Download now to watch offline.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" id="hero-watch-btn"><i class="fas fa-play"></i> Watch Now</button>
+                    <button class="btn btn-secondary" id="hero-info-btn"><i class="fas fa-info-circle"></i> More Info</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Error Message -->
+        <div class="error-message" id="error-message" style="display: none;"></div>
+         <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Loading movies...</p>
+        </div>
+        <!-- Category Rows -->
+        <section class="movies-section">
+            <h2 class="section-title"><i class="fas fa-fire"></i> Trending Now🔥</h2>
+            <div class="movies-row" id="trending-now"></div>
+
+            <h2 class="section-title"><i class="fas fa-film"></i> Hollywood Movie</h2>
+            <div class="movies-row" id="hollywood-movies"></div>
+
+            <h2 class="section-title"><i class="fas fa-heart"></i> 💓Teen Romance 💓</h2>
+            <div class="movies-row" id="teen-romance"></div>
+
+            <h2 class="section-title"><i class="fas fa-ghost"></i> 👻Halloween Special👻</h2>
+            <div class="movies-row" id="halloween-special"></div>
+
+            <h2 class="section-title"><i class="fas fa-globe-africa"></i> Nollywood</h2>
+            <div class="movies-row" id="nollywood"></div>
+
+            <h2 class="section-title"><i class="fas fa-tv"></i> SA Drama</h2>
+            <div class="movies-row" id="sa-drama"></div>
+
+            <h2 class="section-title"><i class="fas fa-crown"></i> Premium VIP HD Access>></h2>
+            <div class="movies-row" id="premium-vip"></div>
+
+            <h2 class="section-title"><i class="fas fa-hat-cowboy"></i> Western TV</h2>
+            <div class="movies-row" id="western-tv"></div>
+
+            <h2 class="section-title"><i class="fas fa-theater-masks"></i> K-Drama</h2>
+            <div class="movies-row" id="k-drama"></div>
+
+            <h2 class="section-title"><i class="fas fa-dragon"></i> Animated Film</h2>
+            <div class="movies-row" id="animated-film"></div>
+
+            <h2 class="section-title"><i class="fas fa-users"></i> Must-watch Black Shows</h2>
+            <div class="movies-row" id="black-shows"></div>
+
+            <h2 class="section-title"><i class="fas fa-explosion"></i> Action Movies</h2>
+            <div class="movies-row" id="action-movies"></div>
+
+            <h2 class="section-title"><i class="fas fa-mountain"></i> Adventure Movies</h2>
+            <div class="movies-row" id="adventure-movies"></div>
+
+            <h2 class="section-title"><i class="fas fa-bullseye"></i> Deadly Hunt!</h2>
+            <div class="movies-row" id="deadly-hunt"></div>
+
+            <h2 class="section-title"><i class="fas fa-chart-line"></i> Most trending</h2>
+            <div class="movies-row" id="most-trending"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="#" class="footer-link">Movies</a></li>
+                        <li><a href="#" class="footer-link">TV Shows</a></li>
+                        <li><a href="#" class="footer-link">New & Popular</a></li>
+                        <li><a href="#" class="footer-link">My List</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Action</a></li>
+                        <li><a href="#" class="footer-link">Comedy</a></li>
+                        <li><a href="#" class="footer-link">Drama</a></li>
+                        <li><a href="#" class="footer-link">Horror</a></li>
+                        <li><a href="#" class="footer-link">Romance</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Account</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://silvatech.top" class="footer-link">Account</a></li>
+                        <li><a href="https://pay.silvatech.top" class="footer-link">Redeem Gift</a></li>
+                        <li><a href="https://doc.silvatech.top" class="footer-link">Privacy</a></li>
+                        <li><a href="https://fast.com" class="footer-link">Internet Speed Test</a></li>
+                        <li><a href="https://doc.silvatech.top" class="footer-link">Legal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="contact@silvatech.top" class="footer-link">Help Center</a></li>
+                        <li><a href="https://careers.silvatech.top" class="footer-link">Careers</a></li>
+                        <li><a href="https://wa.me/silvatechnexus" class="footer-link">Contact Us</a></li>
+                        <li><a href="admin@silvatech.top" class="footer-link">Media Center</a></li>
+                        <li><a href="https://silvatech.top" class="footer-link">Corporate Info</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 SilvaStream. All rights reserved. <span class="powered-by">Powered by Gifted Tech & Ibrahim Adams</span></p>
+            </div>
+        </div>
+    </footer>
+
+       <script src="scripts/api.js"></script>
+    <script src="scripts/app.js"></script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('✅ Service Worker registered:', reg))
+            .catch(err => console.log('❌ Service Worker failed:', err));
+        });
+      }
+
+      let deferredPrompt;
+      const installButton = document.createElement('button');
+      installButton.textContent = '📲 Install SilvaStream';
+      installButton.style.cssText = `
+        display:none;
+        position:fixed;
+        bottom:20px;
+        right:20px;
+        background:#e50914;
+        color:white;
+        border:none;
+        padding:12px 18px;
+        border-radius:8px;
+        font-weight:bold;
+        cursor:pointer;
+      `;
+      document.body.appendChild(installButton);
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installButton.style.display = 'block';
+      });
+
+      installButton.addEventListener('click', async () => {
+        installButton.style.display = 'none';
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Install ${outcome}`);
+        deferredPrompt = null;
+      });
+
+      window.addEventListener('appinstalled', () => {
+        console.log('🎉 SilvaStream installed successfully!');
+      });
+    </script>
+</body>
+</html>
+
