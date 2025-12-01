@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>My List - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta property="og:title" content="My List - SilvaStream">
+    <meta property="og:description" content="Your saved movies and series on SilvaStream">
+    <meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
+    <meta property="og:url" content="https://stream.silvatech.top/my-list.html">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/mylist.css">
+</head>
+<body class="dark-mode">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-primary">Silva</span>
+                    <span class="logo-secondary">Stream</span>
+                </div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="movies.html" class="nav-link">
+                    <i class="fas fa-film"></i>
+                    <span>Movies</span>
+                </a>
+                <a href="series.html" class="nav-link">
+                    <i class="fas fa-tv"></i>
+                    <span>TV Series</span>
+                </a>
+                <a href="my-list.html" class="nav-link active">
+                    <i class="fas fa-bookmark"></i>
+                    <span>My List</span>
+                </a>
+                <a href="search.html" class="nav-link search-trigger">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+            </div>
+            
+            <div class="user-actions">
+                <button class="user-notification">
+                    <i class="fas fa-bell"></i>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="movies.html" class="mobile-nav-link">
+                <i class="fas fa-film"></i>
+                <span>Movies</span>
+            </a>
+            <a href="series.html" class="mobile-nav-link">
+                <i class="fas fa-tv"></i>
+                <span>TV Series</span>
+            </a>
+            <a href="my-list.html" class="mobile-nav-link active">
+                <i class="fas fa-bookmark"></i>
+                <span>My List</span>
+            </a>
+            <a href="search.html" class="mobile-nav-link">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- My List Hero -->
+    <section class="mylist-hero">
+        <div class="container">
+            <div class="mylist-hero-content">
+                <h1 class="animate-pop"><i class="fas fa-bookmark"></i> My List</h1>
+                <p class="hero-subtitle animate-fade-in">Your saved movies and TV series</p>
+                <div class="mylist-stats animate-slide-up">
+                    <div class="stat">
+                        <i class="fas fa-film"></i>
+                        <span id="moviesCount">0 Movies</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-tv"></i>
+                        <span id="seriesCount">0 Series</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-clock"></i>
+                        <span id="totalTime">0h 0m</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My List Content -->
+    <main class="mylist-content">
+        <div class="container">
+            <!-- Empty State -->
+            <div class="empty-list" id="emptyList" style="display: none;">
+                <div class="empty-content">
+                    <i class="fas fa-bookmark"></i>
+                    <h2>Your List is Empty</h2>
+                    <p>Start adding movies and TV series to your list</p>
+                    <div class="empty-actions">
+                        <a href="movies.html" class="btn btn-primary">
+                            <i class="fas fa-film"></i>
+                            Browse Movies
+                        </a>
+                        <a href="series.html" class="btn btn-outline">
+                            <i class="fas fa-tv"></i>
+                            Browse Series
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My List Content -->
+            <div class="mylist-container" id="mylistContainer">
+                <!-- Tabs -->
+                <div class="mylist-tabs">
+                    <button class="tab-btn active" data-tab="all">
+                        <i class="fas fa-th-large"></i>
+                        <span>All</span>
+                    </button>
+                    <button class="tab-btn" data-tab="movies">
+                        <i class="fas fa-film"></i>
+                        <span>Movies</span>
+                    </button>
+                    <button class="tab-btn" data-tab="series">
+                        <i class="fas fa-tv"></i>
+                        <span>Series</span>
+                    </button>
+                    <button class="tab-btn" data-tab="recent">
+                        <i class="fas fa-clock"></i>
+                        <span>Recently Added</span>
+                    </button>
+                </div>
+
+                <!-- Filter and Sort -->
+                <div class="mylist-controls">
+                    <div class="filter-controls">
+                        <select class="sort-select" id="sortSelect">
+                            <option value="recent">Recently Added</option>
+                            <option value="title">Title A-Z</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="year">Release Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="search-controls">
+                        <input type="text" 
+                               class="search-input" 
+                               id="searchListInput" 
+                               placeholder="Search your list...">
+                        <button class="search-btn" id="searchListBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- My List Grid -->
+                <div class="mylist-grid" id="mylistGrid">
+                    <!-- List items will be loaded here -->
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions" id="bulkActions" style="display: none;">
+                    <div class="bulk-header">
+                        <span id="selectedCount">0 items selected</span>
+                        <div class="bulk-buttons">
+                            <button class="btn btn-outline" id="clearSelectionBtn">
+                                Clear Selection
+                            </button>
+                            <button class="btn btn-danger" id="removeSelectedBtn">
+                                <i class="fas fa-trash"></i>
+                                Remove Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Reminder -->
+                <div class="whatsapp-reminder">
+                    <div class="reminder-content">
+                        <i class="fab fa-whatsapp"></i>
+                        <div>
+                            <h3>Never Miss an Update</h3>
+                            <p>Join our WhatsApp channel to get updates about your saved content</p>
+                        </div>
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="reminder-btn">
+                            <i class="fab fa-whatsapp"></i>
+                            Join Channel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader">
+                <div class="loader-film">
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                </div>
+            </div>
+            <p>Loading your list...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+                <p class="powered-by">
+                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/cache.js"></script>
+    <script src="scripts/ui-manager.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/theme.js"></script>
+    <script src="scripts/mylist.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            const theme = new ThemeManager();
+            theme.init();
+            
+            // Initialize my list
+            const myList = new MyListManager();
+            myList.init();
+            
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                    mobileMenuBtn.classList.toggle('active');
+                });
+            }
+            
+            // Tab buttons
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Filter list
+                    const tab = btn.dataset.tab;
+                    if (myList) {
+                        myList.filterList(tab);
+                    }
+                });
+            });
+            
+            // Sort select
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect && myList) {
+                sortSelect.addEventListener('change', (e) => {
+                    myList.sortList(e.target.value);
+                });
+            }
+            
+            // Search input
+            const searchListInput = document.getElementById('searchListInput');
+            const searchListBtn = document.getElementById('searchListBtn');
+            
+            if (searchListInput && myList) {
+                let searchTimeout;
+                
+                searchListInput.addEventListener('input', () => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        myList.searchList(searchListInput.value);
+                    }, 300);
+                });
+                
+                if (searchListBtn) {
+                    searchListBtn.addEventListener('click', () => {
+                        myList.searchList(searchListInput.value);
+                    });
+                }
+            }
+            
+            // Bulk actions
+            const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+            const removeSelectedBtn = document.getElementById('removeSelectedBtn');
+            
+            if (clearSelectionBtn && myList) {
+                clearSelectionBtn.addEventListener('click', () => {
+                    myList.clearSelection();
+                });
+            }
+            
+            if (removeSelectedBtn && myList) {
+                removeSelectedBtn.addEventListener('click', () => {
+                    myList.removeSelected();
+                });
+            }
+            
+            // Hide loading overlay after content loads
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
