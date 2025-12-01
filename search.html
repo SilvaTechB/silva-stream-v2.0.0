@@ -1,153 +1,275 @@
-<!-- search.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search - SilvaStream</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Search Movies & Series - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta property="og:title" content="Search - SilvaStream">
+    <meta property="og:description" content="Search thousands of movies and TV series on SilvaStream">
+    <meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
+    <meta property="og:url" content="https://stream.silvatech.top/search.html">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/search.css">
 </head>
-<body>
-    <header id="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-play-circle logo-icon"></i>
-                    <span class="logo-text">SilvaStream</span>
+<body class="dark-mode">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-primary">Silva</span>
+                    <span class="logo-secondary">Stream</span>
+                </div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
                 </a>
-                <div class="search-container full-width">
-                    <input type="text" class="search-input" id="search-input" 
-                           placeholder="Search for movies, TV shows, actors..." autofocus>
-                    <button class="search-btn" id="search-button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <div class="search-filters">
-                        <select id="filter-type">
-                            <option value="">All Types</option>
-                            <option value="movie">Movies</option>
-                            <option value="series">TV Shows</option>
-                        </select>
-                        <select id="filter-genre">
-                            <option value="">All Genres</option>
-                            <option value="action">Action</option>
-                            <option value="comedy">Comedy</option>
-                            <option value="drama">Drama</option>
-                            <option value="horror">Horror</option>
-                            <option value="romance">Romance</option>
-                        </select>
-                        <select id="filter-year">
-                            <option value="">All Years</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                        </select>
+                <a href="movies.html" class="nav-link">
+                    <i class="fas fa-film"></i>
+                    <span>Movies</span>
+                </a>
+                <a href="series.html" class="nav-link">
+                    <i class="fas fa-tv"></i>
+                    <span>TV Series</span>
+                </a>
+                <a href="search.html" class="nav-link active">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+            </div>
+            
+            <div class="user-actions">
+                <button class="user-notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
                     </div>
                 </div>
-                <button class="back-btn" onclick="window.history.back()">
-                    <i class="fas fa-arrow-left"></i> Back
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="movies.html" class="mobile-nav-link">
+                <i class="fas fa-film"></i>
+                <span>Movies</span>
+            </a>
+            <a href="series.html" class="mobile-nav-link">
+                <i class="fas fa-tv"></i>
+                <span>TV Series</span>
+            </a>
+            <a href="search.html" class="mobile-nav-link active">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Hero Section -->
+    <section class="search-hero" id="searchHero">
+        <div class="search-hero-content">
+            <h1>Find Your Favorite Movies & Series</h1>
+            <p>Search through thousands of titles</p>
+            <div class="search-box-large">
+                <input type="text" 
+                       id="mainSearchInput" 
+                       placeholder="Search for movies, series, actors..."
+                       autocomplete="off">
+                <button id="mainSearchBtn">
+                    <i class="fas fa-search"></i>
                 </button>
+                <div class="search-suggestions" id="mainSuggestions"></div>
+            </div>
+            <div class="search-trending">
+                <span>Trending:</span>
+                <button class="trending-tag" data-query="action">Action</button>
+                <button class="trending-tag" data-query="comedy">Comedy</button>
+                <button class="trending-tag" data-query="drama">Drama</button>
+                <button class="trending-tag" data-query="horror">Horror</button>
             </div>
         </div>
-    </header>
+    </section>
 
-    <main class="container">
-        <!-- Search Results -->
-        <section class="search-results">
-            <div class="results-header">
-                <h2 id="results-title">Search Results</h2>
-                <div class="results-count" id="results-count">0 results</div>
-                <div class="sort-options">
-                    <select id="sort-by">
-                        <option value="relevance">Relevance</option>
-                        <option value="year">Year</option>
-                        <option value="rating">Rating</option>
-                        <option value="title">Title</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="results-grid" id="results-grid">
-                <!-- Results will be populated here -->
-            </div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Searching...</p>
-            </div>
-            
-            <div class="no-results" id="no-results" style="display: none;">
-                <i class="fas fa-search"></i>
-                <h3>No results found</h3>
-                <p>Try different keywords or check out our recommendations</p>
-                <button class="btn btn-primary" onclick="window.location.href='index.html'">
-                    Browse Movies
-                </button>
-            </div>
-            
-            <div class="pagination" id="pagination" style="display: none;">
-                <button class="pagination-btn" id="prev-page" disabled>
-                    <i class="fas fa-chevron-left"></i> Previous
-                </button>
-                <span class="page-info" id="page-info">Page 1 of 1</span>
-                <button class="pagination-btn" id="next-page" disabled>
-                    Next <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </section>
-        
-        <!-- Search Suggestions -->
-        <section class="search-suggestions" id="search-suggestions">
-            <h3>Popular Searches</h3>
-            <div class="suggestions-grid">
-                <button class="suggestion-tag" data-query="action">Action Movies</button>
-                <button class="suggestion-tag" data-query="comedy">Comedy</button>
-                <button class="suggestion-tag" data-query="drama">Drama Series</button>
-                <button class="suggestion-tag" data-query="horror">Horror</button>
-                <button class="suggestion-tag" data-query="romance">Romance</button>
-                <button class="suggestion-tag" data-query="marvel">Marvel</button>
-                <button class="suggestion-tag" data-query="disney">Disney</button>
-                <button class="suggestion-tag" data-query="animation">Animation</button>
-            </div>
-        </section>
-    </main>
-
-    <footer>
+    <!-- Search Content -->
+    <main class="search-content">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">Movies</a></li>
-                        <li><a href="#" class="footer-link">TV Shows</a></li>
-                        <li><a href="#" class="footer-link">New Releases</a></li>
-                    </ul>
+            <!-- Search Results -->
+            <div class="search-results-container" id="searchContainer" style="display: none;">
+                <div class="search-results" id="searchResults">
+                    <!-- Results will be loaded here -->
                 </div>
-                <div class="footer-column">
-                    <h3>Follow Us</h3>
-                    <div class="social-links">
-                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
-                           class="social-link whatsapp" target="_blank">
-                            <i class="fab fa-whatsapp"></i> SilvaStream
-                        </a>
-                        <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" 
-                           class="social-link whatsapp" target="_blank">
-                            <i class="fab fa-whatsapp"></i> Silva Tech Nexus
+            </div>
+
+            <!-- Search History & Suggestions -->
+            <div class="search-sidebar">
+                <div class="search-history">
+                    <div class="history-header">
+                        <h3><i class="fas fa-history"></i> Recent Searches</h3>
+                        <button class="clear-history" id="clearHistory">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div class="history-list" id="searchHistory">
+                        <!-- Search history will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="search-suggestions-sidebar">
+                    <h3><i class="fas fa-lightbulb"></i> Trending Searches</h3>
+                    <div class="trending-searches" id="trendingSearches">
+                        <!-- Trending searches will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- WhatsApp Channels -->
+                <div class="whatsapp-sidebar">
+                    <div class="channel-card">
+                        <div class="channel-header">
+                            <i class="fab fa-whatsapp"></i>
+                            <h4>Join Our Community</h4>
+                        </div>
+                        <p>Get exclusive updates and recommendations</p>
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="channel-btn">
+                            <i class="fab fa-whatsapp"></i> Join Channel
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="copyright">
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader">
+                <div class="loader-film">
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                </div>
+            </div>
+            <p>Loading search results...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-bottom">
                 <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+                <p class="powered-by">
+                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
+                </p>
             </div>
         </div>
     </footer>
 
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
     <script src="scripts/api.js"></script>
+    <script src="scripts/cache.js"></script>
+    <script src="scripts/ui-manager.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/theme.js"></script>
     <script src="scripts/search.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            const theme = new ThemeManager();
+            theme.init();
+            
+            // Initialize search
+            if (window.searchManager) {
+                searchManager.init();
+            }
+            
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                    mobileMenuBtn.classList.toggle('active');
+                });
+            }
+            
+            // Clear history button
+            const clearHistoryBtn = document.getElementById('clearHistory');
+            if (clearHistoryBtn && searchManager) {
+                clearHistoryBtn.addEventListener('click', () => {
+                    searchManager.clearHistory();
+                });
+            }
+            
+            // Main search input
+            const mainSearchInput = document.getElementById('mainSearchInput');
+            const mainSearchBtn = document.getElementById('mainSearchBtn');
+            
+            if (mainSearchInput && mainSearchBtn && searchManager) {
+                mainSearchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        searchManager.performSearch(mainSearchInput.value);
+                    }
+                });
+                
+                mainSearchBtn.addEventListener('click', () => {
+                    searchManager.performSearch(mainSearchInput.value);
+                });
+            }
+            
+            // Trending tags
+            document.querySelectorAll('.trending-tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    const query = tag.dataset.query;
+                    if (mainSearchInput) {
+                        mainSearchInput.value = query;
+                        mainSearchInput.focus();
+                    }
+                    if (searchManager) {
+                        searchManager.performSearch(query);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
