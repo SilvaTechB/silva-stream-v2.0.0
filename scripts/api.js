@@ -464,4 +464,31 @@ const categories = [
         id: 'action-movies', 
         query: 'action', 
         icon: 'fas fa-explosion',
-       
+        theme: 'action',
+        color: '#e63946'
+    },
+    { 
+        id: 'adventure-movies', 
+        query: 'adventure', 
+        icon: 'fas fa-mountain',
+        theme: 'adventure',
+        color: '#2a9d8f'
+    },
+    { 
+        id: 'deadly-hunt', 
+        query: 'hunt', 
+        icon: 'fas fa-bullseye',
+        theme: 'thriller',
+        color: '#e76f51'
+    },
+    { 
+        id: 'most-trending', 
+        query: 'popular', 
+        icon: 'fas fa-chart-line',
+        theme: 'popular',
+        color: '#f4a261'
+    }
+];
+
+// Make categories available globally
+window.categories = categories;
