@@ -1,709 +1,959 @@
-class Playback {
+class VideoPlayback {
     constructor() {
-        this.sources = [];
-        this.subtitles = [];
-        this.currentSeason = null;
-        this.currentEpisode = null;
-        this.videoType = null;
-        this.videoData = null;
+        this.videoPlayer = null;
+        this.currentQuality = 'auto';
+        this.currentSubtitles = 'off';
+        this.currentSpeed = 1;
         this.isPlaying = false;
         this.isFullscreen = false;
-        this.controlsVisible = true;
-        this.controlsTimeout = null;
-        this.currentSubtitle = null;
-        this.activeTextTrack = null;
+        this.isPIP = false;
+        this.isBuffering = false;
+        this.currentTime = 0;
+        this.duration = 0;
+        this.buffered = 0;
+        this.playbackSources = [];
+        this.subtitleTracks = [];
+        this.watchHistory = JSON.parse(localStorage.getItem('watch_history') || '[]');
+        
         this.init();
     }
 
-    init() {
+    async init() {
         this.setupDOM();
-        this.setupEvents();
-        this.setupCustomControls();
-        this.loadVideo();
+        this.setupEventListeners();
+        await this.loadVideoData();
+        this.setupVideoPlayer();
+        this.startPlaybackMonitoring();
     }
 
     setupDOM() {
-        // Existing elements
-        this.videoPlayer = document.getElementById('video-player');
-        this.videoTitle = document.getElementById('video-title');
-        this.videoDescription = document.getElementById('video-description');
-        this.videoYear = document.getElementById('video-year');
-        this.videoRating = document.getElementById('video-rating');
-        this.videoDuration = document.getElementById('video-duration');
-        this.videoGenre = document.getElementById('video-genre');
-        this.currentEpisodeInfo = document.getElementById('current-episode-info');
-        this.qualitySelectorBtn = document.getElementById('quality-selector-btn');
-        this.backBtn = document.getElementById('back-btn');
-        this.episodeList = document.getElementById('episode-list');
-        this.playlistWrapper = document.getElementById('playlist-wrapper');
-        this.qualityModal = document.getElementById('quality-modal');
-        this.qualityOptions = document.getElementById('quality-options');
-        this.closeModalBtn = document.querySelector('.close-modal');
+        // Cache DOM elements
+        this.elements = {
+            // Video player
+            videoPlayer: document.getElementById('videoPlayer'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            connectionSpeed: document.getElementById('connectionSpeed'),
+            bufferStatus: document.getElementById('bufferStatus'),
+            playerContainer: document.getElementById('playerContainer'),
+            customControls: document.getElementById('customControls'),
+            errorOverlay: document.getElementById('errorOverlay'),
+            errorMessage: document.getElementById('errorMessage'),
+            nextEpisodeOverlay: document.getElementById('nextEpisodeOverlay'),
+            countdownTimer: document.getElementById('countdownTimer'),
+            
+            // Controls
+            playerBackBtn: document.getElementById('playerBackBtn'),
+            playerTitle: document.getElementById('playerTitle'),
+            playerCurrentTime: document.getElementById('playerCurrentTime'),
+            playerDuration: document.getElementById('playerDuration'),
+            centerPlayBtn: document.getElementById('centerPlayBtn'),
+            progressSlider: document.getElementById('progressSlider'),
+            progressBuffer: document.getElementById('progressBuffer'),
+            progressFilled: document.getElementById('progressFilled'),
+            currentTimeDisplay: document.getElementById('currentTimeDisplay'),
+            totalTimeDisplay: document.getElementById('totalTimeDisplay'),
+            playPauseBtn: document.getElementById('playPauseBtn'),
+            rewindBtn: document.getElementById('rewindBtn'),
+            forwardBtn: document.getElementById('forwardBtn'),
+            volumeBtn: document.getElementById('volumeBtn'),
+            volumeSlider: document.getElementById('volumeSlider'),
+            qualityBtn: document.getElementById('qualityBtn'),
+            subtitleBtn: document.getElementById('subtitleBtn'),
+            speedBtn: document.getElementById('speedBtn'),
+            pipBtn: document.getElementById('pipBtn'),
+            fullscreenBtn: document.getElementById('fullscreenBtn'),
+            
+            // Info
+            connectionInfo: document.getElementById('connectionInfo'),
+            serverInfo: document.getElementById('serverInfo'),
+            bufferInfo: document.getElementById('bufferInfo'),
+            
+            // Sidebar
+            playerSidebar: document.getElementById('playerSidebar'),
+            sidebarToggle: document.getElementById('sidebarToggle'),
+            contentPoster: document.getElementById('contentPoster'),
+            contentTitle: document.getElementById('contentTitle'),
+            contentYear: document.getElementById('contentYear'),
+            contentRating: document.getElementById('contentRating'),
+            contentType: document.getElementById('contentType'),
+            contentDescription: document.getElementById('contentDescription'),
+            episodeListSection: document.getElementById('episodeListSection'),
+            seasonSelect: document.getElementById('seasonSelect'),
+            episodeScroll: document.getElementById('episodeScroll'),
+            relatedList: document.getElementById('relatedList'),
+            
+            // Modals
+            qualityModal: document.getElementById('qualityModal'),
+            subtitleModal: document.getElementById('subtitleModal'),
+            speedModal: document.getElementById('speedModal'),
+            qualityOptions: document.getElementById('qualityOptions'),
+            subtitleOptions: document.getElementById('subtitleOptions'),
+            speedOptions: document.getElementById('speedOptions'),
+            
+            // Error actions
+            retryBtn: document.getElementById('retryBtn'),
+            qualitySelectBtn: document.getElementById('qualitySelectBtn'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            
+            // Next episode
+            playNextBtn: document.getElementById('playNextBtn'),
+            cancelNextBtn: document.getElementById('cancelNextBtn')
+        };
 
-        // Custom controls elements
-        this.loadingSpinner = document.getElementById('loading-spinner');
-        this.progressBar = document.getElementById('progress-bar');
-        this.progressTime = document.getElementById('progress-time');
-        this.playPauseBtn = document.getElementById('play-pause-btn');
-        this.rewindBtn = document.getElementById('rewind-btn');
-        this.forwardBtn = document.getElementById('forward-btn');
-        this.volumeBtn = document.getElementById('volume-btn');
-        this.volumeSlider = document.getElementById('volume-slider');
-        this.downloadBtn = document.getElementById('download-btn');
-        this.prevBtn = document.getElementById('prev-btn');
-        this.nextBtn = document.getElementById('next-btn');
-        this.fullscreenBtn = document.getElementById('fullscreen-btn');
-        this.timeDisplay = document.getElementById('time-display');
-        this.customControls = document.querySelector('.custom-controls');
-        
-        // New elements
-        this.subtitlesBtn = document.getElementById('subtitles-btn');
-        this.shareBtn = document.getElementById('share-btn');
-        this.subtitlesModal = document.getElementById('subtitles-modal');
-        this.subtitlesOptions = document.getElementById('subtitles-options');
-        this.shareModal = document.getElementById('share-modal');
-        this.shareUrlInput = document.getElementById('share-url-input');
-        this.copyUrlBtn = document.getElementById('copy-url-btn');
-        this.castList = document.getElementById('cast-list');
-        this.similarList = document.getElementById('similar-list');
-    }
-
-    setupEvents() {
-        // Existing events
-        this.backBtn.addEventListener('click', () => {
-            window.history.back();
-        });
-
-        this.qualitySelectorBtn.addEventListener('click', () => {
-            this.qualityModal.style.display = 'block';
-        });
-
-        // Close modals
-        document.querySelectorAll('.close-modal').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const modalId = e.target.dataset.modal;
-                document.getElementById(modalId).style.display = 'none';
-            });
-        });
-
-        window.addEventListener('click', (event) => {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
+        this.state = {
+            videoType: null,
+            videoId: null,
+            season: null,
+            episode: null,
+            videoData: null,
+            sources: [],
+            currentSourceIndex: 0,
+            nextEpisodeCountdown: null,
+            controlsVisible: true,
+            controlsTimeout: null,
+            connectionStats: {
+                speed: 0,
+                latency: 0,
+                quality: 'unknown'
             }
-        });
+        };
     }
 
-    setupCustomControls() {
-        // Play/Pause
-        this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
-        this.videoPlayer.addEventListener('click', () => this.togglePlayPause());
-
-        // Progress bar
-        this.progressBar.addEventListener('input', () => this.seekVideo());
-        this.progressBar.addEventListener('mousedown', () => this.pauseVideo());
-        this.progressBar.addEventListener('mouseup', () => {
+    setupEventListeners() {
+        // Navigation
+        this.elements.playerBackBtn.addEventListener('click', () => this.goBack());
+        
+        // Playback controls
+        this.elements.centerPlayBtn.addEventListener('click', () => this.togglePlay());
+        this.elements.playPauseBtn.addEventListener('click', () => this.togglePlay());
+        this.elements.rewindBtn.addEventListener('click', () => this.rewind(10));
+        this.elements.forwardBtn.addEventListener('click', () => this.forward(10));
+        
+        // Progress
+        this.elements.progressSlider.addEventListener('input', (e) => this.seekVideo(e.target.value));
+        this.elements.progressSlider.addEventListener('mousedown', () => this.pauseVideo());
+        this.elements.progressSlider.addEventListener('mouseup', () => {
             if (this.isPlaying) this.playVideo();
         });
-
-        // Rewind/Forward
-        this.rewindBtn.addEventListener('click', () => this.rewind(10));
-        this.forwardBtn.addEventListener('click', () => this.forward(10));
-
+        
         // Volume
-        this.volumeSlider.addEventListener('input', () => this.setVolume());
-        this.volumeBtn.addEventListener('click', () => this.toggleMute());
-
-        // Download
-        this.downloadBtn.addEventListener('click', () => this.downloadVideo());
-
-        // Navigation
-        this.prevBtn.addEventListener('click', () => this.previousContent());
-        this.nextBtn.addEventListener('click', () => this.nextContent());
-
-        // Fullscreen
-        this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
-
-        // Subtitles
-        this.subtitlesBtn.addEventListener('click', () => this.showSubtitlesModal());
-
-        // Share
-        this.shareBtn.addEventListener('click', () => this.showShareModal());
-
-        // Video events
-        this.videoPlayer.addEventListener('timeupdate', () => this.updateProgress());
-        this.videoPlayer.addEventListener('loadeddata', () => this.hideLoading());
-        this.videoPlayer.addEventListener('waiting', () => this.showLoading());
-        this.videoPlayer.addEventListener('playing', () => this.hideLoading());
-        this.videoPlayer.addEventListener('ended', () => this.videoEnded());
-
-        // Controls visibility
-        this.videoPlayer.addEventListener('mousemove', () => this.showControls());
-        this.videoPlayer.addEventListener('mouseleave', () => this.hideControls());
-        this.customControls.addEventListener('mousemove', () => this.showControls());
-
-        // Keyboard controls
-        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        this.elements.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+        this.elements.volumeBtn.addEventListener('click', () => this.toggleMute());
+        
+        // Quality/Subtitles/Speed
+        this.elements.qualityBtn.addEventListener('click', () => this.showQualityModal());
+        this.elements.subtitleBtn.addEventListener('click', () => this.showSubtitleModal());
+        this.elements.speedBtn.addEventListener('click', () => this.showSpeedModal());
+        
+        // PIP & Fullscreen
+        this.elements.pipBtn.addEventListener('click', () => this.togglePIP());
+        this.elements.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+        
+        // Sidebar
+        this.elements.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
+        
+        // Season select
+        this.elements.seasonSelect.addEventListener('change', (e) => this.loadSeasonEpisodes(e.target.value));
+        
+        // Error actions
+        this.elements.retryBtn.addEventListener('click', () => this.retryPlayback());
+        this.elements.qualitySelectBtn.addEventListener('click', () => this.showQualityModal());
+        this.elements.downloadBtn.addEventListener('click', () => this.downloadVideo());
+        
+        // Next episode
+        this.elements.playNextBtn.addEventListener('click', () => this.playNextEpisode());
+        this.elements.cancelNextBtn.addEventListener('click', () => this.cancelNextEpisode());
+        
+        // Modal close buttons
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => this.closeModals());
+        });
+        
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) this.closeModals();
+            });
+        });
+        
+        // Video events will be set up after player initialization
+        this.setupVideoEvents();
+        
+        // Mouse move for controls visibility
+        this.elements.playerContainer.addEventListener('mousemove', () => this.showControls());
+        this.elements.playerContainer.addEventListener('mouseleave', () => this.hideControls());
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
     }
 
-    async loadVideo() {
+    async loadVideoData() {
         const urlParams = new URLSearchParams(window.location.search);
-        const videoId = urlParams.get('id');
-        this.videoType = urlParams.get('type');
-        const season = urlParams.get('season');
-        const episode = urlParams.get('episode');
-
-        if (!videoId || !this.videoType) {
-            console.error('No video ID or type specified');
+        this.state.videoId = urlParams.get('id');
+        this.state.videoType = urlParams.get('type');
+        this.state.season = urlParams.get('season');
+        this.state.episode = urlParams.get('episode');
+        const directUrl = urlParams.get('url');
+        
+        if (!this.state.videoId || !this.state.videoType) {
+            this.showError('Invalid video parameters');
             return;
         }
-
+        
         this.showLoading();
+        
         try {
-            this.videoData = await MovieAPI.getMovieInfo(videoId);
+            // Load video info
+            this.state.videoData = await MovieAPI.getMovieInfo(this.state.videoId);
             
-            if (!this.videoData || !this.videoData.results) {
-                console.error('Failed to load video data');
-                return;
+            if (!this.state.videoData) {
+                throw new Error('Failed to load video data');
             }
-
+            
+            // Update UI with video info
             this.updateVideoInfo();
-            this.loadCastMembers();
-            this.loadSimilarContent(videoId);
-
-            // Load sources and subtitles
-            if (this.videoType === 'movie') {
-                this.playlistWrapper.style.display = 'none';
-                this.prevBtn.style.display = 'none';
-                this.nextBtn.style.display = 'none';
-                const sourcesData = await MovieAPI.getDownloadSources(videoId);
-                this.sources = sourcesData.results || [];
-                this.subtitles = sourcesData.subtitles || [];
-                this.populateQualityOptions();
-                this.populateSubtitlesOptions();
-                if (this.sources.length > 0) {
-                    this.playVideo(this.sources[0].download_url);
-                }
-            } else if (this.videoType === 'series') {
-                const seasons = this.videoData.results.resource?.seasons || [];
-                this.renderSeasonDropdowns(seasons);
-
-                if (season && episode) {
-                    this.currentSeason = parseInt(season);
-                    this.currentEpisode = parseInt(episode);
-                    this.updateCurrentEpisodeInfo();
-                    const sourcesData = await MovieAPI.getDownloadSources(videoId, season, episode);
-                    this.sources = sourcesData.results || [];
-                    this.subtitles = sourcesData.subtitles || [];
-                    this.populateQualityOptions();
-                    this.populateSubtitlesOptions();
-                    if (this.sources.length > 0) {
-                        this.playVideo(this.sources[0].download_url);
-                    }
-                    this.highlightCurrentEpisode();
-                    this.openSeasonDropdown(this.currentSeason);
-                }
-
-                this.prevBtn.style.display = 'flex';
-                this.nextBtn.style.display = 'flex';
+            
+            // Load sources
+            if (directUrl) {
+                // Direct URL provided
+                this.state.sources = [{
+                    url: decodeURIComponent(directUrl),
+                    quality: 'Direct',
+                    format: 'direct'
+                }];
+                this.loadVideoSource(0);
+            } else if (this.state.videoType === 'movie') {
+                const sourcesData = await MovieAPI.getDownloadSources(this.state.videoId);
+                this.state.sources = sourcesData?.results || [];
+                this.loadBestSource();
+            } else if (this.state.videoType === 'series' && this.state.season && this.state.episode) {
+                const sourcesData = await MovieAPI.getDownloadSources(
+                    this.state.videoId,
+                    this.state.season,
+                    this.state.episode
+                );
+                this.state.sources = sourcesData?.results || [];
+                this.loadBestSource();
+                
+                // Load episodes for sidebar
+                this.loadEpisodes();
             }
+            
+            // Load related content
+            this.loadRelatedContent();
+            
+            // Load subtitles
+            this.loadSubtitles();
+            
         } catch (error) {
-            console.error('Error loading video:', error);
+            console.error('Error loading video data:', error);
+            this.showError('Failed to load video. Please try again.');
+        } finally {
+            this.hideLoading();
         }
+    }
+
+    loadBestSource() {
+        if (!this.state.sources || this.state.sources.length === 0) {
+            this.showError('No video sources available');
+            return;
+        }
+        
+        // Sort sources by quality (highest first)
+        const sortedSources = [...this.state.sources].sort((a, b) => {
+            const qualityA = this.parseQuality(a.quality);
+            const qualityB = this.parseQuality(b.quality);
+            return qualityB - qualityA;
+        });
+        
+        // Check connection and select appropriate quality
+        const connectionSpeed = this.state.connectionStats.speed;
+        let selectedIndex = 0;
+        
+        if (connectionSpeed > 0) {
+            if (connectionSpeed < 2) { // Less than 2 Mbps
+                selectedIndex = sortedSources.findIndex(s => this.parseQuality(s.quality) <= 480);
+            } else if (connectionSpeed < 5) { // 2-5 Mbps
+                selectedIndex = sortedSources.findIndex(s => this.parseQuality(s.quality) <= 720);
+            } else if (connectionSpeed < 10) { // 5-10 Mbps
+                selectedIndex = sortedSources.findIndex(s => this.parseQuality(s.quality) <= 1080);
+            }
+            // For >10 Mbps, use highest quality
+        }
+        
+        selectedIndex = Math.max(0, Math.min(selectedIndex, sortedSources.length - 1));
+        this.loadVideoSource(selectedIndex);
+    }
+
+    parseQuality(qualityString) {
+        if (!qualityString) return 0;
+        const match = qualityString.match(/(\d+)p/);
+        return match ? parseInt(match[1]) : 0;
+    }
+
+    loadVideoSource(sourceIndex) {
+        if (!this.state.sources[sourceIndex]) {
+            this.showError('Selected source not available');
+            return;
+        }
+        
+        this.state.currentSourceIndex = sourceIndex;
+        const source = this.state.sources[sourceIndex];
+        
+        if (this.videoPlayer) {
+            // Update source
+            this.videoPlayer.src({
+                src: source.download_url || source.url,
+                type: this.getMimeType(source.format)
+            });
+            
+            // Update quality display
+            this.elements.qualityBtn.innerHTML = `
+                <i class="fas fa-hd"></i>
+                <span class="btn-tooltip">${source.quality || 'Unknown'}</span>
+            `;
+            
+            // Save to watch history
+            this.saveToWatchHistory();
+        }
+    }
+
+    getMimeType(format) {
+        const mimeTypes = {
+            'mp4': 'video/mp4',
+            'm3u8': 'application/x-mpegURL',
+            'webm': 'video/webm',
+            'mkv': 'video/x-matroska'
+        };
+        return mimeTypes[format?.toLowerCase()] || 'video/mp4';
+    }
+
+    setupVideoPlayer() {
+        if (!this.videoPlayer && this.elements.videoPlayer) {
+            this.videoPlayer = videojs(this.elements.videoPlayer, {
+                controls: false, // Using custom controls
+                autoplay: true,
+                preload: 'auto',
+                fluid: true,
+                responsive: true,
+                playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
+                html5: {
+                    nativeTextTracks: false,
+                    vhs: {
+                        overrideNative: true,
+                        enableLowInitialPlaylist: true,
+                        smoothQualityChange: true,
+                        bandwidth: 1000000 // Start with 1 Mbps
+                    }
+                }
+            });
+            
+            this.setupVideoEvents();
+        }
+    }
+
+    setupVideoEvents() {
+        if (!this.videoPlayer) return;
+        
+        // Play/Pause
+        this.videoPlayer.on('play', () => {
+            this.isPlaying = true;
+            this.updatePlayPauseButton();
+            this.hideLoading();
+        });
+        
+        this.videoPlayer.on('pause', () => {
+            this.isPlaying = false;
+            this.updatePlayPauseButton();
+        });
+        
+        this.videoPlayer.on('waiting', () => {
+            this.isBuffering = true;
+            this.showBuffering();
+        });
+        
+        this.videoPlayer.on('playing', () => {
+            this.isBuffering = false;
+            this.hideBuffering();
+        });
+        
+        // Time updates
+        this.videoPlayer.on('timeupdate', () => {
+            this.updateProgress();
+            this.updateTimeDisplay();
+        });
+        
+        this.videoPlayer.on('loadedmetadata', () => {
+            this.duration = this.videoPlayer.duration();
+            this.updateDurationDisplay();
+        });
+        
+        // Progress updates
+        this.videoPlayer.on('progress', () => {
+            this.updateBufferProgress();
+        });
+        
+        // Ended
+        this.videoPlayer.on('ended', () => {
+            this.videoEnded();
+        });
+        
+        // Error handling
+        this.videoPlayer.on('error', (error) => {
+            console.error('Video player error:', error);
+            this.handlePlaybackError();
+        });
     }
 
     updateVideoInfo() {
-        const subject = this.videoData.results.subject;
-        this.videoTitle.textContent = subject.title;
-        this.videoDescription.textContent = subject.description || 'No description available.';
+        if (!this.state.videoData) return;
         
-        // Update meta information
-        if (subject.year) {
-            this.videoYear.textContent = subject.year;
-            this.videoYear.style.display = 'inline-block';
+        const video = this.state.videoData.results?.subject;
+        if (!video) return;
+        
+        // Update title
+        const title = video.title || 'Unknown';
+        this.elements.playerTitle.textContent = title;
+        this.elements.contentTitle.textContent = title;
+        document.title = `${title} - SilvaStream`;
+        
+        // Update poster
+        if (video.cover?.url) {
+            this.elements.contentPoster.src = video.cover.url;
         }
         
-        if (subject.rating) {
-            this.videoRating.textContent = `⭐ ${subject.rating}`;
-            this.videoRating.style.display = 'inline-block';
-        }
+        // Update metadata
+        this.elements.contentYear.textContent = video.year || 'N/A';
+        this.elements.contentRating.textContent = video.imdbRatingValue ? `${video.imdbRatingValue}/10` : 'N/A';
+        this.elements.contentType.textContent = this.state.videoType === 'movie' ? 'Movie' : 'Series';
+        this.elements.contentDescription.textContent = video.description || 'No description available.';
         
-        if (subject.duration) {
-            this.videoDuration.textContent = subject.duration;
-            this.videoDuration.style.display = 'inline-block';
-        }
-        
-        if (subject.genre && subject.genre.length > 0) {
-            this.videoGenre.textContent = subject.genre[0];
-            this.videoGenre.style.display = 'inline-block';
+        // Update episode section visibility
+        if (this.state.videoType === 'series') {
+            this.elements.episodeListSection.style.display = 'block';
+            this.loadSeasons();
+        } else {
+            this.elements.episodeListSection.style.display = 'none';
         }
     }
 
-    loadCastMembers() {
-        const subject = this.videoData.results.subject;
-        const cast = subject.cast || [];
-        
-        if (cast.length === 0) {
-            this.castList.innerHTML = '<p>No cast information available.</p>';
-            return;
-        }
-
-        this.castList.innerHTML = cast.map(member => `
-            <div class="cast-member">
-                <div class="cast-photo">
-                    ${member.photo ? 
-                        `<img src="${member.photo}" alt="${member.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\"fas fa-user\"></i>';" class="cast-photo">` :
-                        `<i class="fas fa-user"></i>`
-                    }
-                </div>
-                <div class="cast-name">${member.name}</div>
-                <div class="cast-character">${member.character || 'Actor'}</div>
-            </div>
-        `).join('');
-    }
-
-    async loadSimilarContent(videoId) {
+    async loadSeasons() {
         try {
-            // Since we don't have a specific similar content API endpoint,
-            // we'll use search with the video title to find similar content
-            const title = this.videoData.results.subject.title;
-            const searchWords = title.split(' ').slice(0, 2).join(' ');
-            const similarData = await MovieAPI.searchMovies(searchWords);
-            this.renderSimilarContent(similarData);
+            const seasons = this.state.videoData.results?.resource?.seasons || [];
+            
+            // Populate season selector
+            this.elements.seasonSelect.innerHTML = seasons.map((season, index) => {
+                const seasonNum = index + 1;
+                return `<option value="${seasonNum}" ${seasonNum == this.state.season ? 'selected' : ''}>
+                    Season ${seasonNum}
+                </option>`;
+            }).join('');
+            
+            // Load episodes for current season
+            this.loadEpisodes();
         } catch (error) {
-            console.error('Error loading similar content:', error);
-            this.similarList.innerHTML = '<p>No similar content found.</p>';
+            console.error('Error loading seasons:', error);
         }
     }
 
-    renderSimilarContent(similarData) {
-        if (!similarData || !similarData.results || similarData.results.length === 0) {
-            this.similarList.innerHTML = '<p>No similar content found.</p>';
-            return;
-        }
-
-        // Filter out the current video and limit to 6 items
-        const currentVideoId = new URLSearchParams(window.location.search).get('id');
-        const similarItems = similarData.results
-            .filter(item => item.id !== currentVideoId)
-            .slice(0, 6);
-
-        if (similarItems.length === 0) {
-            this.similarList.innerHTML = '<p>No similar content found.</p>';
-            return;
-        }
-
-        this.similarList.innerHTML = similarItems.map(item => {
-            const itemType = MovieAPI.isSeries(item) ? 'series' : 'movie';
-            return `
-                <div class="similar-item" data-id="${item.id}" data-type="${itemType}">
-                    <img src="${item.cover || item.poster || '/images/placeholder.jpg'}" 
-                         alt="${item.title}" 
-                         onerror="this.src='/images/placeholder.jpg'">
-                    <div class="similar-item-info">
-                        <div class="similar-item-title">${item.title}</div>
-                        <div class="similar-item-year">${item.year || ''}</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Add event listeners to similar items
-        this.similarList.querySelectorAll('.similar-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const id = item.dataset.id;
-                const type = item.dataset.type;
-                window.location.href = `playback.html?id=${id}&type=${type}`;
-            });
-        });
-    }
-
-    populateSubtitlesOptions() {
-        // Clear existing options except "Subtitles Off"
-        const existingOptions = this.subtitlesOptions.querySelectorAll('.subtitle-option:not([data-lan="off"])');
-        existingOptions.forEach(option => option.remove());
-
-        // Add subtitle options
-        if (this.subtitles && this.subtitles.length > 0) {
-            this.subtitlesOptions.innerHTML += this.subtitles.map(subtitle => `
-                <div class="subtitle-option" data-lan="${subtitle.lan}" data-url="${subtitle.url}">
-                    <span class="subtitle-lan">${subtitle.lanName} (${subtitle.lan})</span>
-                </div>
-            `).join('');
-        }
-
-        // Add event listeners to subtitle options
-        this.subtitlesOptions.querySelectorAll('.subtitle-option').forEach(option => {
-            option.addEventListener('click', () => {
-                const lan = option.dataset.lan;
-                const url = option.dataset.url;
-                
-                // Remove active class from all options
-                this.subtitlesOptions.querySelectorAll('.subtitle-option').forEach(opt => {
-                    opt.classList.remove('active');
-                });
-                
-                // Add active class to selected option
-                option.classList.add('active');
-                
-                if (lan === 'off') {
-                    this.disableSubtitles();
-                } else {
-                    this.loadSubtitle(url, lan);
-                }
-                
-                this.subtitlesModal.style.display = 'none';
-            });
-        });
-
-        // Set "Subtitles Off" as active by default
-        const offOption = this.subtitlesOptions.querySelector('.subtitle-option[data-lan="off"]');
-        if (offOption) {
-            offOption.classList.add('active');
-        }
-    }
-
-    async loadSubtitle(url, lan) {
+    async loadEpisodes() {
         try {
-            // Convert SRT to VTT format
-            const response = await fetch(url);
-            const srtContent = await response.text();
-            const vttContent = this.convertSrtToVtt(srtContent);
+            const seasonNum = parseInt(this.state.season) || 1;
+            const season = this.state.videoData.results?.resource?.seasons?.[seasonNum - 1];
             
-            // Create blob URL for VTT content
-            const blob = new Blob([vttContent], { type: 'text/vtt' });
-            const vttUrl = URL.createObjectURL(blob);
+            if (!season) return;
             
-            // Remove existing track if any
-            if (this.activeTextTrack) {
-                this.videoPlayer.removeChild(this.activeTextTrack);
+            const episodeCount = season.maxEp || season.resolutions?.[0]?.epNum || 0;
+            const currentEpisode = parseInt(this.state.episode) || 1;
+            
+            // Generate episode list
+            let episodesHTML = '';
+            for (let i = 1; i <= episodeCount; i++) {
+                const isCurrent = i === currentEpisode;
+                episodesHTML += `
+                    <div class="episode-item ${isCurrent ? 'current' : ''}" 
+                         data-season="${seasonNum}" 
+                         data-episode="${i}">
+                        <div class="episode-number">${i}</div>
+                        <div class="episode-info">
+                            <div class="episode-title">Episode ${i}</div>
+                            <div class="episode-duration">45 min</div>
+                        </div>
+                        ${isCurrent ? '<div class="episode-watching"><i class="fas fa-play"></i> Watching</div>' : ''}
+                        <button class="episode-play-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                `;
             }
             
-            // Create new track element
-            const track = document.createElement('track');
-            track.kind = 'subtitles';
-            track.src = vttUrl;
-            track.srclang = lan;
-            track.label = this.getLanguageName(lan);
-            track.default = true;
+            this.elements.episodeScroll.innerHTML = episodesHTML;
             
-            this.videoPlayer.appendChild(track);
-            this.activeTextTrack = track;
+            // Add event listeners
+            this.elements.episodeScroll.querySelectorAll('.episode-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.episode-play-btn')) {
+                        const season = item.dataset.season;
+                        const episode = item.dataset.episode;
+                        this.playEpisode(season, episode);
+                    }
+                });
+            });
             
-            // Enable subtitles
-            this.videoPlayer.textTracks[0].mode = 'showing';
-            this.currentSubtitle = lan;
+            this.elements.episodeScroll.querySelectorAll('.episode-play-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const item = e.target.closest('.episode-item');
+                    const season = item.dataset.season;
+                    const episode = item.dataset.episode;
+                    this.playEpisode(season, episode);
+                });
+            });
             
-            // Update subtitles button appearance
-            this.subtitlesBtn.classList.add('active');
+        } catch (error) {
+            console.error('Error loading episodes:', error);
+        }
+    }
+
+    async loadRelatedContent() {
+        try {
+            const similar = await MovieAPI.getSimilarMovies(this.state.videoId);
+            if (!similar || similar.length === 0) return;
+            
+            // Display up to 3 related items
+            const relatedHTML = similar.slice(0, 3).map(item => {
+                const isMovie = MovieAPI.isMovie(item);
+                const type = isMovie ? 'movie' : 'series';
+                
+                return `
+                    <div class="related-item" data-id="${item.subjectId}" data-type="${type}">
+                        <img src="${item.cover?.url || 'assets/placeholder.jpg'}" 
+                             alt="${item.title}"
+                             loading="lazy">
+                        <div class="related-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="related-info">
+                            <div class="related-title">${item.title}</div>
+                            <div class="related-year">${item.year || ''}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            this.elements.relatedList.innerHTML = relatedHTML;
+            
+            // Add event listeners
+            this.elements.relatedList.querySelectorAll('.related-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.dataset.id;
+                    const type = item.dataset.type;
+                    window.location.href = `playback.html?id=${id}&type=${type}`;
+                });
+            });
+            
+        } catch (error) {
+            console.error('Error loading related content:', error);
+        }
+    }
+
+    async loadSubtitles() {
+        try {
+            let subtitleData;
+            
+            if (this.state.videoType === 'movie') {
+                const sources = await MovieAPI.getDownloadSources(this.state.videoId);
+                subtitleData = sources?.subtitles;
+            } else if (this.state.videoType === 'series' && this.state.season && this.state.episode) {
+                const sources = await MovieAPI.getDownloadSources(
+                    this.state.videoId,
+                    this.state.season,
+                    this.state.episode
+                );
+                subtitleData = sources?.subtitles;
+            }
+            
+            if (!subtitleData) return;
+            
+            this.subtitleTracks = subtitleData;
+            this.populateSubtitleOptions();
+            
+        } catch (error) {
+            console.error('Error loading subtitles:', error);
+        }
+    }
+
+    populateSubtitleOptions() {
+        if (!this.subtitleTracks || this.subtitleTracks.length === 0) return;
+        
+        let optionsHTML = '<div class="subtitle-option active" data-lang="off"><span class="subtitle-name">Off</span></div>';
+        
+        optionsHTML += this.subtitleTracks.map(sub => `
+            <div class="subtitle-option" data-lang="${sub.lan}" data-url="${sub.url}">
+                <span class="subtitle-name">${sub.lanName} (${sub.lan})</span>
+            </div>
+        `).join('');
+        
+        this.elements.subtitleOptions.innerHTML = optionsHTML;
+        
+        // Add event listeners
+        this.elements.subtitleOptions.querySelectorAll('.subtitle-option').forEach(option => {
+            option.addEventListener('click', () => {
+                this.selectSubtitle(option.dataset.lang, option.dataset.url);
+            });
+        });
+    }
+
+    selectSubtitle(lang, url) {
+        // Remove active class from all options
+        this.elements.subtitleOptions.querySelectorAll('.subtitle-option').forEach(opt => {
+            opt.classList.remove('active');
+        });
+        
+        // Add active class to selected
+        const selected = this.elements.subtitleOptions.querySelector(`[data-lang="${lang}"]`);
+        if (selected) selected.classList.add('active');
+        
+        if (lang === 'off') {
+            this.disableSubtitles();
+        } else {
+            this.loadSubtitle(url, lang);
+        }
+        
+        this.closeModals();
+    }
+
+    async loadSubtitle(url, lang) {
+        try {
+            // Fetch and convert SRT to VTT
+            const response = await fetch(url);
+            const srtText = await response.text();
+            const vttText = this.convertSrtToWebVTT(srtText);
+            
+            // Create blob URL
+            const blob = new Blob([vttText], { type: 'text/vtt' });
+            const vttUrl = URL.createObjectURL(blob);
+            
+            // Remove existing track
+            const existingTrack = this.videoPlayer.remoteTextTracks().getTrackById('custom-subtitle');
+            if (existingTrack) {
+                this.videoPlayer.remoteTextTracks().removeTrack(existingTrack);
+            }
+            
+            // Add new track
+            this.videoPlayer.addRemoteTextTrack({
+                kind: 'subtitles',
+                srclang: lang,
+                label: lang.toUpperCase(),
+                src: vttUrl,
+                id: 'custom-subtitle',
+                default: true
+            }, true);
+            
+            // Update subtitle button
+            this.elements.subtitleBtn.classList.add('active');
+            this.elements.subtitleBtn.innerHTML = `
+                <i class="fas fa-closed-captioning"></i>
+                <span class="btn-tooltip">${lang.toUpperCase()}</span>
+            `;
             
         } catch (error) {
             console.error('Error loading subtitle:', error);
+            this.showToast('Failed to load subtitle', 'error');
         }
     }
 
     disableSubtitles() {
-        if (this.activeTextTrack) {
-            this.videoPlayer.removeChild(this.activeTextTrack);
-            this.activeTextTrack = null;
+        // Remove all text tracks
+        const tracks = this.videoPlayer.remoteTextTracks();
+        for (let i = tracks.length - 1; i >= 0; i--) {
+            this.videoPlayer.removeRemoteTextTrack(tracks[i]);
         }
         
-        this.currentSubtitle = null;
-        this.subtitlesBtn.classList.remove('active');
-        
-        // Disable all text tracks
-        for (let i = 0; i < this.videoPlayer.textTracks.length; i++) {
-            this.videoPlayer.textTracks[i].mode = 'disabled';
-        }
+        // Update subtitle button
+        this.elements.subtitleBtn.classList.remove('active');
+        this.elements.subtitleBtn.innerHTML = `
+            <i class="fas fa-closed-captioning"></i>
+            <span class="btn-tooltip">Subtitles</span>
+        `;
     }
 
-    convertSrtToVtt(srtContent) {
-        // Basic SRT to VTT conversion
-        let vttContent = 'WEBVTT\n\n';
-        vttContent += srtContent
+    convertSrtToWebVTT(srtText) {
+        // Convert SRT to WebVTT format
+        let vttText = 'WEBVTT\n\n';
+        vttText += srtText
             .replace(/\r\n/g, '\n')
             .replace(/\n\r/g, '\n')
             .replace(/\r/g, '\n')
             .replace(/(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/g, '$2 --> $3')
             .replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g, '$1.$2');
         
-        return vttContent;
+        return vttText;
     }
 
-    getLanguageName(lan) {
-        const languageNames = {
-            'en': 'English',
-            'es': 'Spanish',
-            'fr': 'French',
-            'de': 'German',
-            'it': 'Italian',
-            'pt': 'Portuguese',
-            'ru': 'Russian',
-            'zh': 'Chinese',
-            'ja': 'Japanese',
-            'ko': 'Korean',
-            'ar': 'Arabic',
-            'hi': 'Hindi',
-            'tr': 'Turkish',
-            'nl': 'Dutch',
-            'sv': 'Swedish',
-            'pl': 'Polish',
-            'in_id': 'Indonesian',
-            'ms': 'Malay',
-            'th': 'Thai',
-            'vi': 'Vietnamese',
-            'fil': 'Filipino',
-            'sw': 'Swahili',
-            'bn': 'Bengali',
-            'pa': 'Punjabi',
-            'ur': 'Urdu',
-            'fa': 'Persian'
-        };
-        
-        return languageNames[lan] || lan;
-    }
-
-    showSubtitlesModal() {
-        this.subtitlesModal.style.display = 'block';
-    }
-
-    showShareModal() {
-        // Set current URL in share input
-        this.shareUrlInput.value = window.location.href;
-        this.shareModal.style.display = 'block';
-        
-        // Setup share options
-        this.setupShareOptions();
-    }
-
-    setupShareOptions() {
-        const currentUrl = encodeURIComponent(window.location.href);
-        const title = encodeURIComponent(this.videoTitle.textContent);
-        
-        // Copy link
-        document.getElementById('copy-link').addEventListener('click', () => {
-            this.copyToClipboard(window.location.href);
-        });
-        
-        // WhatsApp
-        document.getElementById('share-whatsapp').addEventListener('click', () => {
-            window.open(`https://wa.me/?text=${title}%20${currentUrl}`, '_blank');
-        });
-        
-        // Facebook
-        document.getElementById('share-facebook').addEventListener('click', () => {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`, '_blank');
-        });
-        
-        // Twitter
-        document.getElementById('share-twitter').addEventListener('click', () => {
-            window.open(`https://twitter.com/intent/tweet?text=${title}&url=${currentUrl}`, '_blank');
-        });
-        
-        // Telegram
-        document.getElementById('share-telegram').addEventListener('click', () => {
-            window.open(`https://t.me/share/url?url=${currentUrl}&text=${title}`, '_blank');
-        });
-        
-        // Copy URL button
-        this.copyUrlBtn.addEventListener('click', () => {
-            this.copyToClipboard(window.location.href);
-        });
-    }
-
-    async copyToClipboard(text) {
-        try {
-            await navigator.clipboard.writeText(text);
-            this.showNotification('Link copied to clipboard!');
-        } catch (err) {
-            console.error('Failed to copy: ', err);
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            this.showNotification('Link copied to clipboard!');
+    // Playback Controls
+    togglePlay() {
+        if (this.videoPlayer) {
+            if (this.videoPlayer.paused()) {
+                this.playVideo();
+            } else {
+                this.pauseVideo();
+            }
         }
     }
 
-    showNotification(message) {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            z-index: 3000;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Remove notification after 3 seconds
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
-    }
-
-    // Custom Controls Methods
-    togglePlayPause() {
-        if (this.videoPlayer.paused) {
-            this.playVideo();
-        } else {
-            this.pauseVideo();
+    playVideo() {
+        if (this.videoPlayer) {
+            this.videoPlayer.play();
         }
-    }
-
-    playVideo(url = null) {
-        if (url) {
-            this.videoPlayer.src = url;
-        }
-        this.videoPlayer.play();
-        this.isPlaying = true;
-        this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
     }
 
     pauseVideo() {
-        this.videoPlayer.pause();
-        this.isPlaying = false;
-        this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    }
-
-    seekVideo() {
-        const seekTime = (this.progressBar.value / 100) * this.videoPlayer.duration;
-        this.videoPlayer.currentTime = seekTime;
-    }
-
-    updateProgress() {
-        if (this.videoPlayer.duration) {
-            const progress = (this.videoPlayer.currentTime / this.videoPlayer.duration) * 100;
-            this.progressBar.value = progress;
-            
-            const currentTime = this.formatTime(this.videoPlayer.currentTime);
-            const duration = this.formatTime(this.videoPlayer.duration);
-            
-            this.progressTime.textContent = `${currentTime} / ${duration}`;
-            this.timeDisplay.textContent = `${currentTime} / ${duration}`;
+        if (this.videoPlayer) {
+            this.videoPlayer.pause();
         }
     }
 
     rewind(seconds) {
-        this.videoPlayer.currentTime = Math.max(0, this.videoPlayer.currentTime - seconds);
+        if (this.videoPlayer) {
+            const newTime = Math.max(0, this.videoPlayer.currentTime() - seconds);
+            this.videoPlayer.currentTime(newTime);
+            this.showToast(`Rewound ${seconds} seconds`);
+        }
     }
 
     forward(seconds) {
-        this.videoPlayer.currentTime = Math.min(
-            this.videoPlayer.duration, 
-            this.videoPlayer.currentTime + seconds
-        );
+        if (this.videoPlayer) {
+            const newTime = Math.min(this.videoPlayer.duration(), this.videoPlayer.currentTime() + seconds);
+            this.videoPlayer.currentTime(newTime);
+            this.showToast(`Forwarded ${seconds} seconds`);
+        }
     }
 
-    setVolume() {
-        this.videoPlayer.volume = this.volumeSlider.value;
-        this.updateVolumeIcon();
+    seekVideo(percentage) {
+        if (this.videoPlayer) {
+            const time = (percentage / 100) * this.videoPlayer.duration();
+            this.videoPlayer.currentTime(time);
+        }
+    }
+
+    setVolume(value) {
+        if (this.videoPlayer) {
+            const volume = value / 100;
+            this.videoPlayer.volume(volume);
+            this.updateVolumeButton(volume);
+        }
     }
 
     toggleMute() {
-        this.videoPlayer.muted = !this.videoPlayer.muted;
-        this.updateVolumeIcon();
+        if (this.videoPlayer) {
+            this.videoPlayer.muted(!this.videoPlayer.muted());
+            this.updateVolumeButton(this.videoPlayer.volume());
+        }
     }
 
-    updateVolumeIcon() {
-        const volume = this.videoPlayer.muted ? 0 : this.videoPlayer.volume;
+    updateVolumeButton(volume) {
         let icon = 'fa-volume-up';
         
-        if (volume === 0) {
+        if (this.videoPlayer.muted() || volume === 0) {
             icon = 'fa-volume-mute';
         } else if (volume < 0.5) {
             icon = 'fa-volume-down';
         }
         
-        this.volumeBtn.innerHTML = `<i class="fas ${icon}"></i>`;
-        this.volumeSlider.value = volume;
+        this.elements.volumeBtn.innerHTML = `<i class="fas ${icon}"></i>`;
+        this.elements.volumeSlider.value = volume * 100;
     }
 
-    downloadVideo() {
-        if (this.videoPlayer.src) {
-            const a = document.createElement('a');
-            a.href = this.videoPlayer.src;
-            a.download = `${this.videoTitle.textContent}.mp4`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+    updatePlayPauseButton() {
+        const icon = this.isPlaying ? 'fa-pause' : 'fa-play';
+        this.elements.playPauseBtn.innerHTML = `<i class="fas ${icon}"></i>`;
+        this.elements.centerPlayBtn.innerHTML = `<i class="fas ${this.isPlaying ? 'fa-pause' : 'fa-play'}"></i>`;
+    }
+
+    updateProgress() {
+        if (!this.videoPlayer) return;
+        
+        const currentTime = this.videoPlayer.currentTime();
+        const duration = this.videoPlayer.duration();
+        
+        if (duration > 0) {
+            const percentage = (currentTime / duration) * 100;
+            this.elements.progressSlider.value = percentage;
+            this.elements.progressFilled.style.width = `${percentage}%`;
+            
+            // Update time displays
+            this.elements.currentTimeDisplay.textContent = this.formatTime(currentTime);
+            this.elements.playerCurrentTime.textContent = this.formatTime(currentTime);
         }
     }
 
-    previousContent() {
-        if (this.videoType === 'series' && this.currentEpisode > 1) {
-            this.currentEpisode--;
-            this.loadEpisode(this.currentSeason, this.currentEpisode);
+    updateBufferProgress() {
+        if (!this.videoPlayer) return;
+        
+        const buffered = this.videoPlayer.buffered();
+        const duration = this.videoPlayer.duration();
+        
+        if (duration > 0 && buffered.length > 0) {
+            const bufferEnd = buffered.end(buffered.length - 1);
+            const bufferPercentage = (bufferEnd / duration) * 100;
+            this.elements.progressBuffer.style.width = `${bufferPercentage}%`;
+            this.elements.bufferInfo.textContent = `${Math.round(bufferPercentage)}%`;
         }
     }
 
-    nextContent() {
-        if (this.videoType === 'series') {
-            const currentSeasonData = this.videoData.results.resource.seasons[this.currentSeason - 1];
-            if (this.currentEpisode < currentSeasonData.maxEp) {
-                this.currentEpisode++;
-                this.loadEpisode(this.currentSeason, this.currentEpisode);
-            } else if (this.currentSeason < this.videoData.results.resource.seasons.length) {
-                this.currentSeason++;
-                this.currentEpisode = 1;
-                this.loadEpisode(this.currentSeason, this.currentEpisode);
+    updateTimeDisplay() {
+        if (!this.videoPlayer) return;
+        
+        const currentTime = this.videoPlayer.currentTime();
+        const duration = this.videoPlayer.duration();
+        
+        this.elements.currentTimeDisplay.textContent = this.formatTime(currentTime);
+        this.elements.playerCurrentTime.textContent = this.formatTime(currentTime);
+        
+        if (duration) {
+            this.elements.totalTimeDisplay.textContent = this.formatTime(duration);
+            this.elements.playerDuration.textContent = this.formatTime(duration);
+        }
+    }
+
+    updateDurationDisplay() {
+        if (!this.videoPlayer) return;
+        
+        const duration = this.videoPlayer.duration();
+        if (duration) {
+            this.elements.totalTimeDisplay.textContent = this.formatTime(duration);
+            this.elements.playerDuration.textContent = this.formatTime(duration);
+        }
+    }
+
+    formatTime(seconds) {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+        
+        if (hrs > 0) {
+            return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Quality Selection
+    showQualityModal() {
+        if (!this.state.sources || this.state.sources.length === 0) {
+            this.showToast('No quality options available', 'error');
+            return;
+        }
+        
+        // Sort sources by quality
+        const sortedSources = [...this.state.sources].sort((a, b) => {
+            const qualityA = this.parseQuality(a.quality);
+            const qualityB = this.parseQuality(b.quality);
+            return qualityB - qualityA;
+        });
+        
+        // Create quality options
+        this.elements.qualityOptions.innerHTML = sortedSources.map((source, index) => {
+            const isCurrent = index === this.state.currentSourceIndex;
+            const quality = source.quality || 'Unknown';
+            const format = source.format || 'mp4';
+            const size = this.formatFileSize(source.size);
+            
+            return `
+                <div class="quality-option ${isCurrent ? 'current' : ''}" data-index="${index}">
+                    <div class="quality-info">
+                        <div class="quality-name">${quality}</div>
+                        <div class="quality-details">
+                            <span>${format.toUpperCase()}</span>
+                            ${size ? `<span>• ${size}</span>` : ''}
+                        </div>
+                    </div>
+                    ${isCurrent ? '<div class="quality-current">Current</div>' : ''}
+                    <button class="btn btn-sm ${isCurrent ? 'btn-primary' : 'btn-outline'} select-quality">
+                        Select
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+        // Add event listeners
+        this.elements.qualityOptions.querySelectorAll('.select-quality').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const option = e.target.closest('.quality-option');
+                const index = parseInt(option.dataset.index);
+                this.changeQuality(index);
+            });
+        });
+        
+        // Auto quality setting
+        this.elements.autoQuality.checked = this.currentQuality === 'auto';
+        
+        this.elements.qualityModal.classList.add('active');
+    }
+
+    changeQuality(index) {
+        if (index === this.state.currentSourceIndex) {
+            this.closeModals();
+            return;
+        }
+        
+        this.loadVideoSource(index);
+        this.closeModals();
+        this.showToast('Quality changed successfully', 'success');
+    }
+
+    // Speed Selection
+    showSpeedModal() {
+        this.elements.speedModal.classList.add('active');
+        
+        // Add event listeners to speed options
+        this.elements.speedOptions.querySelectorAll('.speed-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const speed = parseFloat(option.dataset.speed);
+                this.setPlaybackSpeed(speed);
+            });
+        });
+    }
+
+    setPlaybackSpeed(speed) {
+        if (this.videoPlayer) {
+            this.videoPlayer.playbackRate(speed);
+            this.currentSpeed = speed;
+            
+            // Update active button
+            this.elements.speedOptions.querySelectorAll('.speed-option').forEach(opt => {
+                opt.classList.toggle('active', parseFloat(opt.dataset.speed) === speed);
+            });
+            
+            this.closeModals();
+            this.showToast(`Playback speed: ${speed}x`, 'success');
+        }
+    }
+
+    // PIP & Fullscreen
+    togglePIP() {
+        if (document.pictureInPictureEnabled && this.videoPlayer) {
+            if (this.isPIP) {
+                document.exitPictureInPicture();
+            } else {
+                this.videoPlayer.enterPictureInPicture();
             }
         }
-    }
-
-    async loadEpisode(season, episode) {
-        this.showLoading();
-        const videoId = new URLSearchParams(window.location.search).get('id');
-        const sourcesData = await MovieAPI.getDownloadSources(videoId, season, episode);
-        this.sources = sourcesData.results || [];
-        this.subtitles = sourcesData.subtitles || [];
-        this.currentSeason = season;
-        this.currentEpisode = episode;
-        this.updateCurrentEpisodeInfo();
-        this.highlightCurrentEpisode();
-        this.populateQualityOptions();
-        this.populateSubtitlesOptions();
-        
-        if (this.sources.length > 0) {
-            this.playVideo(this.sources[0].download_url);
-        }
-        
-        // Update URL without reloading
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set('season', season);
-        newUrl.searchParams.set('episode', episode);
-        window.history.replaceState({}, '', newUrl);
     }
 
     toggleFullscreen() {
-        const videoWrapper = this.videoPlayer.parentElement;
+        const container = this.elements.playerContainer;
         
         if (!this.isFullscreen) {
-            if (videoWrapper.requestFullscreen) {
-                videoWrapper.requestFullscreen();
-            } else if (videoWrapper.webkitRequestFullscreen) {
-                videoWrapper.webkitRequestFullscreen();
-            } else if (videoWrapper.msRequestFullscreen) {
-                videoWrapper.msRequestFullscreen();
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
             }
             this.isFullscreen = true;
-            this.fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            this.elements.fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
         } else {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -713,53 +963,349 @@ class Playback {
                 document.msExitFullscreen();
             }
             this.isFullscreen = false;
-            this.fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            this.elements.fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
         }
     }
 
-    showLoading() {
-        this.loadingSpinner.classList.add('show');
+    // Sidebar
+    toggleSidebar() {
+        this.elements.playerSidebar.classList.toggle('collapsed');
+        this.elements.sidebarToggle.innerHTML = this.elements.playerSidebar.classList.contains('collapsed') 
+            ? '<i class="fas fa-chevron-right"></i>' 
+            : '<i class="fas fa-chevron-left"></i>';
     }
 
-    hideLoading() {
-        this.loadingSpinner.classList.remove('show');
+    // Episode Management
+    playEpisode(season, episode) {
+        if (this.state.videoType === 'series') {
+            window.location.href = `playback.html?id=${this.state.videoId}&type=series&season=${season}&episode=${episode}`;
+        }
     }
 
+    loadSeasonEpisodes(season) {
+        this.state.season = season;
+        this.state.episode = 1;
+        this.loadEpisodes();
+    }
+
+    videoEnded() {
+        if (this.state.videoType === 'series') {
+            // Check if there's a next episode
+            const currentEpisode = parseInt(this.state.episode);
+            const seasonData = this.state.videoData.results?.resource?.seasons?.[this.state.season - 1];
+            const episodeCount = seasonData?.maxEp || 0;
+            
+            if (currentEpisode < episodeCount) {
+                // Show next episode countdown
+                this.showNextEpisodeCountdown();
+            }
+        }
+        
+        // Save completion to history
+        this.saveToWatchHistory(true);
+    }
+
+    showNextEpisodeCountdown() {
+        let countdown = 5;
+        this.elements.nextEpisodeOverlay.style.display = 'block';
+        this.elements.countdownTimer.textContent = countdown;
+        
+        this.state.nextEpisodeCountdown = setInterval(() => {
+            countdown--;
+            this.elements.countdownTimer.textContent = countdown;
+            
+            if (countdown <= 0) {
+                this.playNextEpisode();
+            }
+        }, 1000);
+    }
+
+    playNextEpisode() {
+        clearInterval(this.state.nextEpisodeCountdown);
+        this.elements.nextEpisodeOverlay.style.display = 'none';
+        
+        const nextEpisode = parseInt(this.state.episode) + 1;
+        this.playEpisode(this.state.season, nextEpisode);
+    }
+
+    cancelNextEpisode() {
+        clearInterval(this.state.nextEpisodeCountdown);
+        this.elements.nextEpisodeOverlay.style.display = 'none';
+    }
+
+    // Watch History
+    saveToWatchHistory(completed = false) {
+        if (!this.state.videoData) return;
+        
+        const video = this.state.videoData.results?.subject;
+        if (!video) return;
+        
+        const historyItem = {
+            id: this.state.videoId,
+            type: this.state.videoType,
+            title: video.title,
+            poster: video.cover?.url,
+            timestamp: new Date().toISOString(),
+            progress: this.videoPlayer ? this.videoPlayer.currentTime() : 0,
+            duration: this.videoPlayer ? this.videoPlayer.duration() : 0,
+            completed: completed,
+            season: this.state.season,
+            episode: this.state.episode
+        };
+        
+        // Remove if already exists
+        this.watchHistory = this.watchHistory.filter(item => 
+            !(item.id === historyItem.id && 
+              item.season === historyItem.season && 
+              item.episode === historyItem.episode)
+        );
+        
+        // Add to beginning
+        this.watchHistory.unshift(historyItem);
+        
+        // Keep only last 100 items
+        this.watchHistory = this.watchHistory.slice(0, 100);
+        
+        // Save to localStorage
+        localStorage.setItem('watch_history', JSON.stringify(this.watchHistory));
+    }
+
+    // Error Handling
+    handlePlaybackError() {
+        this.showError('Playback error occurred. Trying alternative source...');
+        
+        // Try next source
+        const nextIndex = (this.state.currentSourceIndex + 1) % this.state.sources.length;
+        if (nextIndex !== this.state.currentSourceIndex) {
+            setTimeout(() => {
+                this.loadVideoSource(nextIndex);
+            }, 2000);
+        }
+    }
+
+    retryPlayback() {
+        this.hideError();
+        this.loadVideoSource(this.state.currentSourceIndex);
+    }
+
+    downloadVideo() {
+        if (this.state.sources[this.state.currentSourceIndex]?.download_url) {
+            const link = document.createElement('a');
+            link.href = this.state.sources[this.state.currentSourceIndex].download_url;
+            link.download = `${this.state.videoData.results?.subject?.title || 'video'}.mp4`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            this.showToast('Download not available for this source', 'error');
+        }
+    }
+
+    // Connection Monitoring
+    startPlaybackMonitoring() {
+        // Monitor connection every 30 seconds
+        setInterval(() => {
+            this.checkConnection();
+        }, 30000);
+        
+        // Initial check
+        this.checkConnection();
+    }
+
+    async checkConnection() {
+        try {
+            // Simple connection check
+            const startTime = Date.now();
+            await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors' });
+            const latency = Date.now() - startTime;
+            
+            // Estimate speed (simplified)
+            const speed = await this.estimateConnectionSpeed();
+            
+            this.state.connectionStats = {
+                speed: speed,
+                latency: latency,
+                quality: this.getConnectionQuality(speed, latency)
+            };
+            
+            this.updateConnectionDisplay();
+            
+            // Auto-quality adjustment
+            if (this.currentQuality === 'auto') {
+                this.adjustQualityBasedOnConnection();
+            }
+            
+        } catch (error) {
+            console.error('Connection check failed:', error);
+        }
+    }
+
+    async estimateConnectionSpeed() {
+        // Simplified speed estimation
+        const testUrl = 'https://speed.cloudflare.com/__down?bytes=1000000'; // 1MB file
+        const startTime = Date.now();
+        
+        try {
+            const response = await fetch(testUrl);
+            const blob = await response.blob();
+            const endTime = Date.now();
+            
+            const duration = (endTime - startTime) / 1000; // seconds
+            const size = blob.size / 1000000; // MB
+            const speed = size / duration; // MBps
+            
+            return speed;
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    getConnectionQuality(speed, latency) {
+        if (speed >= 10 && latency < 50) return 'excellent';
+        if (speed >= 5 && latency < 100) return 'good';
+        if (speed >= 2 && latency < 200) return 'fair';
+        return 'poor';
+    }
+
+    updateConnectionDisplay() {
+        const stats = this.state.connectionStats;
+        this.elements.connectionInfo.textContent = stats.quality.toUpperCase();
+        this.elements.connectionSpeed.textContent = `${stats.speed.toFixed(1)} Mbps`;
+        
+        // Update color based on quality
+        const colors = {
+            excellent: '#00ff00',
+            good: '#aaff00',
+            fair: '#ffff00',
+            poor: '#ff0000'
+        };
+        
+        this.elements.connectionInfo.style.color = colors[stats.quality] || '#ffffff';
+    }
+
+    adjustQualityBasedOnConnection() {
+        const quality = this.state.connectionStats.quality;
+        const currentQuality = this.parseQuality(
+            this.state.sources[this.state.currentSourceIndex]?.quality || '480p'
+        );
+        
+        let targetQuality;
+        
+        switch(quality) {
+            case 'excellent':
+                targetQuality = 1080;
+                break;
+            case 'good':
+                targetQuality = 720;
+                break;
+            case 'fair':
+                targetQuality = 480;
+                break;
+            case 'poor':
+                targetQuality = 360;
+                break;
+            default:
+                return;
+        }
+        
+        if (currentQuality > targetQuality) {
+            // Find appropriate source
+            const newIndex = this.state.sources.findIndex(source => 
+                this.parseQuality(source.quality) <= targetQuality
+            );
+            
+            if (newIndex !== -1 && newIndex !== this.state.currentSourceIndex) {
+                this.loadVideoSource(newIndex);
+                this.showToast(`Auto-adjusted to ${this.state.sources[newIndex].quality} due to connection`, 'info');
+            }
+        }
+    }
+
+    formatFileSize(bytes) {
+        if (!bytes) return '';
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    // UI Controls Visibility
     showControls() {
-        this.customControls.classList.add('show-controls');
-        clearTimeout(this.controlsTimeout);
-        this.controlsTimeout = setTimeout(() => this.hideControls(), 3000);
+        this.elements.customControls.classList.add('visible');
+        clearTimeout(this.state.controlsTimeout);
+        
+        this.state.controlsTimeout = setTimeout(() => {
+            if (this.isPlaying) {
+                this.elements.customControls.classList.remove('visible');
+            }
+        }, 3000);
     }
 
     hideControls() {
         if (this.isPlaying) {
-            this.customControls.classList.remove('show-controls');
+            this.elements.customControls.classList.remove('visible');
         }
     }
 
-    videoEnded() {
-        if (this.videoType === 'series') {
-            // Auto-play next episode
-            setTimeout(() => this.nextContent(), 2000);
+    // Loading States
+    showLoading() {
+        this.elements.loadingOverlay.style.display = 'flex';
+    }
+
+    hideLoading() {
+        this.elements.loadingOverlay.style.display = 'none';
+    }
+
+    showBuffering() {
+        // Show buffering indicator
+        this.elements.bufferStatus.textContent = 'Buffering...';
+    }
+
+    hideBuffering() {
+        this.elements.bufferStatus.textContent = 'Ready';
+    }
+
+    showError(message) {
+        this.elements.errorMessage.textContent = message;
+        this.elements.errorOverlay.style.display = 'flex';
+    }
+
+    hideError() {
+        this.elements.errorOverlay.style.display = 'none';
+    }
+
+    // Navigation
+    goBack() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = 'index.html';
         }
     }
 
-    handleKeyboard(e) {
+    closeModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('active');
+        });
+    }
+
+    // Keyboard Shortcuts
+    handleKeyboardShortcuts(e) {
+        // Skip if input is focused
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        
         switch(e.key.toLowerCase()) {
             case ' ':
             case 'k':
                 e.preventDefault();
-                this.togglePlayPause();
+                this.togglePlay();
                 break;
             case 'f':
+                e.preventDefault();
                 this.toggleFullscreen();
                 break;
             case 'm':
-                this.toggleMute();
-                break;
-            case 'c':
                 e.preventDefault();
-                this.showSubtitlesModal();
+                this.toggleMute();
                 break;
             case 'arrowleft':
                 e.preventDefault();
@@ -775,150 +1321,60 @@ class Playback {
             case 'l':
                 this.forward(10);
                 break;
-        }
-    }
-
-    formatTime(seconds) {
-        const hrs = Math.floor(seconds / 3600);
-        const mins = Math.floor((seconds % 3600) / 60);
-        const secs = Math.floor(seconds % 60);
-        
-        if (hrs > 0) {
-            return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    // Existing methods for seasons and episodes
-    renderSeasonDropdowns(seasons) {
-        this.episodeList.innerHTML = seasons.map((season, seasonIndex) => {
-            const seasonNumber = seasonIndex + 1;
-            return `
-                <div class="season">
-                    <div class="season-header" data-season="${seasonNumber}">
-                        <h3>Season ${seasonNumber}</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="season-content" id="season-${seasonNumber}">
-                        <div class="episodes">
-                            ${[...Array(season.maxEp).keys()].map(episodeIndex => {
-                                const episodeNumber = episodeIndex + 1;
-                                return `
-                                    <button class="episode" data-season="${seasonNumber}" data-episode="${episodeNumber}">
-                                        Episode ${episodeNumber}
-                                    </button>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Add event listeners to season headers
-        this.episodeList.querySelectorAll('.season-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const seasonNumber = header.dataset.season;
-                this.toggleSeasonDropdown(seasonNumber);
-            });
-        });
-
-        // Add event listeners to episodes
-        this.episodeList.querySelectorAll('.episode').forEach(episodeEl => {
-            episodeEl.addEventListener('click', async () => {
-                const season = episodeEl.dataset.season;
-                const episodeNumber = episodeEl.dataset.episode;
-                
-                this.currentSeason = parseInt(season);
-                this.currentEpisode = parseInt(episodeNumber);
-                this.updateCurrentEpisodeInfo();
-                this.highlightCurrentEpisode();
-                
-                const sourcesData = await MovieAPI.getDownloadSources(
-                    new URLSearchParams(window.location.search).get('id'), 
-                    season, 
-                    episodeNumber
-                );
-                this.sources = sourcesData.results || [];
-                this.subtitles = sourcesData.subtitles || [];
-                this.populateQualityOptions();
-                this.populateSubtitlesOptions();
-                
-                if (this.sources.length > 0) {
-                    this.playVideo(this.sources[0].download_url);
+            case 'c':
+                this.showSubtitleModal();
+                break;
+            case 'escape':
+                this.closeModals();
+                if (this.isFullscreen) {
+                    this.toggleFullscreen();
                 }
-            });
-        });
-    }
-
-    toggleSeasonDropdown(seasonNumber) {
-        const seasonContent = document.getElementById(`season-${seasonNumber}`);
-        const seasonHeader = document.querySelector(`.season-header[data-season="${seasonNumber}"]`);
-        
-        this.episodeList.querySelectorAll('.season-content').forEach(content => {
-            if (content.id !== `season-${seasonNumber}`) {
-                content.classList.remove('active');
-                content.previousElementSibling.classList.remove('active');
-            }
-        });
-        
-        seasonContent.classList.toggle('active');
-        seasonHeader.classList.toggle('active');
-    }
-
-    openSeasonDropdown(seasonNumber) {
-        const seasonContent = document.getElementById(`season-${seasonNumber}`);
-        const seasonHeader = document.querySelector(`.season-header[data-season="${seasonNumber}"]`);
-        
-        seasonContent.classList.add('active');
-        seasonHeader.classList.add('active');
-    }
-
-    updateCurrentEpisodeInfo() {
-        if (this.videoType === 'series' && this.currentSeason && this.currentEpisode) {
-            this.currentEpisodeInfo.textContent = `Season ${this.currentSeason} • Episode ${this.currentEpisode}`;
-            this.currentEpisodeInfo.classList.add('active');
+                break;
         }
     }
 
-    highlightCurrentEpisode() {
-        this.episodeList.querySelectorAll('.episode').forEach(ep => {
-            ep.classList.remove('active');
-        });
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        `;
         
-        const currentEpisodeEl = this.episodeList.querySelector(
-            `.episode[data-season="${this.currentSeason}"][data-episode="${this.currentEpisode}"]`
-        );
+        this.elements.playerContainer.appendChild(toast);
         
-        if (currentEpisodeEl) {
-            currentEpisodeEl.classList.add('active');
-        }
-    }
-
-    populateQualityOptions() {
-        this.qualityOptions.innerHTML = this.sources.map(source => `
-            <div class="quality-option" data-url="${source.download_url}">
-                ${source.quality}
-            </div>
-        `).join('');
-
-        this.qualityOptions.querySelectorAll('.quality-option').forEach(option => {
-            option.addEventListener('click', () => {
-                this.playVideo(option.dataset.url);
-                this.qualityModal.style.display = 'none';
-            });
-        });
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 }
 
+// Initialize playback when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new Playback();
+    window.videoPlayback = new VideoPlayback();
 });
 
 // Handle fullscreen changes
 document.addEventListener('fullscreenchange', () => {
-    const playback = document.querySelector('.playback-container')?.playbackInstance;
+    const playback = window.videoPlayback;
     if (playback) {
         playback.isFullscreen = !playback.isFullscreen;
+        playback.elements.fullscreenBtn.innerHTML = playback.isFullscreen 
+            ? '<i class="fas fa-compress"></i>' 
+            : '<i class="fas fa-expand"></i>';
     }
+});
+
+// Handle PIP changes
+document.addEventListener('enterpictureinpicture', () => {
+    const playback = window.videoPlayback;
+    if (playback) playback.isPIP = true;
+});
+
+document.addEventListener('leavepictureinpicture', () => {
+    const playback = window.videoPlayback;
+    if (playback) playback.isPIP = false;
 });
