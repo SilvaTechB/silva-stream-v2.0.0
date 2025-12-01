@@ -2,185 +2,298 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV Series Details - SilvaStream</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Series Details - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta property="og:title" content="Series Details - SilvaStream">
+    <meta property="og:description" content="Watch this series now on SilvaStream">
+    <meta property="og:image" content="">
+    <meta property="og:url" content="">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/details.css">
+    <link rel="stylesheet" href="styles/series.css">
 </head>
-<body>
-    <header id="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-play-circle logo-icon"></i>
-                    <span class="logo-text">SilvaStream</span>
-                    <span class="logo-subtext">powered by gifted tech</span>
-                </a>
-                <div class="nav-links">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Movies</a>
-                    <a href="#" class="nav-link">TV Shows</a>
-                    <a href="sports.html" class="nav-link">sports</a>
-                    <a href="#" class="nav-link">My List</a>
+<body class="dark-mode">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-play-circle"></i>
                 </div>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search for movies or TV shows...">
-                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                <div class="logo-text">
+                    <span class="logo-primary">Silva</span>
+                    <span class="logo-secondary">Stream</span>
                 </div>
-                <div class="user-actions">
-                    <span class="vip-badge">VIP</span>
+            </a>
+            
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+            
+            <div class="user-actions">
+                <button class="user-notification">
                     <i class="fas fa-bell"></i>
-                    <i class="fas fa-user-circle"></i>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="container">
-        <!-- Error Message -->
-        <div class="error-message" id="error-message" style="display: none;"></div>
-
-        <!-- Series Details Section -->
-        <section class="movie-details" id="series-details">
-            <div class="details-header">
-                <img src="" alt="" class="details-backdrop" id="details-backdrop">
-                <div class="header-overlay">
-                    <button class="back-btn" onclick="window.history.back()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                </div>
-            </div>
-            <div class="details-content">
-                <img src="" alt="" class="details-poster" id="details-poster">
-                <div class="details-info">
-                    <h1 class="details-title" id="details-title">Series Title</h1>
-                    <div class="details-meta">
-                        <span id="details-year">2023</span>
-                        <span id="details-seasons">3 Seasons</span>
-                        <span id="details-genre">Drama, Action</span>
-                        <span class="rating" id="details-rating"><i class="fas fa-star"></i> 8.2/10</span>
+    <!-- Series Details -->
+    <main class="series-details-page">
+        <div class="series-hero" id="seriesHero">
+            <div class="hero-backdrop" id="heroBackdrop"></div>
+            <div class="hero-overlay"></div>
+            
+            <div class="container">
+                <div class="series-header">
+                    <div class="series-poster" id="seriesPoster">
+                        <div class="poster-shimmer shimmer"></div>
                     </div>
-                    <p class="details-overview" id="details-overview">Series description goes here...</p>
-                    <div class="details-actions">
-                        <button class="watch-btn" id="watch-btn"><i class="fas fa-play"></i> Watch Now</button>
-                        <button class="trailer-btn" id="trailer-btn"><i class="fas fa-film"></i> Watch Trailer</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Seasons Section -->
-        <section class="seasons-section" id="seasons-section">
-            <h2 class="section-title"><i class="fas fa-list"></i> Seasons & Episodes</h2>
-            <div class="seasons-container" id="seasons-container">
-                <!-- Seasons will be populated here -->
-            </div>
-        </section>
-
-        <!-- Quality Selection Modal for Streaming -->
-        <div class="modal" id="stream-quality-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Select Streaming Quality</h3>
-                    <button class="close-modal" data-modal="stream-quality-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="quality-options" id="stream-quality-options">
-                        <!-- Quality options will be populated here -->
+                    
+                    <div class="series-info">
+                        <h1 class="series-title" id="seriesTitle">Loading...</h1>
+                        
+                        <div class="series-meta" id="seriesMeta">
+                            <span class="meta-item"><i class="fas fa-calendar"></i> <span id="seriesYear">-</span></span>
+                            <span class="meta-item"><i class="fas fa-list-ol"></i> <span id="seriesSeasons">-</span></span>
+                            <span class="meta-item"><i class="fas fa-star"></i> <span id="seriesRating">-</span></span>
+                            <span class="meta-item"><i class="fas fa-tv"></i> <span>TV Series</span></span>
+                        </div>
+                        
+                        <div class="series-genres" id="seriesGenres">
+                            <!-- Genres will be loaded here -->
+                        </div>
+                        
+                        <p class="series-description" id="seriesDescription">Loading description...</p>
+                        
+                        <div class="series-actions">
+                            <button class="btn btn-primary btn-lg" id="playSeries">
+                                <i class="fas fa-play"></i>
+                                <span>Watch Now</span>
+                            </button>
+                            
+                            <button class="btn btn-outline btn-lg" id="trailerBtn">
+                                <i class="fas fa-play-circle"></i>
+                                <span>Trailer</span>
+                            </button>
+                            
+                            <button class="btn btn-outline btn-lg" id="addToListBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>My List</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quality Selection Modal for Download -->
-        <div class="modal" id="download-quality-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Select Download Quality</h3>
-                    <button class="close-modal" data-modal="download-quality-modal">&times;</button>
+        <!-- Series Content -->
+        <div class="container">
+            <!-- Cast Section -->
+            <section class="section-cast">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Cast</h2>
                 </div>
-                <div class="modal-body">
-                    <div class="quality-options" id="download-quality-options">
-                        <!-- Quality options will be populated here -->
-                    </div>
+                <div class="cast-grid" id="castGrid">
+                    <!-- Cast members will be loaded here -->
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- Player Section -->
-        <section class="player-container" id="player-container">
-            <div class="player-header">
-                <h3 class="player-title" id="player-title">Episode Title</h3>
-                <button class="close-player" id="close-player">&times;</button>
-            </div>
-            <video controls class="video-player" id="video-player">
-                Your browser does not support the video tag.
-            </video>
-        </section>
+            <!-- Trailers Section -->
+            <section class="section-trailers" id="trailersSection" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-film"></i> Trailers & Clips</h2>
+                </div>
+                <div class="trailers-grid" id="trailersGrid">
+                    <!-- Trailers will be loaded here -->
+                </div>
+            </section>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Loading series details...</p>
+            <!-- Seasons & Episodes -->
+            <section class="section-seasons" id="seasonsSection">
+                <div class="section-header">
+                    <h2><i class="fas fa-list-ol"></i> Seasons & Episodes</h2>
+                </div>
+                <div class="seasons-container" id="seasonsContainer">
+                    <!-- Seasons will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Similar Series -->
+            <section class="section-similar">
+                <div class="section-header">
+                    <h2><i class="fas fa-thumbs-up"></i> More Like This</h2>
+                </div>
+                <div class="similar-grid" id="similarGrid">
+                    <!-- Similar series will be loaded here -->
+                </div>
+            </section>
         </div>
     </main>
 
-    <footer>
+    <!-- WhatsApp Section -->
+    <section class="whatsapp-section">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Navigation</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">Movies</a></li>
-                        <li><a href="#" class="footer-link">TV Shows</a></li>
-                        <li><a href="#" class="footer-link">New & Popular</a></li>
-                        <li><a href="#" class="footer-link">My List</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Categories</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Action</a></li>
-                        <li><a href="#" class="footer-link">Comedy</a></li>
-                        <li><a href="#" class="footer-link">Drama</a></li>
-                        <li><a href="#" class="footer-link">Horror</a></li>
-                        <li><a href="#" class="footer-link">Romance</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Account</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Account</a></li>
-                        <li><a href="#" class="footer-link">Redeem Gift</a></li>
-                        <li><a href="#" class="footer-link">Privacy</a></li>
-                        <li><a href="#" class="footer-link">Speed Test</a></li>
-                        <li><a href="#" class="footer-link">Legal</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>About Us</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Help Center</a></li>
-                        <li><a href="#" class="footer-link">Careers</a></li>
-                        <li><a href="#" class="footer-link">Contact Us</a></li>
-                        <li><a href="#" class="footer-link">Media Center</a></li>
-                        <li><a href="#" class="footer-link">Corporate Info</a></li>
-                    </ul>
+            <div class="section-header">
+                <h2><i class="fab fa-whatsapp"></i> Stay Updated</h2>
+                <p>Join our WhatsApp channels for exclusive content</p>
+            </div>
+            
+            <div class="whatsapp-channels">
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <span class="channel-badge">Official</span>
+                    </div>
+                    <div class="channel-content">
+                        <h3>SilvaStream Main Channel</h3>
+                        <p>Get daily series recommendations and updates</p>
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="channel-join">
+                            <i class="fab fa-whatsapp"></i>
+                            Join Channel
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 SilvaStream. All rights reserved. <span class="powered-by">Powered by Gifted Tech & Ibrahim Adams</span></p>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div class="modal" id="trailerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Watch Trailer</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="video-container" id="trailerVideo">
+                    <video controls id="trailerPlayer" width="100%">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="episodeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Episode Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="episode-details" id="episodeDetails">
+                    <!-- Episode details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader">
+                <div class="loader-film">
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                </div>
+            </div>
+            <p>Loading series details...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+                <p class="powered-by">
+                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
+                </p>
             </div>
         </div>
     </footer>
 
-    <button id="install-prompt">📲 Install SilvaStream</button>
-
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
     <script src="scripts/api.js"></script>
-    <script src="scripts/player.js"></script>
+    <script src="scripts/cache.js"></script>
+    <script src="scripts/ui-manager.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/theme.js"></script>
     <script src="scripts/series-details.js"></script>
-    <script src="scripts/pwa.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            const theme = new ThemeManager();
+            theme.init();
+            
+            // Initialize series details
+            const seriesDetails = new SeriesDetails();
+            seriesDetails.init();
+            
+            // Modal close buttons
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                }
+            });
+            
+            // Back button
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    window.history.back();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
