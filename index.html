@@ -2,222 +2,448 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SilvaStream - Premium Movie Streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>SilvaStream - Premium Movie & Series Streaming</title>
+    
     <!-- Open Graph Meta Tags -->
-<meta property="og:title" content="SilvaStream - Premium Movie Streaming">
-<meta property="og:description" content="Silva Tech Nexus - Leading in software development, innovation, and creativity">
-<meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
-<meta property="og:url" content="https://stream.silvatech.top">
-<meta property="og:type" content="website">
+    <meta property="og:title" content="SilvaStream - Premium Movie Streaming">
+    <meta property="og:description" content="Stream thousands of movies, TV shows, and exclusive content in HD. Join the entertainment revolution!">
+    <meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
+    <meta property="og:url" content="https://stream.silvatech.top">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SilvaStream">
 
-<!-- Twitter Card Meta Tags -->
-<meta name="twitter:title" content="SilvaStream - Premium Movie Streaming">
-<meta name="twitter:description" content="Silva Tech Nexus - Leading in software development, innovation, and creativity">
-<meta name="twitter:image" content="https://imgur.com/a/AogAcnj.png">
-<meta name="twitter:card" content="summary_large_image">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SilvaStream - Premium Movie Streaming">
+    <meta name="twitter:description" content="Stream thousands of movies, TV shows, and exclusive content in HD. Join the entertainment revolution!">
+    <meta name="twitter:image" content="https://imgur.com/a/AogAcnj.png">
+    
+    <!-- PWA Configuration -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e50914">
-
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="scripts/app.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js" as="script">
 </head>
-<body>
-    <header id="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-play-circle logo-icon"></i>
-                    <span class="logo-text">SilvaStream</span>
-                    <span class="logo-subtext">powered by gifted tech</span>
+<body class="dark-mode">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Installation Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-content">
+            <i class="fas fa-download"></i>
+            <div>
+                <h4>Install SilvaStream</h4>
+                <p>Get the best streaming experience with our app</p>
+            </div>
+            <button class="install-btn" id="installBtn">Install</button>
+            <button class="install-close" id="installClose">&times;</button>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-play-circle"></i>
+                    <div class="logo-pulse"></div>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-primary">Silva</span>
+                    <span class="logo-secondary">Stream</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
                 </a>
-                <div class="nav-links">
-                    <a href="index.html" class="nav-link active">Home</a>
-                    <a href="#" class="nav-link">Movies</a>
-                    <a href="#" class="nav-link">TV Shows</a>
-                    <a href="sports.html" class="nav-link">sport</a>
-                    <a href="#" class="nav-link">My List</a>
-                </div>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search for movies or TV shows...">
-                    <button class="search-btn"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="user-actions">
-                    <span class="vip-badge">VIP</span>
+                <a href="movies.html" class="nav-link">
+                    <i class="fas fa-film"></i>
+                    <span>Movies</span>
+                </a>
+                <a href="series.html" class="nav-link">
+                    <i class="fas fa-tv"></i>
+                    <span>TV Series</span>
+                </a>
+                <a href="sports.html" class="nav-link">
+                    <i class="fas fa-futbol"></i>
+                    <span>Sports</span>
+                </a>
+                <a href="my-list.html" class="nav-link">
+                    <i class="fas fa-bookmark"></i>
+                    <span>My List</span>
+                    <span class="badge" id="listCount">0</span>
+                </a>
+                <a href="search.html" class="nav-link search-trigger">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+            </div>
+
+            <!-- User Actions -->
+            <div class="user-actions">
+                <button class="user-notification">
                     <i class="fas fa-bell"></i>
-                    <i class="fas fa-user-circle"></i>
+                    <span class="notification-dot"></span>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-menu">
+                        <div class="profile-header">
+                            <div class="profile-avatar-large">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h4 id="userName">Guest</h4>
+                                <span class="vip-badge">VIP Member</span>
+                            </div>
+                        </div>
+                        <div class="profile-links">
+                            <a href="profile.html" class="profile-link">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Profile Settings</span>
+                            </a>
+                            <a href="watch-history.html" class="profile-link">
+                                <i class="fas fa-history"></i>
+                                <span>Watch History</span>
+                            </a>
+                            <a href="subscription.html" class="profile-link">
+                                <i class="fas fa-crown"></i>
+                                <span>Subscription</span>
+                            </a>
+                            <button class="profile-link" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
 
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Unlimited Movies, TV Shows, and More</h1>
-                <p class="hero-description">Stream anywhere. Cancel anytime. Download now to watch offline.</p>
-                <div class="hero-actions">
-                    <button class="btn btn-primary" id="hero-watch-btn"><i class="fas fa-play"></i> Watch Now</button>
-                    <button class="btn btn-secondary" id="hero-info-btn"><i class="fas fa-info-circle"></i> More Info</button>
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <a href="index.html" class="mobile-nav-link active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="movies.html" class="mobile-nav-link">
+                <i class="fas fa-film"></i>
+                <span>Movies</span>
+            </a>
+            <a href="series.html" class="mobile-nav-link">
+                <i class="fas fa-tv"></i>
+                <span>TV Series</span>
+            </a>
+            <a href="sports.html" class="mobile-nav-link">
+                <i class="fas fa-futbol"></i>
+                <span>Sports</span>
+            </a>
+            <a href="my-list.html" class="mobile-nav-link">
+                <i class="fas fa-bookmark"></i>
+                <span>My List</span>
+                <span class="badge" id="mobileListCount">0</span>
+            </a>
+            <a href="search.html" class="mobile-nav-link">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Hero Slider -->
+    <section class="hero-slider">
+        <div class="splide" id="mainSlider">
+            <div class="splide__track">
+                <ul class="splide__list" id="featuredSlides">
+                    <!-- Featured content will be loaded here -->
+                </ul>
+            </div>
+            <div class="splide__progress">
+                <div class="splide__progress__bar"></div>
+            </div>
+        </div>
+        
+        <div class="hero-overlay">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title animate-pop">Unlimited Entertainment</h1>
+                    <p class="hero-subtitle animate-fade-in">Stream thousands of movies, series, and exclusive content in stunning HD quality</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg animate-slide-up" id="startWatching">
+                            <i class="fas fa-play"></i>
+                            <span>Start Watching Free</span>
+                        </button>
+                        <button class="btn btn-outline btn-lg animate-slide-up" style="animation-delay: 0.1s">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Learn More</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <main class="container">
-        <!-- Error Message -->
-        <div class="error-message" id="error-message" style="display: none;"></div>
-         <div class="loading" id="loading" style="display: none;">
-            <div class="spinner"></div>
-            <p>Loading movies...</p>
+    <!-- WhatsApp Channels Section -->
+    <section class="whatsapp-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <h2>Join Our Community</h2>
+                <p>Get exclusive updates, early access, and special offers</p>
+            </div>
+            
+            <div class="whatsapp-channels">
+                <div class="channel-card animate-slide-up">
+                    <div class="channel-header">
+                        <div class="channel-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <span class="channel-badge">Official</span>
+                    </div>
+                    <div class="channel-content">
+                        <h3>SilvaStream Main Channel</h3>
+                        <p>Get daily movie recommendations, updates, and exclusive content</p>
+                        <div class="channel-stats">
+                            <span><i class="fas fa-users"></i> 10K+ Members</span>
+                            <span><i class="fas fa-bolt"></i> Live Updates</span>
+                        </div>
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="channel-join">
+                            <i class="fab fa-whatsapp"></i>
+                            Join Channel
+                        </a>
+                    </div>
+                </div>
+
+                <div class="channel-card animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="channel-header">
+                        <div class="channel-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <span class="channel-badge">Tech</span>
+                    </div>
+                    <div class="channel-content">
+                        <h3>Silva Tech Nexus</h3>
+                        <p>Behind the scenes, tech updates, and development insights</p>
+                        <div class="channel-stats">
+                            <span><i class="fas fa-users"></i> 5K+ Members</span>
+                            <span><i class="fas fa-cogs"></i> Tech Updates</span>
+                        </div>
+                        <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" target="_blank" class="channel-join">
+                            <i class="fab fa-whatsapp"></i>
+                            Join Channel
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Category Rows -->
-        <section class="movies-section">
-            <h2 class="section-title"><i class="fas fa-fire"></i> Trending Now🔥</h2>
-            <div class="movies-row" id="trending-now"></div>
+    </section>
 
-            <h2 class="section-title"><i class="fas fa-film"></i> Hollywood Movie</h2>
-            <div class="movies-row" id="hollywood-movies"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Featured Movies Slider -->
+            <section class="section-slider">
+                <div class="section-header">
+                    <h2>Trending Now 🔥</h2>
+                    <a href="category.html?type=trending" class="view-all">
+                        View All
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="splide" id="trendingSlider">
+                    <div class="splide__track">
+                        <div class="splide__list" id="trendingList">
+                            <!-- Trending movies will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <h2 class="section-title"><i class="fas fa-heart"></i> 💓Teen Romance 💓</h2>
-            <div class="movies-row" id="teen-romance"></div>
+            <!-- Category Sections -->
+            <div class="category-grid" id="categoryGrid">
+                <!-- Categories will be dynamically loaded -->
+            </div>
 
-            <h2 class="section-title"><i class="fas fa-ghost"></i> 👻Halloween Special👻</h2>
-            <div class="movies-row" id="halloween-special"></div>
+            <!-- Personalized Recommendations -->
+            <section class="section-slider">
+                <div class="section-header">
+                    <h2>Recommended For You</h2>
+                    <div class="section-subtitle">Based on your watch history</div>
+                </div>
+                <div class="splide" id="recommendationsSlider">
+                    <div class="splide__track">
+                        <div class="splide__list" id="recommendationsList">
+                            <!-- Recommendations will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <h2 class="section-title"><i class="fas fa-globe-africa"></i> Nollywood</h2>
-            <div class="movies-row" id="nollywood"></div>
-
-            <h2 class="section-title"><i class="fas fa-tv"></i> SA Drama</h2>
-            <div class="movies-row" id="sa-drama"></div>
-
-            <h2 class="section-title"><i class="fas fa-crown"></i> Premium VIP HD Access>></h2>
-            <div class="movies-row" id="premium-vip"></div>
-
-            <h2 class="section-title"><i class="fas fa-hat-cowboy"></i> Western TV</h2>
-            <div class="movies-row" id="western-tv"></div>
-
-            <h2 class="section-title"><i class="fas fa-theater-masks"></i> K-Drama</h2>
-            <div class="movies-row" id="k-drama"></div>
-
-            <h2 class="section-title"><i class="fas fa-dragon"></i> Animated Film</h2>
-            <div class="movies-row" id="animated-film"></div>
-
-            <h2 class="section-title"><i class="fas fa-users"></i> Must-watch Black Shows</h2>
-            <div class="movies-row" id="black-shows"></div>
-
-            <h2 class="section-title"><i class="fas fa-explosion"></i> Action Movies</h2>
-            <div class="movies-row" id="action-movies"></div>
-
-            <h2 class="section-title"><i class="fas fa-mountain"></i> Adventure Movies</h2>
-            <div class="movies-row" id="adventure-movies"></div>
-
-            <h2 class="section-title"><i class="fas fa-bullseye"></i> Deadly Hunt!</h2>
-            <div class="movies-row" id="deadly-hunt"></div>
-
-            <h2 class="section-title"><i class="fas fa-chart-line"></i> Most trending</h2>
-            <div class="movies-row" id="most-trending"></div>
-        </section>
+            <!-- Continue Watching -->
+            <section class="section-slider" id="continueWatchingSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Continue Watching</h2>
+                </div>
+                <div class="splide" id="continueSlider">
+                    <div class="splide__track">
+                        <div class="splide__list" id="continueList">
+                            <!-- Continue watching items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
-    <footer>
+    <!-- Footer -->
+    <footer class="main-footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Navigation</h3>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-play-circle"></i>
+                        <div>
+                            <span class="logo-primary">Silva</span>
+                            <span class="logo-secondary">Stream</span>
+                        </div>
+                    </div>
+                    <p class="footer-description">
+                        The ultimate destination for premium entertainment. Stream anywhere, anytime.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Browse</h4>
                     <ul class="footer-links">
-                        <li><a href="index.html" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">Movies</a></li>
-                        <li><a href="#" class="footer-link">TV Shows</a></li>
-                        <li><a href="#" class="footer-link">New & Popular</a></li>
-                        <li><a href="#" class="footer-link">My List</a></li>
+                        <li><a href="movies.html">Movies</a></li>
+                        <li><a href="series.html">TV Series</a></li>
+                        <li><a href="new.html">New Releases</a></li>
+                        <li><a href="trending.html">Trending</a></li>
+                        <li><a href="genres.html">Genres</a></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                    <h3>Categories</h3>
+
+                <div class="footer-col">
+                    <h4>Account</h4>
                     <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Action</a></li>
-                        <li><a href="#" class="footer-link">Comedy</a></li>
-                        <li><a href="#" class="footer-link">Drama</a></li>
-                        <li><a href="#" class="footer-link">Horror</a></li>
-                        <li><a href="#" class="footer-link">Romance</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="my-list.html">My List</a></li>
+                        <li><a href="watch-history.html">Watch History</a></li>
+                        <li><a href="subscription.html">Subscription</a></li>
+                        <li><a href="settings.html">Settings</a></li>
                     </ul>
                 </div>
-                <div class="footer-column">
-                    <h3>Account</h3>
+
+                <div class="footer-col">
+                    <h4>Support</h4>
                     <ul class="footer-links">
-                        <li><a href="https://silvatech.top" class="footer-link">Account</a></li>
-                        <li><a href="https://pay.silvatech.top" class="footer-link">Redeem Gift</a></li>
-                        <li><a href="https://doc.silvatech.top" class="footer-link">Privacy</a></li>
-                        <li><a href="https://fast.com" class="footer-link">Internet Speed Test</a></li>
-                        <li><a href="https://doc.silvatech.top" class="footer-link">Legal</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>About Us</h3>
-                    <ul class="footer-links">
-                        <li><a href="contact@silvatech.top" class="footer-link">Help Center</a></li>
-                        <li><a href="https://careers.silvatech.top" class="footer-link">Careers</a></li>
-                        <li><a href="https://wa.me/silvatechnexus" class="footer-link">Contact Us</a></li>
-                        <li><a href="admin@silvatech.top" class="footer-link">Media Center</a></li>
-                        <li><a href="https://silvatech.top" class="footer-link">Corporate Info</a></li>
+                        <li><a href="help.html">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 SilvaStream. All rights reserved. <span class="powered-by">Powered by Gifted Tech & Ibrahim Adams</span></p>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+                <p class="powered-by">
+                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
+                </p>
             </div>
         </div>
     </footer>
 
-       <script src="scripts/api.js"></script>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader">
+                <div class="loader-film">
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                </div>
+            </div>
+            <p>Loading SilvaStream...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/cache.js"></script>
+    <script src="scripts/auth.js"></script>
     <script src="scripts/app.js"></script>
-
+    <script src="scripts/theme.js"></script>
+    <script src="scripts/pwa.js"></script>
+    
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('✅ Service Worker registered:', reg))
-            .catch(err => console.log('❌ Service Worker failed:', err));
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize SilvaStream App
+            const app = new SilvaStreamApp();
+            app.init();
+            
+            // Initialize theme
+            const theme = new ThemeManager();
+            theme.init();
+            
+            // Initialize PWA
+            const pwa = new PWAHandler();
+            pwa.init();
+            
+            // Initialize auth
+            const auth = new AuthManager();
+            auth.init();
         });
-      }
-
-      let deferredPrompt;
-      const installButton = document.createElement('button');
-      installButton.textContent = '📲 Install SilvaStream';
-      installButton.style.cssText = `
-        display:none;
-        position:fixed;
-        bottom:20px;
-        right:20px;
-        background:#e50914;
-        color:white;
-        border:none;
-        padding:12px 18px;
-        border-radius:8px;
-        font-weight:bold;
-        cursor:pointer;
-      `;
-      document.body.appendChild(installButton);
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installButton.style.display = 'block';
-      });
-
-      installButton.addEventListener('click', async () => {
-        installButton.style.display = 'none';
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`Install ${outcome}`);
-        deferredPrompt = null;
-      });
-
-      window.addEventListener('appinstalled', () => {
-        console.log('🎉 SilvaStream installed successfully!');
-      });
     </script>
 </body>
 </html>
-
