@@ -1,0 +1,129 @@
+<!-- category.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category - SilvaStream</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/category.css">
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-play-circle logo-icon"></i>
+                    <span class="logo-text">SilvaStream</span>
+                </a>
+                <button class="back-btn" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="category-header" id="category-header">
+            <div class="header-content">
+                <h1 id="category-title">Category</h1>
+                <p id="category-description">Browse all content in this category</p>
+                <div class="category-stats">
+                    <div class="stat">
+                        <i class="fas fa-film"></i>
+                        <span id="total-count">0</span> Titles
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-clock"></i>
+                        Updated daily
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-controls">
+            <div class="controls-group">
+                <div class="filter-section">
+                    <button class="filter-btn" id="filter-toggle">
+                        <i class="fas fa-filter"></i> Filters
+                    </button>
+                    <div class="filter-panel" id="filter-panel">
+                        <div class="filter-group">
+                            <label>Type</label>
+                            <select id="filter-content-type">
+                                <option value="all">All</option>
+                                <option value="movie">Movies Only</option>
+                                <option value="series">TV Shows Only</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By</label>
+                            <select id="sort-category">
+                                <option value="relevance">Relevance</option>
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="rating">Highest Rated</option>
+                                <option value="title">Title A-Z</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn btn-secondary" id="apply-filters">
+                                Apply Filters
+                            </button>
+                            <button class="btn btn-text" id="reset-filters">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="search-in-category">
+                <input type="text" id="category-search" 
+                       placeholder="Search within category...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <section class="category-content">
+            <div class="content-grid grid-view" id="content-grid">
+                <!-- Content will be loaded here -->
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading category content...</p>
+            </div>
+            
+            <div class="no-content" id="no-content" style="display: none;">
+                <i class="fas fa-film"></i>
+                <h3>No content found</h3>
+                <p>Try adjusting your filters or check back later</p>
+            </div>
+        </section>
+
+        <div class="whatsapp-promo-category">
+            <div class="promo-content">
+                <i class="fab fa-whatsapp"></i>
+                <div class="promo-text">
+                    <h3>Never Miss an Update!</h3>
+                    <p>Join our WhatsApp channels for the latest movies and series</p>
+                    <div class="promo-links">
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                           target="_blank" class="whatsapp-link">
+                            <i class="fab fa-whatsapp"></i> SilvaStream Channel
+                        </a>
+                        <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" 
+                           target="_blank" class="whatsapp-link nexus">
+                            <i class="fab fa-whatsapp"></i> Silva Tech Nexus
