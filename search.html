@@ -1,0 +1,153 @@
+<!-- search.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - SilvaStream</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/search.css">
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-play-circle logo-icon"></i>
+                    <span class="logo-text">SilvaStream</span>
+                </a>
+                <div class="search-container full-width">
+                    <input type="text" class="search-input" id="search-input" 
+                           placeholder="Search for movies, TV shows, actors..." autofocus>
+                    <button class="search-btn" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="search-filters">
+                        <select id="filter-type">
+                            <option value="">All Types</option>
+                            <option value="movie">Movies</option>
+                            <option value="series">TV Shows</option>
+                        </select>
+                        <select id="filter-genre">
+                            <option value="">All Genres</option>
+                            <option value="action">Action</option>
+                            <option value="comedy">Comedy</option>
+                            <option value="drama">Drama</option>
+                            <option value="horror">Horror</option>
+                            <option value="romance">Romance</option>
+                        </select>
+                        <select id="filter-year">
+                            <option value="">All Years</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Search Results -->
+        <section class="search-results">
+            <div class="results-header">
+                <h2 id="results-title">Search Results</h2>
+                <div class="results-count" id="results-count">0 results</div>
+                <div class="sort-options">
+                    <select id="sort-by">
+                        <option value="relevance">Relevance</option>
+                        <option value="year">Year</option>
+                        <option value="rating">Rating</option>
+                        <option value="title">Title</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="results-grid" id="results-grid">
+                <!-- Results will be populated here -->
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Searching...</p>
+            </div>
+            
+            <div class="no-results" id="no-results" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No results found</h3>
+                <p>Try different keywords or check out our recommendations</p>
+                <button class="btn btn-primary" onclick="window.location.href='index.html'">
+                    Browse Movies
+                </button>
+            </div>
+            
+            <div class="pagination" id="pagination" style="display: none;">
+                <button class="pagination-btn" id="prev-page" disabled>
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <span class="page-info" id="page-info">Page 1 of 1</span>
+                <button class="pagination-btn" id="next-page" disabled>
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Search Suggestions -->
+        <section class="search-suggestions" id="search-suggestions">
+            <h3>Popular Searches</h3>
+            <div class="suggestions-grid">
+                <button class="suggestion-tag" data-query="action">Action Movies</button>
+                <button class="suggestion-tag" data-query="comedy">Comedy</button>
+                <button class="suggestion-tag" data-query="drama">Drama Series</button>
+                <button class="suggestion-tag" data-query="horror">Horror</button>
+                <button class="suggestion-tag" data-query="romance">Romance</button>
+                <button class="suggestion-tag" data-query="marvel">Marvel</button>
+                <button class="suggestion-tag" data-query="disney">Disney</button>
+                <button class="suggestion-tag" data-query="animation">Animation</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="#" class="footer-link">Movies</a></li>
+                        <li><a href="#" class="footer-link">TV Shows</a></li>
+                        <li><a href="#" class="footer-link">New Releases</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                           class="social-link whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> SilvaStream
+                        </a>
+                        <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" 
+                           class="social-link whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Silva Tech Nexus
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/search.js"></script>
+</body>
+</html>
