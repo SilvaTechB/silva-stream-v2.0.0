@@ -348,4 +348,68 @@ class SearchPage {
         
         // Add event listeners to popular tags
         this.elements.noResults.querySelectorAll('.popular-tag').forEach(tag => {
-            tag.addEventListener('
+            tag.addEventListener('click', () => {
+                const query = tag.dataset.query;
+                this.elements.searchInput.value = query;
+                this.currentQuery = query;
+                this.currentPage = 1;
+                this.updateURL(query, 1, 'all');
+                this.performSearch();
+            });
+        });
+    }
+
+    showNoResults() {
+        this.elements.resultsSection.style.display = 'none';
+        this.elements.noResults.style.display = 'block';
+        this.elements.noResults.innerHTML = `
+            <div class="no-results-content">
+                <i class="fas fa-search"></i>
+                <h3>No results found for "${this.currentQuery}"</h3>
+                <p>Try these suggestions:</p>
+                <div class="suggestions">
+                    <a href="category.html?type=trending" class="suggestion-link">Trending Now</a>
+                    <a href="category.html?type=hollywood" class="suggestion-link">Hollywood Movies</a>
+                    <a href="category.html?type=korean" class="suggestion-link">K-Drama Series</a>
+                    <a href="new.html" class="suggestion-link">New Releases</a>
+                </div>
+                <div class="search-tips">
+                    <h4>Search Tips:</h4>
+                    <ul>
+                        <li>Check your spelling</li>
+                        <li>Try more general keywords</li>
+                        <li>Browse by category instead</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+
+    showError(message) {
+        this.elements.resultsSection.style.display = 'none';
+        this.elements.noResults.style.display = 'block';
+        this.elements.noResults.innerHTML = `
+            <div class="no-results-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Search Error</h3>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="searchPage.performSearch()">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            </div>
+        `;
+    }
+
+    showLoading() {
+        this.elements.loading.style.display = 'flex';
+    }
+
+    hideLoading() {
+        this.elements.loading.style.display = 'none';
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.searchPage = new SearchPage();
+});
