@@ -13,6 +13,7 @@
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/details.css">
@@ -43,13 +44,25 @@
                 <i class="fas fa-arrow-left"></i>
                 <span>Back to Home</span>
             </a>
+            
+            <div class="user-actions">
+                <button class="user-notification">
+                    <i class="fas fa-bell"></i>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- Movie Details -->
     <main class="movie-details-page">
         <div class="movie-hero" id="movieHero">
-            <div class="hero-backdrop"></div>
+            <div class="hero-backdrop" id="heroBackdrop"></div>
             <div class="hero-overlay"></div>
             
             <div class="container">
@@ -113,7 +126,7 @@
             </section>
 
             <!-- Trailers Section -->
-            <section class="section-trailers" id="trailersSection">
+            <section class="section-trailers" id="trailersSection" style="display: none;">
                 <div class="section-header">
                     <h2><i class="fas fa-film"></i> Trailers & Clips</h2>
                 </div>
@@ -133,7 +146,7 @@
             </section>
 
             <!-- Download Options -->
-            <section class="section-downloads">
+            <section class="section-downloads" id="downloadsSection" style="display: none;">
                 <div class="section-header">
                     <h2><i class="fas fa-download"></i> Download Options</h2>
                 </div>
@@ -144,6 +157,35 @@
         </div>
     </main>
 
+    <!-- WhatsApp Section -->
+    <section class="whatsapp-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fab fa-whatsapp"></i> Stay Updated</h2>
+                <p>Join our WhatsApp channels for exclusive content</p>
+            </div>
+            
+            <div class="whatsapp-channels">
+                <div class="channel-card">
+                    <div class="channel-header">
+                        <div class="channel-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <span class="channel-badge">Official</span>
+                    </div>
+                    <div class="channel-content">
+                        <h3>SilvaStream Main Channel</h3>
+                        <p>Get daily movie recommendations and updates</p>
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="channel-join">
+                            <i class="fab fa-whatsapp"></i>
+                            Join Channel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Modals -->
     <div class="modal" id="trailerModal">
         <div class="modal-content">
@@ -153,7 +195,9 @@
             </div>
             <div class="modal-body">
                 <div class="video-container" id="trailerVideo">
-                    <!-- Video player will be loaded here -->
+                    <video controls id="trailerPlayer" width="100%">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
             </div>
         </div>
@@ -173,6 +217,20 @@
         </div>
     </div>
 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader">
+                <div class="loader-film">
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                </div>
+            </div>
+            <p>Loading movie details...</p>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
@@ -189,18 +247,56 @@
     <script src="scripts/config.js"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/cache.js"></script>
-    <script src="scripts/movie-details.js"></script>
+    <script src="scripts/ui-manager.js"></script>
+    <script src="scripts/auth.js"></script>
     <script src="scripts/theme.js"></script>
+    <script src="scripts/movie-details.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            const theme = new ThemeManager();
+            theme.init();
+            
             // Initialize movie details
             const movieDetails = new MovieDetails();
             movieDetails.init();
             
-            // Initialize theme
-            const theme = new ThemeManager();
-            theme.init();
+            // Modal close buttons
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                }
+            });
+            
+            // Back button
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    window.history.back();
+                });
+            }
         });
     </script>
 </body>
