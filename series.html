@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>TV Series - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta property="og:title" content="TV Series - SilvaStream">
+    <meta property="og:description" content="Browse thousands of TV series on SilvaStream">
+    <meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
+    <meta property="og:url" content="https://stream.silvatech.top/series.html">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/category.css">
+</head>
+<body class="dark-mode">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-primary">Silva</span>
+                    <span class="logo-secondary">Stream</span>
+                </div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="movies.html" class="nav-link">
+                    <i class="fas fa-film"></i>
+                    <span>Movies</span>
+                </a>
+                <a href="series.html" class="nav-link active">
+                    <i class="fas fa-tv"></i>
+                    <span>TV Series</span>
+                </a>
+                <a href="sports.html" class="nav-link">
+                    <i class="fas fa-futbol"></i>
+                    <span>Sports</span>
+                </a>
+                <a href="search.html" class="nav-link search-trigger">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+            </div>
+            
+            <div class="user-actions">
+                <button class="user-notification">
+                    <i class="fas fa-bell"></i>
+                </button>
+                
+                <div class="user-profile">
+                    <div class="profile-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="movies.html" class="mobile-nav-link">
+                <i class="fas fa-film"></i>
+                <span>Movies</span>
+            </a>
+            <a href="series.html" class="mobile-nav-link active">
+                <i class="fas fa-tv"></i>
+                <span>TV Series</span>
+            </a>
+            <a href="sports.html" class="mobile-nav-link">
+                <i class="fas fa-futbol"></i>
+                <span>Sports</span>
+            </a>
+            <a href="search.html" class="mobile-nav-link">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Series Hero -->
+    <section class="category-hero series-hero">
+        <div class="container">
+            <div class="category-hero-content">
+                <h1 class="animate-pop"><i class="fas fa-tv"></i> TV Series</h1>
+                <p class="hero-subtitle animate-fade-in">Binge-watch your favorite TV shows from around the world</p>
+                <div class="hero-stats animate-slide-up">
+                    <div class="stat">
+                        <i class="fas fa-tv"></i>
+                        <span>5,000+ Series</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-list-ol"></i>
+                        <span>50,000+ Episodes</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-globe"></i>
+                        <span>Multiple Languages</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Series Content -->
+    <main class="category-content">
+        <div class="container">
+            <!-- Filters -->
+            <div class="category-filters">
+                <div class="filter-section">
+                    <h3><i class="fas fa-filter"></i> Filter Series</h3>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="trending">Trending</button>
+                        <button class="filter-btn" data-filter="new">New Releases</button>
+                        <button class="filter-btn" data-filter="popular">Popular</button>
+                        <button class="filter-btn" data-filter="ongoing">Ongoing</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3><i class="fas fa-tags"></i> Genres</h3>
+                    <div class="genre-buttons">
+                        <button class="genre-btn" data-genre="drama">Drama</button>
+                        <button class="genre-btn" data-genre="comedy">Comedy</button>
+                        <button class="genre-btn" data-genre="action">Action</button>
+                        <button class="genre-btn" data-genre="crime">Crime</button>
+                        <button class="genre-btn" data-genre="sci-fi">Sci-Fi</button>
+                        <button class="genre-btn" data-genre="fantasy">Fantasy</button>
+                        <button class="genre-btn" data-genre="romance">Romance</button>
+                        <button class="genre-btn" data-genre="thriller">Thriller</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3><i class="fas fa-sort"></i> Sort By</h3>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="popularity">Popularity</option>
+                        <option value="newest">Newest First</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="seasons">Most Seasons</option>
+                        <option value="title">Title A-Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Series Grid -->
+            <section class="series-grid-section">
+                <div class="section-header">
+                    <h2>Featured Series</h2>
+                    <div class="series-count" id="seriesCount">Loading series...</div>
+                </div>
+                
+                <div class="series-grid" id="seriesGrid">
+                    <!-- Series will be loaded here -->
+                </div>
+                
+                <div class="load-more-container">
+                    <button class="btn btn-outline load-more" id="loadMoreBtn">
+                        <i class="fas fa-plus"></i>
+                        Load More Series
+                    </button>
+                </div>
+            </section>
+
+            <!-- Series Categories -->
+            <section class="categories-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-layer-group"></i> Series Categories</h2>
+                </div>
+                
+                <div class="categories-grid">
+                    <div class="category-card">
+                        <div class="category-header" style="background: linear-gradient(135deg, #ff4d4d, #e50914);">
+                            <i class="fas fa-globe-africa"></i>
+                            <h3>Nollywood</h3>
+                        </div>
+                        <div class="category-content">
+                            <p>Nigerian TV series and dramas</p>
+                            <a href="category.html?type=nollywood" class="category-link">
+                                Browse Series
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="category-card">
+                        <div class="category-header" style="background: linear-gradient(135deg, #9d4edd, #7b2cbf);">
+                            <i class="fas fa-theater-masks"></i>
+                            <h3>K-Drama</h3>
+                        </div>
+                        <div class="category-content">
+                            <p>Korean drama series</p>
+                            <a href="category.html?type=k-drama" class="category-link">
+                                Browse Series
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="category-card">
+                        <div class="category-header" style="background: linear-gradient(135deg, #00a8ff, #0097e6);">
+                            <i class="fas fa-tv"></i>
+                            <h3>SA Drama</h3>
+                        </div>
+                        <div class="category-content">
+                            <p>South African TV dramas</p>
+                            <a href="category.html?type=sa-drama" class="category-link">
+                                Browse Series
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="category-card">
+                        <div class="category-header" style="background: linear-gradient(135deg, #ffd700, #ff9500);">
+                            <i class="fas fa-hat-cowboy"></i>
+                            <h3>Western TV</h3>
+                        </div>
+                        <div class="category-content">
+                            <p>Western and cowboy series</p>
+                            <a href="category.html?type=western-tv" class="category-link">
+                                Browse Series
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WhatsApp Channels -->
+            <section class="whatsapp-series">
+                <div class="section-header">
+                    <h2><i class="fab fa-whatsapp"></i> Series Updates</h2>
+                    <p>Get daily series recommendations on WhatsApp</p>
+                </div>
+                
+                <div class="whatsapp-series-content">
+                    <div class="series-channel-card">
+                        <div class="channel-header">
+                            <i class="fab fa-whatsapp"></i>
+                            <h3>SilvaStream Series</h3>
+                        </div>
+                        <div class="channel-content">
+                            <p>Receive daily series recommendations, new episodes, and exclusive content updates</p>
+                            <div class="channel-features">
+                                <span><i class="fas fa-check"></i> Episode Updates</span>
+                                <span><i class="fas fa-check"></i> New Series</span>
+                                <span><i class="fas fa-check"></i> Binge Recommendations</span>
+                            </div>
+                            <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="series-join-btn">
+                                <i class="fab fa-whatsapp"></i>
+                                Join Series Channel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loader">
+                <div class="loader-film">
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                    <div class="film-strip"></div>
+                </div>
+            </div>
+            <p>Loading series...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+                <p class="powered-by">
+                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/cache.js"></script>
+    <script src="scripts/ui-manager.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/theme.js"></script>
+    <script src="scripts/series.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme
+            const theme = new ThemeManager();
+            theme.init();
+            
+            // Initialize series
+            const series = new SeriesManager();
+            series.init();
+            
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                    mobileMenuBtn.classList.toggle('active');
+                });
+            }
+            
+            // Filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Apply filter
+                    const filter = btn.dataset.filter;
+                    if (series) {
+                        series.applyFilter(filter);
+                    }
+                });
+            });
+            
+            // Genre buttons
+            const genreBtns = document.querySelectorAll('.genre-btn');
+            genreBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Toggle active class
+                    btn.classList.toggle('active');
+                    
+                    // Get all active genres
+                    const activeGenres = Array.from(document.querySelectorAll('.genre-btn.active'))
+                        .map(b => b.dataset.genre);
+                    
+                    if (series) {
+                        series.filterByGenres(activeGenres);
+                    }
+                });
+            });
+            
+            // Sort select
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect && series) {
+                sortSelect.addEventListener('change', (e) => {
+                    series.sortSeries(e.target.value);
+                });
+            }
+            
+            // Load more button
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn && series) {
+                loadMoreBtn.addEventListener('click', () => {
+                    series.loadMoreSeries();
+                });
+            }
+            
+            // Hide loading overlay after content loads
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.display = 'none';
+                }
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
