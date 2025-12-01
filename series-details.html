@@ -1,186 +1,314 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-theme">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV Series Details - SilvaStream</title>
+    <title>Series Details - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Watch TV series details, episodes, cast and similar shows on SilvaStream">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/details.css">
+    <link rel="stylesheet" href="styles/series-details.css">
+    
+    <!-- Preload -->
+    <link rel="preload" href="scripts/series-details.js" as="script">
 </head>
 <body>
-    <header id="header">
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Loading series details...</p>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </div>
+
+    <!-- Header -->
+    <header class="detail-header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-play-circle logo-icon"></i>
-                    <span class="logo-text">SilvaStream</span>
-                    <span class="logo-subtext">powered by gifted tech</span>
+                <a href="index.html" class="back-home">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
                 </a>
-                <div class="nav-links">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Movies</a>
-                    <a href="#" class="nav-link">TV Shows</a>
-                    <a href="sports.html" class="nav-link">sports</a>
-                    <a href="#" class="nav-link">My List</a>
-                </div>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search for movies or TV shows...">
-                    <button class="search-btn"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="user-actions">
-                    <span class="vip-badge">VIP</span>
-                    <i class="fas fa-bell"></i>
-                    <i class="fas fa-user-circle"></i>
+                
+                <div class="header-actions">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                    <a href="profile.html" class="user-avatar">
+                        <img src="assets/default-avatar.jpg" alt="User">
+                        <span class="vip-badge">VIP</span>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Error Message -->
-        <div class="error-message" id="error-message" style="display: none;"></div>
-
-        <!-- Series Details Section -->
-        <section class="movie-details" id="series-details">
-            <div class="details-header">
-                <img src="" alt="" class="details-backdrop" id="details-backdrop">
-                <div class="header-overlay">
-                    <button class="back-btn" onclick="window.history.back()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
+    <!-- Series Hero Section -->
+    <section class="series-hero" id="seriesHero">
+        <div class="hero-backdrop" id="heroBackdrop">
+            <div class="backdrop-overlay"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="series-poster" id="seriesPoster">
+                    <img src="" alt="" id="posterImage">
+                    <div class="poster-badge">HD</div>
+                    <div class="poster-season">Season 3</div>
                 </div>
-            </div>
-            <div class="details-content">
-                <img src="" alt="" class="details-poster" id="details-poster">
-                <div class="details-info">
-                    <h1 class="details-title" id="details-title">Series Title</h1>
-                    <div class="details-meta">
-                        <span id="details-year">2023</span>
-                        <span id="details-seasons">3 Seasons</span>
-                        <span id="details-genre">Drama, Action</span>
-                        <span class="rating" id="details-rating"><i class="fas fa-star"></i> 8.2/10</span>
+                
+                <div class="series-info">
+                    <div class="series-meta">
+                        <span id="seriesYear">2020-2024</span>
+                        <span>•</span>
+                        <span id="seriesSeasons">3 Seasons</span>
+                        <span>•</span>
+                        <span id="seriesGenre">Drama</span>
+                        <div class="rating-badge" id="ratingBadge">
+                            <i class="fas fa-star"></i>
+                            <span>8.7/10</span>
+                        </div>
                     </div>
-                    <p class="details-overview" id="details-overview">Series description goes here...</p>
-                    <div class="details-actions">
-                        <button class="watch-btn" id="watch-btn"><i class="fas fa-play"></i> Watch Now</button>
-                        <button class="trailer-btn" id="trailer-btn"><i class="fas fa-film"></i> Watch Trailer</button>
+                    
+                    <h1 class="series-title" id="seriesTitle">Series Title</h1>
+                    
+                    <p class="series-description" id="seriesDescription">
+                        Series description goes here...
+                    </p>
+                    
+                    <div class="series-tags" id="seriesTags">
+                        <span class="tag">Drama</span>
+                        <span class="tag">Mystery</span>
+                        <span class="tag">Thriller</span>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Seasons Section -->
-        <section class="seasons-section" id="seasons-section">
-            <h2 class="section-title"><i class="fas fa-list"></i> Seasons & Episodes</h2>
-            <div class="seasons-container" id="seasons-container">
-                <!-- Seasons will be populated here -->
-            </div>
-        </section>
-
-        <!-- Quality Selection Modal for Streaming -->
-        <div class="modal" id="stream-quality-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Select Streaming Quality</h3>
-                    <button class="close-modal" data-modal="stream-quality-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="quality-options" id="stream-quality-options">
-                        <!-- Quality options will be populated here -->
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-lg" id="watchNowBtn">
+                            <i class="fas fa-play"></i>
+                            Watch Now
+                        </button>
+                        
+                        <button class="btn btn-outline btn-lg" id="watchTrailerBtn">
+                            <i class="fas fa-play-circle"></i>
+                            Watch Trailer
+                        </button>
+                        
+                        <button class="btn btn-icon" id="bookmarkBtn" title="Add to Watchlist">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        
+                        <button class="btn btn-icon" id="shareBtn" title="Share">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="quick-info">
+                        <div class="info-item">
+                            <i class="fas fa-tv"></i>
+                            <span id="episodeCount">24 Episodes</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-language"></i>
+                            <span>English</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-closed-captioning"></i>
+                            <span>Subtitles Available</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Quality Selection Modal for Download -->
-        <div class="modal" id="download-quality-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Select Download Quality</h3>
-                    <button class="close-modal" data-modal="download-quality-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="quality-options" id="download-quality-options">
-                        <!-- Quality options will be populated here -->
+    <!-- Main Content -->
+    <main class="detail-content">
+        <div class="container">
+            <!-- Seasons Section -->
+            <section class="seasons-section" id="seasonsSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list"></i>
+                        Seasons & Episodes
+                    </h2>
+                    <div class="season-selector" id="seasonSelector">
+                        <!-- Season buttons will be loaded here -->
                     </div>
                 </div>
-            </div>
-        </div>
+                
+                <div class="episodes-grid" id="episodesGrid">
+                    <!-- Episodes will be loaded here -->
+                </div>
+            </section>
 
-        <!-- Player Section -->
-        <section class="player-container" id="player-container">
-            <div class="player-header">
-                <h3 class="player-title" id="player-title">Episode Title</h3>
-                <button class="close-player" id="close-player">&times;</button>
-            </div>
-            <video controls class="video-player" id="video-player">
-                Your browser does not support the video tag.
-            </video>
-        </section>
+            <!-- Cast Section -->
+            <section class="cast-section" id="castSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Cast & Crew
+                    </h2>
+                </div>
+                
+                <div class="cast-grid" id="castGrid">
+                    <!-- Cast members loaded by JS -->
+                </div>
+            </section>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Loading series details...</p>
+            <!-- Similar Series Section -->
+            <section class="similar-section" id="similarSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-tv"></i>
+                        Similar Series
+                    </h2>
+                    <a href="#" class="view-all" id="viewAllSimilar">View All</a>
+                </div>
+                
+                <div class="similar-grid" id="similarGrid">
+                    <!-- Similar series loaded by JS -->
+                </div>
+            </section>
+
+            <!-- Series Info -->
+            <section class="info-section">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Series Details</h3>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <span class="info-label">Status:</span>
+                                <span class="info-value" id="seriesStatus">Ongoing</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Network:</span>
+                                <span class="info-value" id="seriesNetwork">HBO</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Creator:</span>
+                                <span class="info-value" id="seriesCreator">John Doe</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Awards:</span>
+                                <span class="info-value" id="seriesAwards">10 Wins</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-chart-line"></i> Ratings</h3>
+                        <div class="ratings-list">
+                            <div class="rating-item">
+                                <span class="rating-source">IMDb</span>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 87%"></div>
+                                </div>
+                                <span class="rating-score">8.7/10</span>
+                            </div>
+                            <div class="rating-item">
+                                <span class="rating-source">Rotten Tomatoes</span>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 95%"></div>
+                                </div>
+                                <span class="rating-score">95%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WhatsApp Promo -->
+            <section class="promo-section">
+                <div class="promo-content">
+                    <div class="promo-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="promo-text">
+                        <h3>Never Miss an Episode!</h3>
+                        <p>Join our WhatsApp channel for episode releases and updates</p>
+                    </div>
+                    <div class="promo-actions">
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                           class="btn btn-whatsapp" 
+                           target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                            Join Channel
+                        </a>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Navigation</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">Movies</a></li>
-                        <li><a href="#" class="footer-link">TV Shows</a></li>
-                        <li><a href="#" class="footer-link">New & Popular</a></li>
-                        <li><a href="#" class="footer-link">My List</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Categories</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Action</a></li>
-                        <li><a href="#" class="footer-link">Comedy</a></li>
-                        <li><a href="#" class="footer-link">Drama</a></li>
-                        <li><a href="#" class="footer-link">Horror</a></li>
-                        <li><a href="#" class="footer-link">Romance</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Account</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Account</a></li>
-                        <li><a href="#" class="footer-link">Redeem Gift</a></li>
-                        <li><a href="#" class="footer-link">Privacy</a></li>
-                        <li><a href="#" class="footer-link">Speed Test</a></li>
-                        <li><a href="#" class="footer-link">Legal</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>About Us</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Help Center</a></li>
-                        <li><a href="#" class="footer-link">Careers</a></li>
-                        <li><a href="#" class="footer-link">Contact Us</a></li>
-                        <li><a href="#" class="footer-link">Media Center</a></li>
-                        <li><a href="#" class="footer-link">Corporate Info</a></li>
-                    </ul>
+    <!-- Episode Modal -->
+    <div class="modal" id="episodeModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="episodeModalTitle">Episode Details</h3>
+                <button class="modal-close" id="closeEpisodeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="episode-details" id="episodeDetails">
+                    <!-- Episode details loaded by JS -->
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 SilvaStream. All rights reserved. <span class="powered-by">Powered by Gifted Tech & Ibrahim Adams</span></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="detail-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-play-circle"></i>
+                    <span>SilvaStream</span>
+                </div>
+                <p class="footer-text">Binge-watch your favorite series in HD</p>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="movies.html">Movies</a>
+                    <a href="series.html">Series</a>
+                    <a href="sports.html">Sports</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <p class="copyright">&copy; 2025 SilvaStream. Powered by Gifted Tech & Ibrahim Adams</p>
             </div>
         </div>
     </footer>
 
-    <button id="install-prompt">📲 Install SilvaStream</button>
-
+    <!-- Scripts -->
+    <script src="scripts/utils.js"></script>
     <script src="scripts/api.js"></script>
-    <script src="scripts/player.js"></script>
     <script src="scripts/series-details.js"></script>
-    <script src="scripts/pwa.js"></script>
+    
+    <script>
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.classList.toggle('dark-theme', savedTheme === 'dark');
+        
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
 </body>
 </html>
