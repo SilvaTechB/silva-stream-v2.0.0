@@ -1,187 +1,384 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-theme">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Details - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Watch movie details, cast information, trailers and similar movies on SilvaStream">
+    <meta property="og:title" content="Movie Details - SilvaStream">
+    <meta property="og:description" content="Watch movie details, cast, trailers and recommendations">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/details.css">
+    
+    <!-- Preload -->
+    <link rel="preload" href="scripts/movie-details.js" as="script">
 </head>
 <body>
-    <header id="header">
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Loading movie details...</p>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </div>
+
+    <!-- Header -->
+    <header class="detail-header">
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-play-circle logo-icon"></i>
-                    <span class="logo-text">SilvaStream</span>
-                    <span class="logo-subtext">powered by gifted tech</span>
+                <a href="index.html" class="back-home">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
                 </a>
-                <div class="nav-links">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Movies</a>
-                    <a href="#" class="nav-link">TV Shows</a>
-                    <a href="sports.html" class="nav-link">sports</a>
-                    <a href="#" class="nav-link">My List</a>
-                </div>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search for movies or TV shows...">
-                    <button class="search-btn"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="user-actions">
-                    <span class="vip-badge">VIP</span>
-                    <i class="fas fa-bell"></i>
-                    <i class="fas fa-user-circle"></i>
+                
+                <div class="header-actions">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                    <a href="profile.html" class="user-avatar">
+                        <img src="assets/default-avatar.jpg" alt="User">
+                        <span class="vip-badge">VIP</span>
+                    </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Error Message -->
-        <div class="error-message" id="error-message" style="display: none;"></div>
-
-        <!-- Movie Details Section -->
-        <section class="movie-details" id="movie-details">
-            <div class="details-header">
-                <img src="" alt="" class="details-backdrop" id="details-backdrop">
-                <div class="header-overlay">
-                    <button class="back-btn" onclick="window.history.back()">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
+    <!-- Movie Hero Section -->
+    <section class="movie-hero" id="movieHero">
+        <div class="hero-backdrop" id="heroBackdrop">
+            <div class="backdrop-overlay"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="movie-poster" id="moviePoster">
+                    <img src="" alt="" id="posterImage">
+                    <div class="poster-badge">HD</div>
                 </div>
-            </div>
-            <div class="details-content">
-                <img src="" alt="" class="details-poster" id="details-poster">
-                <div class="details-info">
-                    <h1 class="details-title" id="details-title">Movie Title</h1>
-                    <div class="details-meta">
-                        <span id="details-year">2023</span>
-                        <span id="details-runtime">120 min</span>
-                        <span id="details-genre">Action, Adventure</span>
-                        <span class="rating" id="details-rating"><i class="fas fa-star"></i> 7.5/10</span>
+                
+                <div class="movie-info">
+                    <div class="movie-meta">
+                        <span id="movieYear">2024</span>
+                        <span>•</span>
+                        <span id="movieRuntime">120 min</span>
+                        <span>•</span>
+                        <span id="movieGenre">Action</span>
+                        <div class="rating-badge" id="ratingBadge">
+                            <i class="fas fa-star"></i>
+                            <span>8.5/10</span>
+                        </div>
                     </div>
-                    <p class="details-overview" id="details-overview">Movie description goes here...</p>
-                    <div class="details-actions">
-                        <button class="watch-btn" id="watch-btn"><i class="fas fa-play"></i> Watch Now</button>
-                        <button class="trailer-btn" id="trailer-btn"><i class="fas fa-film"></i> Watch Trailer</button>
-                        <button class="download-btn" id="download-btn"><i class="fas fa-download"></i> Download</button>
+                    
+                    <h1 class="movie-title" id="movieTitle">Movie Title</h1>
+                    
+                    <p class="movie-description" id="movieDescription">
+                        Movie description goes here...
+                    </p>
+                    
+                    <div class="movie-tags" id="movieTags">
+                        <span class="tag">Action</span>
+                        <span class="tag">Adventure</span>
+                        <span class="tag">Sci-Fi</span>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Download Sources Section -->
-        <section class="sources-section" id="sources-section" style="display: none;">
-            <h2 class="section-title"><i class="fas fa-download"></i> Download Sources</h2>
-            <div class="sources-grid" id="sources-grid">
-                <!-- Sources will be populated here -->
-            </div>
-        </section>
-
-        <!-- Quality Selection Modal for Streaming -->
-        <div class="modal" id="stream-quality-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Select Streaming Quality</h3>
-                    <button class="close-modal" data-modal="stream-quality-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="quality-options" id="stream-quality-options">
-                        <!-- Quality options will be populated here -->
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-lg" id="watchNowBtn">
+                            <i class="fas fa-play"></i>
+                            Watch Now
+                        </button>
+                        
+                        <button class="btn btn-outline btn-lg" id="watchTrailerBtn">
+                            <i class="fas fa-play-circle"></i>
+                            Watch Trailer
+                        </button>
+                        
+                        <button class="btn btn-icon" id="bookmarkBtn" title="Add to Watchlist">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        
+                        <button class="btn btn-icon" id="shareBtn" title="Share">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        
+                        <button class="btn btn-icon" id="downloadBtn" title="Download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="quick-info">
+                        <div class="info-item">
+                            <i class="fas fa-language"></i>
+                            <span>English</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-closed-captioning"></i>
+                            <span>Subtitles Available</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-hd"></i>
+                            <span>4K Available</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Quality Selection Modal for Download -->
-        <div class="modal" id="download-quality-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Select Download Quality</h3>
-                    <button class="close-modal" data-modal="download-quality-modal">&times;</button>
+    <!-- Main Content -->
+    <main class="detail-content">
+        <div class="container">
+            <!-- Cast Section -->
+            <section class="cast-section" id="castSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Cast & Crew
+                    </h2>
                 </div>
-                <div class="modal-body">
-                    <div class="quality-options" id="download-quality-options">
-                        <!-- Quality options will be populated here -->
+                
+                <div class="cast-grid" id="castGrid">
+                    <!-- Cast members loaded by JS -->
+                </div>
+            </section>
+
+            <!-- Similar Movies Section -->
+            <section class="similar-section" id="similarSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-film"></i>
+                        Similar Movies
+                    </h2>
+                    <a href="#" class="view-all" id="viewAllSimilar">View All</a>
+                </div>
+                
+                <div class="similar-grid" id="similarGrid">
+                    <!-- Similar movies loaded by JS -->
+                </div>
+            </section>
+
+            <!-- Download Sources -->
+            <section class="sources-section" id="sourcesSection">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-download"></i>
+                        Download Sources
+                    </h2>
+                    <span class="section-subtitle">Choose your preferred quality</span>
+                </div>
+                
+                <div class="sources-grid" id="sourcesGrid">
+                    <!-- Sources loaded by JS -->
+                </div>
+            </section>
+
+            <!-- Movie Details Info -->
+            <section class="info-section">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Details</h3>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <span class="info-label">Release Date:</span>
+                                <span class="info-value" id="releaseDate">2024-01-01</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Director:</span>
+                                <span class="info-value" id="director">John Doe</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Writer:</span>
+                                <span class="info-value" id="writer">Jane Smith</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Budget:</span>
+                                <span class="info-value" id="budget">$200M</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-chart-line"></i> Ratings</h3>
+                        <div class="ratings-list">
+                            <div class="rating-item">
+                                <span class="rating-source">IMDb</span>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 85%"></div>
+                                </div>
+                                <span class="rating-score">8.5/10</span>
+                            </div>
+                            <div class="rating-item">
+                                <span class="rating-source">Rotten Tomatoes</span>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 92%"></div>
+                                </div>
+                                <span class="rating-score">92%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- Player Section -->
-        <section class="player-container" id="player-container">
-            <div class="player-header">
-                <h3 class="player-title" id="player-title">Movie Title</h3>
-                <button class="close-player" id="close-player">&times;</button>
-            </div>
-            <video controls class="video-player" id="video-player">
-                Your browser does not support the video tag.
-            </video>
-        </section>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Loading movie details...</p>
+            <!-- WhatsApp Promo -->
+            <section class="promo-section">
+                <div class="promo-content">
+                    <div class="promo-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="promo-text">
+                        <h3>Join Our Community!</h3>
+                        <p>Get updates on new releases, exclusive content, and special offers</p>
+                    </div>
+                    <div class="promo-actions">
+                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                           class="btn btn-whatsapp" 
+                           target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                            SilvaStream Channel
+                        </a>
+                        <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" 
+                           class="btn btn-outline" 
+                           target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                            Silva Tech Nexus
+                        </a>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Navigation</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">Movies</a></li>
-                        <li><a href="#" class="footer-link">TV Shows</a></li>
-                        <li><a href="#" class="footer-link">New & Popular</a></li>
-                        <li><a href="#" class="footer-link">My List</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Categories</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Action</a></li>
-                        <li><a href="#" class="footer-link">Comedy</a></li>
-                        <li><a href="#" class="footer-link">Drama</a></li>
-                        <li><a href="#" class="footer-link">Horror</a></li>
-                        <li><a href="#" class="footer-link">Romance</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Account</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Account</a></li>
-                        <li><a href="#" class="footer-link">Redeem Gift</a></li>
-                        <li><a href="#" class="footer-link">Privacy</a></li>
-                        <li><a href="#" class="footer-link">Speed Test</a></li>
-                        <li><a href="#" class="footer-link">Legal</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>About Us</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" class="footer-link">Help Center</a></li>
-                        <li><a href="#" class="footer-link">Careers</a></li>
-                        <li><a href="#" class="footer-link">Contact Us</a></li>
-                        <li><a href="#" class="footer-link">Media Center</a></li>
-                        <li><a href="#" class="footer-link">Corporate Info</a></li>
-                    </ul>
+    <!-- Quality Selection Modal -->
+    <div class="modal" id="qualityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Quality</h3>
+                <button class="modal-close" id="closeQualityModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="quality-options" id="qualityOptions">
+                    <!-- Quality options loaded by JS -->
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 SilvaStream. All rights reserved. <span class="powered-by">Powered by Gifted Tech & Ibrahim Adams</span></p>
+        </div>
+    </div>
+
+    <!-- Trailer Modal -->
+    <div class="modal" id="trailerModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Movie Trailer</h3>
+                <button class="modal-close" id="closeTrailerModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="trailer-container" id="trailerContainer">
+                    <!-- YouTube iframe will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share This Movie</h3>
+                <button class="modal-close" id="closeShareModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <button class="share-option" data-platform="whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        WhatsApp
+                    </button>
+                    <button class="share-option" data-platform="facebook">
+                        <i class="fab fa-facebook"></i>
+                        Facebook
+                    </button>
+                    <button class="share-option" data-platform="twitter">
+                        <i class="fab fa-twitter"></i>
+                        Twitter
+                    </button>
+                    <button class="share-option" data-platform="telegram">
+                        <i class="fab fa-telegram"></i>
+                        Telegram
+                    </button>
+                    <button class="share-option" data-platform="copy">
+                        <i class="fas fa-link"></i>
+                        Copy Link
+                    </button>
+                </div>
+                <div class="share-link">
+                    <input type="text" readonly id="shareLinkInput" value="">
+                    <button class="btn btn-sm" id="copyLinkBtn">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="detail-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-play-circle"></i>
+                    <span>SilvaStream</span>
+                </div>
+                <p class="footer-text">Experience premium streaming at its best</p>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="movies.html">Movies</a>
+                    <a href="series.html">Series</a>
+                    <a href="sports.html">Sports</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <p class="copyright">&copy; 2025 SilvaStream. Powered by Gifted Tech & Ibrahim Adams</p>
             </div>
         </div>
     </footer>
 
-    <button id="install-prompt">📲 Install SilvaStream</button>
-
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="scripts/utils.js"></script>
     <script src="scripts/api.js"></script>
-    <script src="scripts/player.js"></script>
     <script src="scripts/movie-details.js"></script>
-    <script src="scripts/pwa.js"></script>
+    
+    <script>
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.classList.toggle('dark-theme', savedTheme === 'dark');
+        
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
 </body>
 </html>
