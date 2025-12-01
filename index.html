@@ -299,11 +299,6 @@
                 </div>
             </section>
 
-            <!-- Category Sections -->
-            <div class="category-grid" id="categoryGrid">
-                <!-- Categories will be dynamically loaded -->
-            </div>
-
             <!-- Personalized Recommendations -->
             <section class="section-slider">
                 <div class="section-header">
@@ -318,6 +313,11 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Categories Grid -->
+            <div class="category-grid" id="categoryGrid">
+                <!-- Categories will be dynamically loaded -->
+            </div>
 
             <!-- Continue Watching -->
             <section class="section-slider" id="continueWatchingSection" style="display: none;">
@@ -421,6 +421,7 @@
     <script src="scripts/api.js"></script>
     <script src="scripts/cache.js"></script>
     <script src="scripts/auth.js"></script>
+    <script src="scripts/ui-manager.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/theme.js"></script>
     <script src="scripts/pwa.js"></script>
@@ -437,12 +438,60 @@
             theme.init();
             
             // Initialize PWA
-            const pwa = new PWAHandler();
-            pwa.init();
+            if (window.PWAHandler) {
+                const pwa = new PWAHandler();
+                pwa.init();
+            }
             
             // Initialize auth
-            const auth = new AuthManager();
-            auth.init();
+            if (window.authManager) {
+                authManager.init();
+            }
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                    mobileMenuBtn.classList.toggle('active');
+                });
+            }
+            
+            // Install button
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) {
+                installBtn.addEventListener('click', () => {
+                    if (window.deferredPrompt) {
+                        window.deferredPrompt.prompt();
+                    }
+                });
+            }
+            
+            // Install close button
+            const installClose = document.getElementById('installClose');
+            if (installClose) {
+                installClose.addEventListener('click', () => {
+                    const installPrompt = document.getElementById('installPrompt');
+                    if (installPrompt) {
+                        installPrompt.style.display = 'none';
+                    }
+                });
+            }
+        });
+        
+        // Handle beforeinstallprompt event
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install prompt
+            const installPrompt = document.getElementById('installPrompt');
+            if (installPrompt) {
+                installPrompt.style.display = 'block';
+            }
         });
     </script>
 </body>
