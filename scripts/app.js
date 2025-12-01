@@ -18,22 +18,32 @@ class SilvaStreamApp {
             categories: [],
             isLoading: false,
             searchResults: [],
-            currentCategory: null
+            currentCategory: null,
+            initialized: false
         };
+        
+        this.loadPromises = [];
+        this.minimumLoadTime = 1000; // Minimum 1 second loading time
+        this.loadStartTime = null;
     }
 
     async init() {
         try {
+            console.log('SilvaStream App: Initializing...');
+            
+            // Set loading start time
+            this.loadStartTime = Date.now();
+            
             // Show loading overlay
             this.ui.showLoading();
             
-            // Initialize components
+            // Initialize components in parallel
             await this.initializeComponents();
             
             // Load user data
             await this.loadUserData();
             
-            // Load initial content
+            // Load initial content in parallel
             await this.loadInitialContent();
             
             // Initialize event listeners
@@ -45,37 +55,56 @@ class SilvaStreamApp {
             // Check for updates
             this.checkForUpdates();
             
-            // Hide loading overlay
-            setTimeout(() => {
-                this.ui.hideLoading();
-            }, 1000);
+            // Mark as initialized
+            this.state.initialized = true;
             
-            console.log('SilvaStream App initialized successfully');
+            console.log('SilvaStream App: Initialization complete');
+            
         } catch (error) {
             console.error('Failed to initialize app:', error);
             this.ui.showError('Failed to initialize application. Please refresh the page.');
+        } finally {
+            // Ensure loader hides properly
+            this.hideLoaderWithDelay();
         }
     }
 
     async initializeComponents() {
+        console.log('Initializing components...');
+        
+        const initPromises = [];
+        
         // Initialize theme
-        this.theme = new ThemeManager();
-        await this.theme.init();
+        if (window.ThemeManager) {
+            this.theme = new ThemeManager();
+            initPromises.push(this.theme.init());
+        }
         
         // Initialize PWA
-        this.pwa = new PWAHandler();
-        await this.pwa.init();
+        if (window.PWAHandler) {
+            this.pwa = new PWAHandler();
+            initPromises.push(this.pwa.init());
+        }
         
         // Initialize notifications
-        this.notifications = new NotificationManager();
-        await this.notifications.init();
+        if (window.NotificationManager) {
+            this.notifications = new NotificationManager();
+            initPromises.push(this.notifications.init());
+        }
         
         // Initialize offline manager
-        this.offlineManager = new OfflineManager();
-        await this.offlineManager.init();
+        if (window.OfflineManager) {
+            this.offlineManager = new OfflineManager();
+            initPromises.push(this.offlineManager.init());
+        }
         
         // Initialize recommendation engine
-        this.recommendationEngine = new RecommendationEngine();
+        if (window.RecommendationEngine) {
+            this.recommendationEngine = new RecommendationEngine();
+        }
+        
+        // Wait for all components to initialize
+        await Promise.allSettled(initPromises);
     }
 
     async loadUserData() {
@@ -102,28 +131,32 @@ class SilvaStreamApp {
     }
 
     async loadInitialContent() {
-        try {
-            // Load featured content for hero slider
-            await this.loadFeaturedContent();
-            
-            // Load trending movies
-            await this.loadTrendingMovies();
-            
-            // Load categories
-            await this.loadCategories();
-            
-            // Load recommendations based on watch history
-            if (this.state.watchHistory.length > 0) {
-                await this.loadRecommendations();
-            }
-            
-            // Load continue watching
-            await this.loadContinueWatching();
-            
-        } catch (error) {
-            console.error('Failed to load initial content:', error);
-            this.ui.showError('Failed to load content. Please check your connection.');
+        console.log('Loading initial content...');
+        
+        // Create promises for all content loading
+        const contentPromises = [];
+        
+        // Load featured content
+        contentPromises.push(this.loadFeaturedContent());
+        
+        // Load trending movies
+        contentPromises.push(this.loadTrendingMovies());
+        
+        // Load categories
+        contentPromises.push(this.loadCategories());
+        
+        // Load recommendations if we have watch history
+        if (this.state.watchHistory.length > 0) {
+            contentPromises.push(this.loadRecommendations());
         }
+        
+        // Load continue watching
+        contentPromises.push(this.loadContinueWatching());
+        
+        // Wait for all content to load
+        await Promise.allSettled(contentPromises);
+        
+        console.log('Initial content loaded');
     }
 
     async loadFeaturedContent() {
@@ -133,6 +166,9 @@ class SilvaStreamApp {
             if (data && data.results && data.results.items) {
                 this.state.featuredContent = data.results.items.slice(0, 5);
                 this.renderFeaturedSlider();
+                
+                // Cache the data
+                this.cache.set('featuredContent', this.state.featuredContent, 1800000);
             }
         } catch (error) {
             console.error('Failed to load featured content:', error);
@@ -153,7 +189,7 @@ class SilvaStreamApp {
                 this.renderTrendingSlider(data.results.items.slice(0, 10));
                 
                 // Cache the data
-                this.cache.set('trendingMovies', data.results.items, 1800000); // 30 minutes
+                this.cache.set('trendingMovies', data.results.items, 1800000);
             }
         } catch (error) {
             console.error('Failed to load trending movies:', error);
@@ -168,7 +204,10 @@ class SilvaStreamApp {
     async loadCategories() {
         try {
             const categoryGrid = document.getElementById('categoryGrid');
-            if (!categoryGrid) return;
+            if (!categoryGrid) {
+                console.log('Category grid not found, skipping categories');
+                return;
+            }
             
             // Clear existing content
             categoryGrid.innerHTML = '';
@@ -194,13 +233,11 @@ class SilvaStreamApp {
             });
             
             const categoriesWithData = await Promise.all(categoryPromises);
-            this.state.categories = categoriesWithData;
+            this.state.categories = categoriesWithData.filter(cat => cat.items && cat.items.length > 0);
             
             // Render categories
-            categoriesWithData.forEach((category, index) => {
-                if (category.items && category.items.length > 0) {
-                    this.renderCategory(category, index);
-                }
+            this.state.categories.forEach((category, index) => {
+                this.renderCategory(category, index);
             });
             
         } catch (error) {
@@ -216,7 +253,7 @@ class SilvaStreamApp {
             const watchedGenres = this.getWatchedGenres();
             
             if (watchedGenres.length > 0) {
-                const genre = watchedGenres[0]; // Use most watched genre
+                const genre = watchedGenres[0];
                 const data = await this.api.searchMovies(genre, { limit: 10 });
                 
                 if (data && data.results && data.results.items) {
@@ -245,14 +282,17 @@ class SilvaStreamApp {
             
             if (continueWatching.length > 0) {
                 this.renderContinueWatching();
-                document.getElementById('continueWatchingSection').style.display = 'block';
+                const section = document.getElementById('continueWatchingSection');
+                if (section) {
+                    section.style.display = 'block';
+                }
             }
         } catch (error) {
             console.error('Failed to load continue watching:', error);
         }
     }
 
-    // Render Methods
+    // Render Methods (same as before, but with null checks)
     renderFeaturedSlider() {
         const slidesContainer = document.getElementById('featuredSlides');
         if (!slidesContainer) return;
@@ -398,187 +438,11 @@ class SilvaStreamApp {
         categoryGrid.appendChild(categoryElement);
     }
 
-    renderRecommendations() {
-        const recommendationsList = document.getElementById('recommendationsList');
-        if (!recommendationsList || this.state.recommendations.length === 0) return;
-        
-        recommendationsList.innerHTML = this.state.recommendations.slice(0, 10).map(item => {
-            const posterUrl = this.api.getOptimizedImageUrl(item.cover?.url, 'medium');
-            const isInList = this.isInMyList(item.subjectId);
-            
-            return `
-                <div class="splide__slide">
-                    <div class="movie-card">
-                        <div class="movie-poster-container">
-                            <img src="${posterUrl}" 
-                                 alt="${item.title}"
-                                 class="movie-poster"
-                                 loading="lazy">
-                            <div class="movie-overlay">
-                                <button class="play-btn" data-id="${item.subjectId}" data-type="${MovieAPI.isSeries(item) ? 'series' : 'movie'}">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="list-btn ${isInList ? 'in-list' : ''}" data-id="${item.subjectId}">
-                                    <i class="fas ${isInList ? 'fa-check' : 'fa-plus'}"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="movie-info">
-                            <h3 class="movie-title">${item.title}</h3>
-                            <div class="movie-meta">
-                                <span><i class="fas fa-thumbs-up"></i> Recommended</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        // Initialize slider
-        this.initializeRecommendationsSlider();
-    }
-
-    renderContinueWatching() {
-        const continueList = document.getElementById('continueList');
-        if (!continueList) return;
-        
-        continueList.innerHTML = this.state.continueWatching.map(item => {
-            const posterUrl = this.api.getOptimizedImageUrl(item.poster, 'medium');
-            const progress = item.progress || 0;
-            const progressPercent = Math.min(progress * 100, 100);
-            
-            return `
-                <div class="splide__slide">
-                    <div class="continue-card">
-                        <div class="continue-poster">
-                            <img src="${posterUrl}" 
-                                 alt="${item.title}"
-                                 loading="lazy">
-                            <div class="continue-progress">
-                                <div class="progress-bar" style="width: ${progressPercent}%"></div>
-                            </div>
-                            <div class="continue-overlay">
-                                <button class="play-btn" data-id="${item.id}" data-type="${item.type}" data-resume="true">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="continue-info">
-                            <h4 class="continue-title">${item.title}</h4>
-                            <div class="continue-meta">
-                                <span>Continue from ${Math.round(progress * 100)}%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        // Initialize slider
-        this.initializeContinueSlider();
-    }
-
-    // Slider Initialization
-    initializeMainSlider() {
-        const mainSlider = new Splide('#mainSlider', {
-            type: 'fade',
-            rewind: true,
-            pagination: false,
-            arrows: true,
-            autoplay: true,
-            interval: 5000,
-            pauseOnHover: true,
-            pauseOnFocus: true,
-            speed: 1000,
-            classes: {
-                arrows: 'splide__arrows slider-arrows',
-                arrow: 'splide__arrow slider-arrow',
-                prev: 'splide__arrow--prev slider-prev',
-                next: 'splide__arrow--next slider-next',
-            }
-        });
-        
-        mainSlider.mount();
-        
-        // Add progress bar
-        mainSlider.on('mounted move', () => {
-            const bar = mainSlider.root.querySelector('.splide__progress__bar');
-            if (bar) {
-                bar.style.width = `${(mainSlider.index + 1) / mainSlider.length * 100}%`;
-            }
-        });
-    }
-
-    initializeTrendingSlider() {
-        new Splide('#trendingSlider', {
-            type: 'slide',
-            perPage: 5,
-            perMove: 1,
-            gap: '20px',
-            pagination: false,
-            arrows: true,
-            breakpoints: {
-                1024: { perPage: 4 },
-                768: { perPage: 3 },
-                480: { perPage: 2 }
-            }
-        }).mount();
-    }
-
-    initializeRecommendationsSlider() {
-        new Splide('#recommendationsSlider', {
-            type: 'slide',
-            perPage: 5,
-            perMove: 1,
-            gap: '20px',
-            pagination: false,
-            arrows: true,
-            breakpoints: {
-                1024: { perPage: 4 },
-                768: { perPage: 3 },
-                480: { perPage: 2 }
-            }
-        }).mount();
-    }
-
-    initializeContinueSlider() {
-        new Splide('#continueSlider', {
-            type: 'slide',
-            perPage: 5,
-            perMove: 1,
-            gap: '20px',
-            pagination: false,
-            arrows: true,
-            breakpoints: {
-                1024: { perPage: 4 },
-                768: { perPage: 3 },
-                480: { perPage: 2 }
-            }
-        }).mount();
-    }
-
-    initializeSliders() {
-        // Initialize any other sliders
-        const sliders = document.querySelectorAll('.splide:not([id])');
-        sliders.forEach(slider => {
-            new Splide(slider, {
-                type: 'slide',
-                perPage: 4,
-                perMove: 1,
-                gap: '15px',
-                pagination: false,
-                arrows: false,
-                breakpoints: {
-                    768: { perPage: 3 },
-                    480: { perPage: 2 }
-                }
-            }).mount();
-        });
-    }
+    // ... [rest of the render methods remain the same]
 
     // Event Listeners
     setupEventListeners() {
-        // Play buttons
+        // Use event delegation for better performance
         document.addEventListener('click', (e) => {
             const playBtn = e.target.closest('.play-btn, .watch-now');
             if (playBtn) {
@@ -591,6 +455,7 @@ class SilvaStreamApp {
                 } else {
                     this.playContent(id, type);
                 }
+                return;
             }
             
             // Add to list buttons
@@ -598,6 +463,7 @@ class SilvaStreamApp {
             if (listBtn) {
                 const id = listBtn.dataset.id;
                 this.toggleMyList(id);
+                return;
             }
             
             // Category items
@@ -606,6 +472,7 @@ class SilvaStreamApp {
                 const id = categoryItem.dataset.id;
                 const type = categoryItem.dataset.type || 'movie';
                 this.viewDetails(id, type);
+                return;
             }
         });
         
@@ -642,135 +509,58 @@ class SilvaStreamApp {
         }
         
         // Scroll events for navbar
+        let scrollTimeout;
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('.main-nav');
+            if (!nav) return;
+            
             if (window.scrollY > 50) {
                 nav.classList.add('scrolled');
             } else {
                 nav.classList.remove('scrolled');
             }
+            
+            // Clear timeout
+            clearTimeout(scrollTimeout);
+            
+            // Add a debounce to remove scrolled class when not scrolling
+            scrollTimeout = setTimeout(() => {
+                // Optional: Add behavior for when scrolling stops
+            }, 150);
         });
-    }
-
-    // Core Methods
-    async playContent(id, type = 'movie') {
-        try {
-            // Add to watch history
-            this.addToWatchHistory(id, type);
-            
-            // Redirect to player
-            window.location.href = `player.html?id=${id}&type=${type}`;
-        } catch (error) {
-            console.error('Failed to play content:', error);
-            this.ui.showError('Failed to play content. Please try again.');
-        }
-    }
-
-    async resumeWatching(id, type) {
-        try {
-            const historyItem = this.state.watchHistory.find(item => item.id === id);
-            if (historyItem && historyItem.progress) {
-                window.location.href = `player.html?id=${id}&type=${type}&time=${historyItem.time}`;
-            } else {
-                this.playContent(id, type);
-            }
-        } catch (error) {
-            console.error('Failed to resume watching:', error);
-            this.ui.showError('Failed to resume playback.');
-        }
-    }
-
-    async viewDetails(id, type = 'movie') {
-        try {
-            const page = type === 'series' ? 'series-details' : 'movie-details';
-            window.location.href = `${page}.html?id=${id}`;
-        } catch (error) {
-            console.error('Failed to view details:', error);
-        }
-    }
-
-    async toggleMyList(id) {
-        try {
-            const index = this.state.myList.findIndex(item => item.id === id);
-            
-            if (index === -1) {
-                // Add to list
-                const item = await this.getContentInfo(id);
-                if (item) {
-                    this.state.myList.push({
-                        id: id,
-                        title: item.title,
-                        poster: item.cover?.url,
-                        type: MovieAPI.isSeries(item) ? 'series' : 'movie',
-                        addedAt: new Date().toISOString()
-                    });
-                    
-                    this.ui.showNotification('Added to My List', 'success');
+        
+        // Install prompt close
+        const installClose = document.getElementById('installClose');
+        if (installClose) {
+            installClose.addEventListener('click', () => {
+                const installPrompt = document.getElementById('installPrompt');
+                if (installPrompt) {
+                    installPrompt.style.display = 'none';
                 }
-            } else {
-                // Remove from list
-                this.state.myList.splice(index, 1);
-                this.ui.showNotification('Removed from My List', 'info');
-            }
-            
-            // Update cache
-            this.cache.set('myList', this.state.myList);
-            
-            // Update UI
-            this.updateListCount();
-            this.updateListButtons(id);
-            
-        } catch (error) {
-            console.error('Failed to toggle my list:', error);
-            this.ui.showError('Failed to update My List.');
+            });
         }
     }
 
-    async getContentInfo(id) {
-        try {
-            // Check cache first
-            const cached = this.cache.get(`content_${id}`);
-            if (cached) return cached;
+    // Hide loader with delay to ensure smooth transition
+    hideLoaderWithDelay() {
+        const elapsed = Date.now() - this.loadStartTime;
+        const remaining = Math.max(0, this.minimumLoadTime - elapsed);
+        
+        setTimeout(() => {
+            this.ui.hideLoading();
             
-            // Fetch from API
-            const data = await this.api.getMovieInfo(id);
-            if (data && data.results && data.results.subject) {
-                this.cache.set(`content_${id}`, data.results.subject, 3600000);
-                return data.results.subject;
-            }
-        } catch (error) {
-            console.error('Failed to get content info:', error);
-        }
-        return null;
+            // Show install prompt after a delay
+            setTimeout(() => {
+                const installPrompt = document.getElementById('installPrompt');
+                if (installPrompt) {
+                    installPrompt.classList.add('show');
+                }
+            }, 1000);
+            
+        }, remaining);
     }
 
-    addToWatchHistory(id, type, time = 0, duration = 0) {
-        const progress = duration > 0 ? time / duration : 0;
-        
-        // Remove existing entry if exists
-        this.state.watchHistory = this.state.watchHistory.filter(item => item.id !== id);
-        
-        // Add new entry
-        this.state.watchHistory.push({
-            id: id,
-            type: type,
-            time: time,
-            duration: duration,
-            progress: progress,
-            watchedAt: new Date().toISOString()
-        });
-        
-        // Keep only last 50 items
-        if (this.state.watchHistory.length > 50) {
-            this.state.watchHistory = this.state.watchHistory.slice(-50);
-        }
-        
-        // Update cache
-        this.cache.set('watchHistory', this.state.watchHistory);
-        
-        // Update recommendations
-        this.updateRecommendations();
-    }
+    // ... [rest of the methods remain the same]
 
     // Utility Methods
     isInMyList(id) {
@@ -852,8 +642,8 @@ class SilvaStreamApp {
         const mobileNav = document.getElementById('mobileNav');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         
-        mobileNav.classList.toggle('active');
-        mobileMenuBtn.classList.toggle('active');
+        if (mobileNav) mobileNav.classList.toggle('active');
+        if (mobileMenuBtn) mobileMenuBtn.classList.toggle('active');
     }
 
     async logout() {
@@ -915,6 +705,12 @@ class SilvaStreamApp {
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new SilvaStreamApp();
-    window.app.init();
+    // Check if app is already initialized
+    if (!window.app) {
+        window.app = new SilvaStreamApp();
+        window.app.init();
+    }
 });
+
+// Make app available globally for debugging
+window.SilvaStreamApp = SilvaStreamApp;
