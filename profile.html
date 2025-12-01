@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Manage your SilvaStream profile, watch history, and preferences">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/root.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/profile.css">
+    
+    <!-- Preload -->
+    <link rel="preload" href="scripts/profile.js" as="script">
+</head>
+<body>
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Loading profile...</p>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+    </div>
+
+    <!-- Header -->
+    <header class="profile-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-home">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
+                </a>
+                
+                <div class="header-title">
+                    <h1>My Profile</h1>
+                    <p class="header-subtitle">Manage your account and preferences</p>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="editProfileBtn">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Profile Navigation -->
+    <nav class="profile-nav">
+        <div class="container">
+            <div class="nav-container">
+                <button class="nav-item active" data-section="overview">
+                    <i class="fas fa-user"></i>
+                    <span>Overview</span>
+                </button>
+                <button class="nav-item" data-section="watchlist">
+                    <i class="fas fa-bookmark"></i>
+                    <span>Watchlist</span>
+                    <span class="nav-badge" id="watchlistCount">0</span>
+                </button>
+                <button class="nav-item" data-section="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </button>
+                <button class="nav-item" data-section="recommendations">
+                    <i class="fas fa-robot"></i>
+                    <span>Recommendations</span>
+                    <span class="nav-badge">AI</span>
+                </button>
+                <button class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+                <button class="nav-item" data-section="subscription">
+                    <i class="fas fa-crown"></i>
+                    <span>Subscription</span>
+                    <span class="vip-badge">VIP</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="profile-content">
+        <div class="container">
+            <!-- Profile Overview Section -->
+            <section class="profile-section active" id="overviewSection">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="avatar-container">
+                            <div class="avatar-large" id="profileAvatar">
+                                <img src="assets/default-avatar.jpg" alt="Profile">
+                                <button class="avatar-edit" id="changeAvatarBtn">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                            <div class="avatar-status">
+                                <span class="status-indicator online"></span>
+                                <span class="status-text">Online</span>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-info">
+                            <h2 id="profileName">Guest User</h2>
+                            <p class="profile-email" id="profileEmail">guest@silvastream.com</p>
+                            <div class="profile-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Member since: <strong id="joinDate">2024</strong></span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-trophy"></i>
+                                    <span>Level: <strong id="userLevel">Bronze</strong></span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>Points: <strong id="userPoints">0</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="totalWatched">0</span>
+                                    <span class="stat-label">Total Watched</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="watchTime">0h</span>
+                                    <span class="stat-label">Watch Time</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="favorites">0</span>
+                                    <span class="stat-label">Favorites</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-award"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number" id="achievements">0</span>
+                                    <span class="stat-label">Achievements</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-body">
+                        <!-- Recently Watched -->
+                        <div class="section-row">
+                            <div class="section-header">
+                                <h3>Recently Watched</h3>
+                                <a href="history.html" class="view-all">View All</a>
+                            </div>
+                            <div class="recent-grid" id="recentWatched">
+                                <!-- Recently watched items loaded by JS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Continue Watching -->
+                        <div class="section-row">
+                            <div class="section-header">
+                                <h3>Continue Watching</h3>
+                                <button class="btn btn-sm btn-outline" id="clearContinue">
+                                    Clear All
+                                </button>
+                            </div>
+                            <div class="continue-grid" id="continueWatching">
+                                <!-- Continue watching items loaded by JS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Top Genres -->
+                        <div class="section-row">
+                            <div class="section-header">
+                                <h3>Your Top Genres</h3>
+                            </div>
+                            <div class="genres-chart" id="genresChart">
+                                <!-- Genre chart loaded by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Watchlist Section -->
+            <section class="profile-section" id="watchlistSection">
+                <div class="section-header">
+                    <h2>My Watchlist</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-outline" id="sortWatchlist">
+                            <i class="fas fa-sort"></i>
+                            Sort
+                        </button>
+                        <button class="btn btn-outline" id="exportWatchlist">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                        <button class="btn btn-danger" id="clearWatchlist">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="watchlist-container">
+                    <div class="watchlist-filters">
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-filter="all">All</button>
+                            <button class="filter-tab" data-filter="movies">Movies</button>
+                            <button class="filter-tab" data-filter="series">Series</button>
+                            <button class="filter-tab" data-filter="watched">Watched</button>
+                            <button class="filter-tab" data-filter="unwatched">Unwatched</button>
+                        </div>
+                        <div class="search-watchlist">
+                            <i class="fas fa-search"></i>
+                            <input type="text" 
+                                   id="searchWatchlist" 
+                                   placeholder="Search watchlist...">
+                        </div>
+                    </div>
+                    
+                    <div class="watchlist-grid" id="watchlistGrid">
+                        <!-- Watchlist items loaded by JS -->
+                    </div>
+                    
+                    <div class="empty-watchlist" id="emptyWatchlist">
+                        <div class="empty-content">
+                            <i class="fas fa-bookmark"></i>
+                            <h3>Your watchlist is empty</h3>
+                            <p>Add movies and series to watch later</p>
+                            <a href="index.html" class="btn btn-primary">
+                                <i class="fas fa-play-circle"></i>
+                                Browse Content
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section class="profile-section" id="historySection">
+                <div class="section-header">
+                    <h2>Watch History</h2>
+                    <div class="section-actions">
+                        <div class="date-filter">
+                            <select id="historyPeriod">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" id="exportHistory">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                        <button class="btn btn-danger" id="clearHistory">
+                            <i class="fas fa-trash"></i>
+                            Clear History
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="history-container">
+                    <div class="history-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-film"></i>
+                            <div>
+                                <span class="stat-number" id="historyMovies">0</span>
+                                <span class="stat-label">Movies</span>
+                            </
