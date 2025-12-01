@@ -1,675 +1,920 @@
-// scripts/app.js - ENHANCED VERSION
-
+// Main Application Class with Enhanced Features
 class SilvaStreamApp {
     constructor() {
-        this.theme = 'dark';
-        this.userProfile = null;
-        this.watchHistory = [];
-        this.init();
+        this.api = movieAPI;
+        this.cache = new CacheManager();
+        this.auth = new AuthManager();
+        this.ui = new UIManager();
+        this.player = null;
+        
+        // State management
+        this.state = {
+            user: null,
+            watchHistory: [],
+            myList: [],
+            recommendations: [],
+            continueWatching: [],
+            featuredContent: [],
+            categories: [],
+            isLoading: false,
+            searchResults: [],
+            currentCategory: null
+        };
     }
 
     async init() {
-        await this.loadUserData();
-        this.setupDOM();
-        this.setupEvents();
-        this.setupTheme();
-        this.loadInitialContent();
-        this.setupServiceWorker();
-        this.setupIntersectionObserver();
+        try {
+            // Show loading overlay
+            this.ui.showLoading();
+            
+            // Initialize components
+            await this.initializeComponents();
+            
+            // Load user data
+            await this.loadUserData();
+            
+            // Load initial content
+            await this.loadInitialContent();
+            
+            // Initialize event listeners
+            this.setupEventListeners();
+            
+            // Initialize sliders
+            this.initializeSliders();
+            
+            // Check for updates
+            this.checkForUpdates();
+            
+            // Hide loading overlay
+            setTimeout(() => {
+                this.ui.hideLoading();
+            }, 1000);
+            
+            console.log('SilvaStream App initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize app:', error);
+            this.ui.showError('Failed to initialize application. Please refresh the page.');
+        }
+    }
+
+    async initializeComponents() {
+        // Initialize theme
+        this.theme = new ThemeManager();
+        await this.theme.init();
+        
+        // Initialize PWA
+        this.pwa = new PWAHandler();
+        await this.pwa.init();
+        
+        // Initialize notifications
+        this.notifications = new NotificationManager();
+        await this.notifications.init();
+        
+        // Initialize offline manager
+        this.offlineManager = new OfflineManager();
+        await this.offlineManager.init();
+        
+        // Initialize recommendation engine
+        this.recommendationEngine = new RecommendationEngine();
     }
 
     async loadUserData() {
-        // Load user data from localStorage
-        const savedTheme = localStorage.getItem('silvastream-theme');
-        const savedProfile = localStorage.getItem('silvastream-profile');
-        const savedHistory = localStorage.getItem('silvastream-history');
-
-        if (savedTheme) this.theme = savedTheme;
-        if (savedProfile) this.userProfile = JSON.parse(savedProfile);
-        if (savedHistory) this.watchHistory = JSON.parse(savedHistory);
-    }
-
-    setupDOM() {
-        // Cache DOM elements
-        this.header = document.getElementById('header');
-        this.searchInput = document.querySelector('.search-input');
-        this.searchBtn = document.querySelector('.search-btn');
-        this.loading = document.getElementById('loading');
-        this.errorMessage = document.getElementById('error-message');
-        this.heroWatchBtn = document.getElementById('hero-watch-btn');
-        this.heroInfoBtn = document.getElementById('hero-info-btn');
-        this.themeToggle = document.querySelector('.theme-toggle');
-        
-        // Create theme toggle if not exists
-        if (!this.themeToggle) {
-            this.themeToggle = document.createElement('button');
-            this.themeToggle.className = 'theme-toggle';
-            this.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            document.body.appendChild(this.themeToggle);
-        }
-    }
-
-    setupEvents() {
-        // Window events
-        window.addEventListener('scroll', () => this.handleScroll());
-        
-        // Search events
-        if (this.searchBtn) {
-            this.searchBtn.addEventListener('click', () => this.openSearchPage());
-        }
-        if (this.searchInput) {
-            this.searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') this.openSearchPage();
-            });
-        }
-        
-        // Theme toggle
-        this.themeToggle.addEventListener('click', () => this.toggleTheme());
-        
-        // Hero section events
-        if (this.heroWatchBtn) {
-            this.heroWatchBtn.addEventListener('click', () => this.showRandomMovie());
-        }
-        if (this.heroInfoBtn) {
-            this.heroInfoBtn.addEventListener('click', () => {
-                document.getElementById('trending-now').scrollIntoView({ 
-                    behavior: 'smooth' 
-                });
-            });
-        }
-
-        // Mobile menu toggle (for smaller screens)
-        this.setupMobileMenu();
-    }
-
-    setupTheme() {
-        document.documentElement.setAttribute('data-theme', this.theme);
-        const icon = this.theme === 'dark' ? 'fa-sun' : 'fa-moon';
-        this.themeToggle.innerHTML = `<i class="fas ${icon}"></i>`;
-    }
-
-    toggleTheme() {
-        this.theme = this.theme === 'dark' ? 'light' : 'dark';
-        this.setupTheme();
-        localStorage.setItem('silvastream-theme', this.theme);
-    }
-
-    handleScroll() {
-        if (window.scrollY > 100) {
-            this.header.classList.add('scrolled');
-        } else {
-            this.header.classList.remove('scrolled');
-        }
-
-        // Parallax effect for hero
-        const hero = document.querySelector('.hero');
-        if (hero) {
-            const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.5;
-            hero.style.transform = `translate3d(0, ${rate}px, 0)`;
-        }
-    }
-
-    showError(message, type = 'error') {
-        if (!this.errorMessage) return;
-        
-        this.errorMessage.textContent = message;
-        this.errorMessage.className = `error-message ${type}`;
-        this.errorMessage.style.display = 'block';
-        
-        setTimeout(() => {
-            this.errorMessage.style.display = 'none';
-        }, 5000);
-    }
-
-    showLoading() {
-        if (this.loading) {
-            this.loading.style.display = 'flex';
-        }
-    }
-
-    hideLoading() {
-        if (this.loading) {
-            this.loading.style.display = 'none';
-        }
-    }
-
-    async openSearchPage() {
-        const query = this.searchInput?.value.trim() || '';
-        localStorage.setItem('searchQuery', query);
-        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
-    }
-
-    async showRandomMovie() {
         try {
-            const randomCategories = ['action', 'drama', 'comedy', 'adventure'];
-            const randomCategory = randomCategories[Math.floor(Math.random() * randomCategories.length)];
-            const results = await MovieAPI.searchMovies(randomCategory);
+            // Load user from localStorage or create guest
+            this.state.user = this.auth.getUser() || Config.getDefaultUser();
             
-            if (results?.results?.items?.length > 0) {
-                const randomMovie = results.results.items[Math.floor(Math.random() * results.results.items.length)];
-                window.location.href = `movie-details.html?id=${randomMovie.subjectId}`;
-            }
+            // Load watch history
+            this.state.watchHistory = this.cache.get('watchHistory') || [];
+            
+            // Load my list
+            this.state.myList = this.cache.get('myList') || [];
+            this.updateListCount();
+            
+            // Load recommendations
+            this.state.recommendations = this.cache.get('recommendations') || [];
+            
+            // Update UI with user data
+            this.updateUserUI();
+            
         } catch (error) {
-            console.error('Error loading random movie:', error);
+            console.error('Failed to load user data:', error);
         }
     }
 
     async loadInitialContent() {
-        this.showLoading();
-        
         try {
-            // Load categories with view more functionality
-            await this.loadCategoriesWithViewMore();
+            // Load featured content for hero slider
+            await this.loadFeaturedContent();
             
-            // Load movie slider
-            await this.loadMovieSlider();
+            // Load trending movies
+            await this.loadTrendingMovies();
+            
+            // Load categories
+            await this.loadCategories();
+            
+            // Load recommendations based on watch history
+            if (this.state.watchHistory.length > 0) {
+                await this.loadRecommendations();
+            }
             
             // Load continue watching
             await this.loadContinueWatching();
             
-            // Load recommendations based on history
-            await this.loadRecommendations();
-            
         } catch (error) {
-            console.error('Error loading initial content:', error);
-            this.showError('Failed to load content. Please check your connection.');
-        } finally {
-            this.hideLoading();
+            console.error('Failed to load initial content:', error);
+            this.ui.showError('Failed to load content. Please check your connection.');
         }
     }
 
-    async loadCategoriesWithViewMore() {
-        for (const category of categories) {
-            try {
-                const results = await MovieAPI.searchMovies(category.query);
-                if (results?.results?.items) {
-                    this.displayMovies(results.results.items.slice(0, 10), category.id);
-                    
-                    // Add view more button
-                    this.addViewMoreButton(category.id, category.query, results.results.items);
-                }
-            } catch (error) {
-                console.error(`Error loading ${category.id}:`, error);
-            }
-        }
-    }
-
-    addViewMoreButton(containerId, categoryName, allItems) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        const viewMoreBtn = document.createElement('button');
-        viewMoreBtn.className = 'view-more';
-        viewMoreBtn.innerHTML = '<i class="fas fa-arrow-right"></i> View More';
-        viewMoreBtn.addEventListener('click', () => {
-            this.openCategoryPage(categoryName, allItems);
-        });
-
-        container.parentNode.insertBefore(viewMoreBtn, container.nextSibling);
-    }
-
-    openCategoryPage(categoryName, items) {
-        localStorage.setItem('categoryItems', JSON.stringify(items));
-        localStorage.setItem('categoryName', categoryName);
-        window.location.href = `category.html?name=${encodeURIComponent(categoryName)}`;
-    }
-
-    async loadMovieSlider() {
+    async loadFeaturedContent() {
         try {
-            const results = await MovieAPI.searchMovies('trending');
-            if (results?.results?.items) {
-                this.createMovieSlider(results.results.items.slice(0, 10));
+            const data = await this.api.getTrendingMovies('all', 10);
+            
+            if (data && data.results && data.results.items) {
+                this.state.featuredContent = data.results.items.slice(0, 5);
+                this.renderFeaturedSlider();
             }
         } catch (error) {
-            console.error('Error loading movie slider:', error);
-        }
-    }
-
-    createMovieSlider(movies) {
-        const sliderSection = document.createElement('section');
-        sliderSection.className = 'movie-slider';
-        sliderSection.innerHTML = `
-            <div class="slider-header">
-                <h2 class="section-title">
-                    <i class="fas fa-star"></i> Recommended For You
-                </h2>
-                <div class="slider-controls">
-                    <button class="slider-prev"><i class="fas fa-chevron-left"></i></button>
-                    <button class="slider-next"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-            <div class="slider-container" id="movie-slider-container"></div>
-            <div class="whatsapp-promo-slider">
-                <i class="fab fa-whatsapp"></i>
-                <p>Follow SilvaStream on WhatsApp for updates!</p>
-                <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
-                   target="_blank" class="whatsapp-btn">
-                    Join Channel
-                </a>
-            </div>
-        `;
-
-        const main = document.querySelector('main');
-        if (main) {
-            main.insertBefore(sliderSection, main.firstChild);
-        }
-
-        const sliderContainer = document.getElementById('movie-slider-container');
-        if (sliderContainer) {
-            sliderContainer.innerHTML = movies.map(movie => this.createSliderCard(movie)).join('');
-
-            // Setup slider controls
-            this.setupSliderControls();
-        }
-    }
-
-    createSliderCard(movie) {
-        const isMovie = MovieAPI.isMovie(movie);
-        const posterUrl = movie.cover?.url || 'https://via.placeholder.com/300x450/2a2a2a/ffffff?text=No+Image';
-        
-        return `
-            <div class="slider-card" data-id="${movie.subjectId}" data-type="${isMovie ? 'movie' : 'series'}">
-                <img src="${posterUrl}" alt="${movie.title}" class="slider-poster">
-                <div class="slider-overlay">
-                    <div class="slider-info">
-                        <h3>${movie.title}</h3>
-                        <p>${movie.year || ''}</p>
-                        <button class="slider-play-btn">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    setupSliderControls() {
-        const sliderContainer = document.getElementById('movie-slider-container');
-        const prevBtn = document.querySelector('.slider-prev');
-        const nextBtn = document.querySelector('.slider-next');
-
-        let scrollAmount = 0;
-        const scrollStep = 300;
-
-        prevBtn?.addEventListener('click', () => {
-            scrollAmount = Math.max(0, scrollAmount - scrollStep);
-            sliderContainer.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-        });
-
-        nextBtn?.addEventListener('click', () => {
-            scrollAmount += scrollStep;
-            sliderContainer.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-        });
-
-        // Auto-scroll
-        let autoScroll = setInterval(() => {
-            scrollAmount += scrollStep;
-            if (scrollAmount >= sliderContainer.scrollWidth - sliderContainer.clientWidth) {
-                scrollAmount = 0;
+            console.error('Failed to load featured content:', error);
+            // Fallback to cached content
+            const cached = this.cache.get('featuredContent');
+            if (cached) {
+                this.state.featuredContent = cached;
+                this.renderFeaturedSlider();
             }
-            sliderContainer.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-        }, 5000);
-
-        // Pause on hover
-        sliderContainer.addEventListener('mouseenter', () => clearInterval(autoScroll));
-        sliderContainer.addEventListener('mouseleave', () => {
-            autoScroll = setInterval(() => {
-                scrollAmount += scrollStep;
-                if (scrollAmount >= sliderContainer.scrollWidth - sliderContainer.clientWidth) {
-                    scrollAmount = 0;
-                }
-                sliderContainer.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-            }, 5000);
-        });
+        }
     }
 
-    async loadContinueWatching() {
-        if (this.watchHistory.length === 0) return;
-
-        const historySection = document.createElement('section');
-        historySection.className = 'continue-watching';
-        historySection.innerHTML = `
-            <h2 class="section-title">
-                <i class="fas fa-history"></i> Continue Watching
-            </h2>
-            <div class="history-grid" id="history-grid"></div>
-        `;
-
-        const main = document.querySelector('main');
-        if (main) {
-            const moviesSection = document.querySelector('.movies-section');
-            main.insertBefore(historySection, moviesSection);
-        }
-
-        const historyGrid = document.getElementById('history-grid');
-        if (historyGrid) {
-            // Load last 5 items from history
-            const recentItems = this.watchHistory.slice(-5).reverse();
+    async loadTrendingMovies() {
+        try {
+            const data = await this.api.getTrendingMovies('all', 20);
             
-            for (const item of recentItems) {
+            if (data && data.results && data.results.items) {
+                this.renderTrendingSlider(data.results.items.slice(0, 10));
+                
+                // Cache the data
+                this.cache.set('trendingMovies', data.results.items, 1800000); // 30 minutes
+            }
+        } catch (error) {
+            console.error('Failed to load trending movies:', error);
+            // Try cached data
+            const cached = this.cache.get('trendingMovies');
+            if (cached) {
+                this.renderTrendingSlider(cached.slice(0, 10));
+            }
+        }
+    }
+
+    async loadCategories() {
+        try {
+            const categoryGrid = document.getElementById('categoryGrid');
+            if (!categoryGrid) return;
+            
+            // Clear existing content
+            categoryGrid.innerHTML = '';
+            
+            // Load each category
+            const categoryPromises = Config.CATEGORIES.map(async (category) => {
                 try {
-                    const movieInfo = await MovieAPI.getMovieInfo(item.id);
-                    if (movieInfo?.results?.subject) {
-                        const card = this.createHistoryCard(movieInfo.results.subject, item);
-                        historyGrid.innerHTML += card;
+                    const data = await this.api.searchMovies(category.query, { limit: 8 });
+                    
+                    if (data && data.results && data.results.items) {
+                        return {
+                            ...category,
+                            items: data.results.items.slice(0, 8)
+                        };
                     }
                 } catch (error) {
-                    console.error('Error loading history item:', error);
+                    console.error(`Failed to load ${category.name}:`, error);
+                    return {
+                        ...category,
+                        items: []
+                    };
                 }
-            }
+            });
+            
+            const categoriesWithData = await Promise.all(categoryPromises);
+            this.state.categories = categoriesWithData;
+            
+            // Render categories
+            categoriesWithData.forEach((category, index) => {
+                if (category.items && category.items.length > 0) {
+                    this.renderCategory(category, index);
+                }
+            });
+            
+        } catch (error) {
+            console.error('Failed to load categories:', error);
         }
-    }
-
-    createHistoryCard(movie, historyItem) {
-        const posterUrl = movie.cover?.url || 'https://via.placeholder.com/300x450/2a2a2a/ffffff?text=No+Image';
-        
-        return `
-            <div class="history-card" data-id="${movie.subjectId}">
-                <img src="${posterUrl}" alt="${movie.title}" class="history-poster">
-                <div class="progress-bar">
-                    <div class="progress" style="width: ${historyItem.progress || 0}%"></div>
-                </div>
-                <div class="history-info">
-                    <h3>${movie.title}</h3>
-                    <p>Continue from ${this.formatTime(historyItem.timestamp || 0)}</p>
-                    <button class="resume-btn">
-                        <i class="fas fa-play"></i> Resume
-                    </button>
-                </div>
-            </div>
-        `;
     }
 
     async loadRecommendations() {
-        if (this.watchHistory.length === 0) return;
+        if (this.state.watchHistory.length === 0) return;
+        
+        try {
+            // Get genres from watch history
+            const watchedGenres = this.getWatchedGenres();
+            
+            if (watchedGenres.length > 0) {
+                const genre = watchedGenres[0]; // Use most watched genre
+                const data = await this.api.searchMovies(genre, { limit: 10 });
+                
+                if (data && data.results && data.results.items) {
+                    this.state.recommendations = data.results.items;
+                    this.renderRecommendations();
+                    
+                    // Cache recommendations
+                    this.cache.set('recommendations', this.state.recommendations, 3600000);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load recommendations:', error);
+        }
+    }
 
-        // Simple recommendation based on most watched genre
+    async loadContinueWatching() {
+        if (this.state.watchHistory.length === 0) return;
+        
+        try {
+            // Get last 5 watched items
+            const continueWatching = this.state.watchHistory
+                .slice(-5)
+                .reverse();
+            
+            this.state.continueWatching = continueWatching;
+            
+            if (continueWatching.length > 0) {
+                this.renderContinueWatching();
+                document.getElementById('continueWatchingSection').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Failed to load continue watching:', error);
+        }
+    }
+
+    // Render Methods
+    renderFeaturedSlider() {
+        const slidesContainer = document.getElementById('featuredSlides');
+        if (!slidesContainer) return;
+        
+        slidesContainer.innerHTML = this.state.featuredContent.map((item, index) => {
+            const isActive = index === 0 ? 'is-active' : '';
+            const posterUrl = this.api.getOptimizedImageUrl(item.cover?.url, 'large');
+            
+            return `
+                <li class="splide__slide ${isActive}">
+                    <div class="slide-content">
+                        <img src="${posterUrl}" 
+                             alt="${item.title}"
+                             class="slide-image"
+                             loading="${index === 0 ? 'eager' : 'lazy'}">
+                        <div class="slide-overlay">
+                            <div class="slide-info">
+                                <h2 class="slide-title">${item.title}</h2>
+                                <div class="slide-meta">
+                                    <span>${item.year || 'N/A'}</span>
+                                    <span>•</span>
+                                    <span>${MovieAPI.isSeries(item) ? 'Series' : 'Movie'}</span>
+                                    <span>•</span>
+                                    <span><i class="fas fa-star"></i> ${item.imdbRatingValue || 'N/A'}</span>
+                                </div>
+                                <p class="slide-description">${item.description?.substring(0, 150) || ''}...</p>
+                                <div class="slide-actions">
+                                    <button class="btn btn-primary watch-now" data-id="${item.subjectId}" data-type="${MovieAPI.isSeries(item) ? 'series' : 'movie'}">
+                                        <i class="fas fa-play"></i> Watch Now
+                                    </button>
+                                    <button class="btn btn-outline add-to-list" data-id="${item.subjectId}">
+                                        <i class="fas fa-plus"></i> Add to List
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            `;
+        }).join('');
+        
+        // Initialize slider
+        this.initializeMainSlider();
+    }
+
+    renderTrendingSlider(items) {
+        const trendingList = document.getElementById('trendingList');
+        if (!trendingList) return;
+        
+        trendingList.innerHTML = items.map(item => {
+            const posterUrl = this.api.getOptimizedImageUrl(item.cover?.url, 'medium');
+            const isInList = this.isInMyList(item.subjectId);
+            
+            return `
+                <div class="splide__slide">
+                    <div class="movie-card">
+                        <div class="movie-poster-container">
+                            <img src="${posterUrl}" 
+                                 alt="${item.title}"
+                                 class="movie-poster"
+                                 loading="lazy">
+                            <div class="movie-overlay">
+                                <button class="play-btn" data-id="${item.subjectId}" data-type="${MovieAPI.isSeries(item) ? 'series' : 'movie'}">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="list-btn ${isInList ? 'in-list' : ''}" data-id="${item.subjectId}">
+                                    <i class="fas ${isInList ? 'fa-check' : 'fa-plus'}"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">${item.title}</h3>
+                            <div class="movie-meta">
+                                <span>${item.year || 'N/A'}</span>
+                                <span>•</span>
+                                <span>${MovieAPI.isSeries(item) ? 'Series' : 'Movie'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Initialize slider
+        this.initializeTrendingSlider();
+    }
+
+    renderCategory(category, delayIndex) {
+        const categoryGrid = document.getElementById('categoryGrid');
+        if (!categoryGrid) return;
+        
+        const categoryElement = document.createElement('section');
+        categoryElement.className = 'section-slider animate-slide-up';
+        categoryElement.style.animationDelay = `${delayIndex * 0.1}s`;
+        
+        categoryElement.innerHTML = `
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="${category.icon}" style="color: ${category.color}"></i>
+                    <h2>${category.name}</h2>
+                </div>
+                ${category.viewAll ? `
+                    <a href="category.html?type=${category.id}" class="view-all">
+                        View All
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                ` : ''}
+            </div>
+            <div class="category-items">
+                ${category.items.map(item => {
+                    const posterUrl = this.api.getOptimizedImageUrl(item.cover?.url, 'small');
+                    const isInList = this.isInMyList(item.subjectId);
+                    
+                    return `
+                        <div class="category-item" data-id="${item.subjectId}" data-type="${MovieAPI.isSeries(item) ? 'series' : 'movie'}">
+                            <div class="item-poster">
+                                <img src="${posterUrl}" 
+                                     alt="${item.title}"
+                                     loading="lazy">
+                                <div class="item-overlay">
+                                    <button class="play-btn" data-id="${item.subjectId}">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="list-btn ${isInList ? 'in-list' : ''}" data-id="${item.subjectId}">
+                                        <i class="fas ${isInList ? 'fa-check' : 'fa-plus'}"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="item-info">
+                                <h4 class="item-title">${item.title}</h4>
+                                <div class="item-meta">
+                                    <span>${item.year || 'N/A'}</span>
+                                    <span>•</span>
+                                    <span><i class="fas fa-star"></i> ${item.imdbRatingValue || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        
+        categoryGrid.appendChild(categoryElement);
+    }
+
+    renderRecommendations() {
+        const recommendationsList = document.getElementById('recommendationsList');
+        if (!recommendationsList || this.state.recommendations.length === 0) return;
+        
+        recommendationsList.innerHTML = this.state.recommendations.slice(0, 10).map(item => {
+            const posterUrl = this.api.getOptimizedImageUrl(item.cover?.url, 'medium');
+            const isInList = this.isInMyList(item.subjectId);
+            
+            return `
+                <div class="splide__slide">
+                    <div class="movie-card">
+                        <div class="movie-poster-container">
+                            <img src="${posterUrl}" 
+                                 alt="${item.title}"
+                                 class="movie-poster"
+                                 loading="lazy">
+                            <div class="movie-overlay">
+                                <button class="play-btn" data-id="${item.subjectId}" data-type="${MovieAPI.isSeries(item) ? 'series' : 'movie'}">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="list-btn ${isInList ? 'in-list' : ''}" data-id="${item.subjectId}">
+                                    <i class="fas ${isInList ? 'fa-check' : 'fa-plus'}"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">${item.title}</h3>
+                            <div class="movie-meta">
+                                <span><i class="fas fa-thumbs-up"></i> Recommended</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Initialize slider
+        this.initializeRecommendationsSlider();
+    }
+
+    renderContinueWatching() {
+        const continueList = document.getElementById('continueList');
+        if (!continueList) return;
+        
+        continueList.innerHTML = this.state.continueWatching.map(item => {
+            const posterUrl = this.api.getOptimizedImageUrl(item.poster, 'medium');
+            const progress = item.progress || 0;
+            const progressPercent = Math.min(progress * 100, 100);
+            
+            return `
+                <div class="splide__slide">
+                    <div class="continue-card">
+                        <div class="continue-poster">
+                            <img src="${posterUrl}" 
+                                 alt="${item.title}"
+                                 loading="lazy">
+                            <div class="continue-progress">
+                                <div class="progress-bar" style="width: ${progressPercent}%"></div>
+                            </div>
+                            <div class="continue-overlay">
+                                <button class="play-btn" data-id="${item.id}" data-type="${item.type}" data-resume="true">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="continue-info">
+                            <h4 class="continue-title">${item.title}</h4>
+                            <div class="continue-meta">
+                                <span>Continue from ${Math.round(progress * 100)}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Initialize slider
+        this.initializeContinueSlider();
+    }
+
+    // Slider Initialization
+    initializeMainSlider() {
+        const mainSlider = new Splide('#mainSlider', {
+            type: 'fade',
+            rewind: true,
+            pagination: false,
+            arrows: true,
+            autoplay: true,
+            interval: 5000,
+            pauseOnHover: true,
+            pauseOnFocus: true,
+            speed: 1000,
+            classes: {
+                arrows: 'splide__arrows slider-arrows',
+                arrow: 'splide__arrow slider-arrow',
+                prev: 'splide__arrow--prev slider-prev',
+                next: 'splide__arrow--next slider-next',
+            }
+        });
+        
+        mainSlider.mount();
+        
+        // Add progress bar
+        mainSlider.on('mounted move', () => {
+            const bar = mainSlider.root.querySelector('.splide__progress__bar');
+            if (bar) {
+                bar.style.width = `${(mainSlider.index + 1) / mainSlider.length * 100}%`;
+            }
+        });
+    }
+
+    initializeTrendingSlider() {
+        new Splide('#trendingSlider', {
+            type: 'slide',
+            perPage: 5,
+            perMove: 1,
+            gap: '20px',
+            pagination: false,
+            arrows: true,
+            breakpoints: {
+                1024: { perPage: 4 },
+                768: { perPage: 3 },
+                480: { perPage: 2 }
+            }
+        }).mount();
+    }
+
+    initializeRecommendationsSlider() {
+        new Splide('#recommendationsSlider', {
+            type: 'slide',
+            perPage: 5,
+            perMove: 1,
+            gap: '20px',
+            pagination: false,
+            arrows: true,
+            breakpoints: {
+                1024: { perPage: 4 },
+                768: { perPage: 3 },
+                480: { perPage: 2 }
+            }
+        }).mount();
+    }
+
+    initializeContinueSlider() {
+        new Splide('#continueSlider', {
+            type: 'slide',
+            perPage: 5,
+            perMove: 1,
+            gap: '20px',
+            pagination: false,
+            arrows: true,
+            breakpoints: {
+                1024: { perPage: 4 },
+                768: { perPage: 3 },
+                480: { perPage: 2 }
+            }
+        }).mount();
+    }
+
+    initializeSliders() {
+        // Initialize any other sliders
+        const sliders = document.querySelectorAll('.splide:not([id])');
+        sliders.forEach(slider => {
+            new Splide(slider, {
+                type: 'slide',
+                perPage: 4,
+                perMove: 1,
+                gap: '15px',
+                pagination: false,
+                arrows: false,
+                breakpoints: {
+                    768: { perPage: 3 },
+                    480: { perPage: 2 }
+                }
+            }).mount();
+        });
+    }
+
+    // Event Listeners
+    setupEventListeners() {
+        // Play buttons
+        document.addEventListener('click', (e) => {
+            const playBtn = e.target.closest('.play-btn, .watch-now');
+            if (playBtn) {
+                const id = playBtn.dataset.id;
+                const type = playBtn.dataset.type || 'movie';
+                const resume = playBtn.dataset.resume === 'true';
+                
+                if (resume) {
+                    this.resumeWatching(id, type);
+                } else {
+                    this.playContent(id, type);
+                }
+            }
+            
+            // Add to list buttons
+            const listBtn = e.target.closest('.list-btn, .add-to-list');
+            if (listBtn) {
+                const id = listBtn.dataset.id;
+                this.toggleMyList(id);
+            }
+            
+            // Category items
+            const categoryItem = e.target.closest('.category-item');
+            if (categoryItem) {
+                const id = categoryItem.dataset.id;
+                const type = categoryItem.dataset.type || 'movie';
+                this.viewDetails(id, type);
+            }
+        });
+        
+        // Start watching button
+        const startWatchingBtn = document.getElementById('startWatching');
+        if (startWatchingBtn) {
+            startWatchingBtn.addEventListener('click', () => {
+                if (this.state.featuredContent.length > 0) {
+                    const firstItem = this.state.featuredContent[0];
+                    this.playContent(firstItem.subjectId, MovieAPI.isSeries(firstItem) ? 'series' : 'movie');
+                }
+            });
+        }
+        
+        // Search trigger
+        const searchTriggers = document.querySelectorAll('.search-trigger');
+        searchTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = 'search.html';
+            });
+        });
+        
+        // Logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => this.logout());
+        }
+        
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => this.toggleMobileMenu());
+        }
+        
+        // Scroll events for navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    }
+
+    // Core Methods
+    async playContent(id, type = 'movie') {
+        try {
+            // Add to watch history
+            this.addToWatchHistory(id, type);
+            
+            // Redirect to player
+            window.location.href = `player.html?id=${id}&type=${type}`;
+        } catch (error) {
+            console.error('Failed to play content:', error);
+            this.ui.showError('Failed to play content. Please try again.');
+        }
+    }
+
+    async resumeWatching(id, type) {
+        try {
+            const historyItem = this.state.watchHistory.find(item => item.id === id);
+            if (historyItem && historyItem.progress) {
+                window.location.href = `player.html?id=${id}&type=${type}&time=${historyItem.time}`;
+            } else {
+                this.playContent(id, type);
+            }
+        } catch (error) {
+            console.error('Failed to resume watching:', error);
+            this.ui.showError('Failed to resume playback.');
+        }
+    }
+
+    async viewDetails(id, type = 'movie') {
+        try {
+            const page = type === 'series' ? 'series-details' : 'movie-details';
+            window.location.href = `${page}.html?id=${id}`;
+        } catch (error) {
+            console.error('Failed to view details:', error);
+        }
+    }
+
+    async toggleMyList(id) {
+        try {
+            const index = this.state.myList.findIndex(item => item.id === id);
+            
+            if (index === -1) {
+                // Add to list
+                const item = await this.getContentInfo(id);
+                if (item) {
+                    this.state.myList.push({
+                        id: id,
+                        title: item.title,
+                        poster: item.cover?.url,
+                        type: MovieAPI.isSeries(item) ? 'series' : 'movie',
+                        addedAt: new Date().toISOString()
+                    });
+                    
+                    this.ui.showNotification('Added to My List', 'success');
+                }
+            } else {
+                // Remove from list
+                this.state.myList.splice(index, 1);
+                this.ui.showNotification('Removed from My List', 'info');
+            }
+            
+            // Update cache
+            this.cache.set('myList', this.state.myList);
+            
+            // Update UI
+            this.updateListCount();
+            this.updateListButtons(id);
+            
+        } catch (error) {
+            console.error('Failed to toggle my list:', error);
+            this.ui.showError('Failed to update My List.');
+        }
+    }
+
+    async getContentInfo(id) {
+        try {
+            // Check cache first
+            const cached = this.cache.get(`content_${id}`);
+            if (cached) return cached;
+            
+            // Fetch from API
+            const data = await this.api.getMovieInfo(id);
+            if (data && data.results && data.results.subject) {
+                this.cache.set(`content_${id}`, data.results.subject, 3600000);
+                return data.results.subject;
+            }
+        } catch (error) {
+            console.error('Failed to get content info:', error);
+        }
+        return null;
+    }
+
+    addToWatchHistory(id, type, time = 0, duration = 0) {
+        const progress = duration > 0 ? time / duration : 0;
+        
+        // Remove existing entry if exists
+        this.state.watchHistory = this.state.watchHistory.filter(item => item.id !== id);
+        
+        // Add new entry
+        this.state.watchHistory.push({
+            id: id,
+            type: type,
+            time: time,
+            duration: duration,
+            progress: progress,
+            watchedAt: new Date().toISOString()
+        });
+        
+        // Keep only last 50 items
+        if (this.state.watchHistory.length > 50) {
+            this.state.watchHistory = this.state.watchHistory.slice(-50);
+        }
+        
+        // Update cache
+        this.cache.set('watchHistory', this.state.watchHistory);
+        
+        // Update recommendations
+        this.updateRecommendations();
+    }
+
+    // Utility Methods
+    isInMyList(id) {
+        return this.state.myList.some(item => item.id === id);
+    }
+
+    updateListCount() {
+        const count = this.state.myList.length;
+        
+        // Update desktop counter
+        const listCount = document.getElementById('listCount');
+        if (listCount) {
+            listCount.textContent = count;
+            listCount.style.display = count > 0 ? 'inline-flex' : 'none';
+        }
+        
+        // Update mobile counter
+        const mobileListCount = document.getElementById('mobileListCount');
+        if (mobileListCount) {
+            mobileListCount.textContent = count;
+            mobileListCount.style.display = count > 0 ? 'inline-flex' : 'none';
+        }
+    }
+
+    updateListButtons(id) {
+        const isInList = this.isInMyList(id);
+        
+        // Update all list buttons for this item
+        const listButtons = document.querySelectorAll(`[data-id="${id}"]`);
+        listButtons.forEach(btn => {
+            const icon = btn.querySelector('i');
+            if (icon) {
+                icon.className = isInList ? 'fas fa-check' : 'fas fa-plus';
+            }
+            btn.classList.toggle('in-list', isInList);
+        });
+    }
+
+    updateUserUI() {
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        
+        if (userName) {
+            userName.textContent = this.state.user.name;
+        }
+        
+        if (userAvatar) {
+            if (this.state.user.avatar) {
+                userAvatar.innerHTML = `<img src="${this.state.user.avatar}" alt="${this.state.user.name}">`;
+            } else {
+                userAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+            }
+        }
+    }
+
+    getWatchedGenres() {
         const genreCount = {};
-        this.watchHistory.forEach(item => {
-            if (item.genre) {
-                item.genre.split(',').forEach(genre => {
-                    genreCount[genre.trim()] = (genreCount[genre.trim()] || 0) + 1;
+        
+        this.state.watchHistory.forEach(item => {
+            if (item.genres) {
+                item.genres.forEach(genre => {
+                    genreCount[genre] = (genreCount[genre] || 0) + 1;
                 });
             }
         });
-
-        const topGenre = Object.keys(genreCount).sort((a, b) => genreCount[b] - genreCount[a])[0];
         
-        if (topGenre) {
-            try {
-                const results = await MovieAPI.searchMovies(topGenre);
-                if (results?.results?.items) {
-                    this.createRecommendationsSection(results.results.items.slice(0, 10), topGenre);
-                }
-            } catch (error) {
-                console.error('Error loading recommendations:', error);
-            }
-        }
+        return Object.entries(genreCount)
+            .sort((a, b) => b[1] - a[1])
+            .map(([genre]) => genre);
     }
 
-    createRecommendationsSection(movies, genre) {
-        const recSection = document.createElement('section');
-        recSection.className = 'recommendations';
-        recSection.innerHTML = `
-            <h2 class="section-title">
-                <i class="fas fa-magic"></i> Because you watched ${genre}
-            </h2>
-            <div class="rec-grid" id="rec-grid"></div>
-        `;
-
-        const main = document.querySelector('main');
-        if (main) {
-            main.appendChild(recSection);
-        }
-
-        const recGrid = document.getElementById('rec-grid');
-        if (recGrid) {
-            recGrid.innerHTML = movies.map(movie => this.createMovieCard(movie)).join('');
-            this.addMovieCardEvents();
-        }
+    updateRecommendations() {
+        // In a real app, this would call an API or use ML
+        // For now, we'll just reload recommendations
+        this.loadRecommendations();
     }
 
-    createMovieCard(movie) {
-        const isMovie = MovieAPI.isMovie(movie);
-        const posterUrl = movie.cover?.url || movie.cover || movie.thumbnail || 'https://via.placeholder.com/300x450/2a2a2a/ffffff?text=No+Image';
+    toggleMobileMenu() {
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         
-        return `
-            <div class="movie-card" data-id="${movie.subjectId}" data-type="${isMovie ? 'movie' : 'series'}">
-                <img src="${posterUrl}" 
-                     alt="${movie.title}" 
-                     class="movie-poster" 
-                     loading="lazy"
-                     onerror="this.src='https://via.placeholder.com/300x450/2a2a2a/ffffff?text=No+Image'">
-                <div class="movie-type">${isMovie ? 'MOVIE' : 'SERIES'}</div>
-                <div class="movie-info">
-                    <h3 class="movie-title">${movie.title}</h3>
-                    <p class="movie-year">${movie.year || movie.releaseDate || 'N/A'}</p>
-                </div>
-                <div class="movie-hover">
-                    <button class="play-btn">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button class="add-btn">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button class="info-btn">
-                        <i class="fas fa-info"></i>
-                    </button>
-                </div>
-            </div>
-        `;
+        mobileNav.classList.toggle('active');
+        mobileMenuBtn.classList.toggle('active');
     }
 
-    displayMovies(movies, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        if (!movies || movies.length === 0) {
-            container.innerHTML = '<p>No movies found. Try a different search.</p>';
-            return;
-        }
-
-        container.innerHTML = movies.map(movie => this.createMovieCard(movie)).join('');
-        this.addMovieCardEvents();
-    }
-
-    addMovieCardEvents() {
-        document.querySelectorAll('.movie-card').forEach(card => {
-            const playBtn = card.querySelector('.play-btn');
-            const addBtn = card.querySelector('.add-btn');
-            const infoBtn = card.querySelector('.info-btn');
-
-            card.addEventListener('click', (e) => {
-                if (!playBtn.contains(e.target) && !addBtn.contains(e.target) && !infoBtn.contains(e.target)) {
-                    this.navigateToDetails(card);
-                }
-            });
-
-            playBtn?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.playMovie(card);
-            });
-
-            addBtn?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.addToMyList(card);
-            });
-
-            infoBtn?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.navigateToDetails(card);
-            });
-        });
-    }
-
-    navigateToDetails(card) {
-        const movieId = card.dataset.id;
-        const isMovie = card.dataset.type === 'movie';
-        
-        if (isMovie) {
-            window.location.href = `movie-details.html?id=${movieId}`;
-        } else {
-            window.location.href = `series-details.html?id=${movieId}`;
-        }
-    }
-
-    async playMovie(card) {
-        const movieId = card.dataset.id;
-        const isMovie = card.dataset.type === 'movie';
-        
-        // Add to watch history
-        this.addToWatchHistory(movieId, isMovie);
-        
-        if (isMovie) {
-            window.location.href = `playback.html?id=${movieId}&type=movie`;
-        } else {
-            window.location.href = `playback.html?id=${movieId}&type=series`;
-        }
-    }
-
-    addToMyList(card) {
-        const movieId = card.dataset.id;
-        const title = card.querySelector('.movie-title').textContent;
-        
-        // Get current my list
-        let myList = JSON.parse(localStorage.getItem('silvastream-mylist') || '[]');
-        
-        // Check if already in list
-        if (!myList.some(item => item.id === movieId)) {
-            myList.push({ id: movieId, title: title, addedAt: Date.now() });
-            localStorage.setItem('silvastream-mylist', JSON.stringify(myList));
+    async logout() {
+        try {
+            // Clear user data
+            this.auth.logout();
+            this.cache.clear();
             
-            this.showNotification('Added to My List!');
-        } else {
-            this.showNotification('Already in My List!');
+            // Redirect to home
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Logout failed:', error);
         }
     }
 
-    addToWatchHistory(id, isMovie, progress = 0) {
-        const historyItem = {
-            id,
-            type: isMovie ? 'movie' : 'series',
-            timestamp: progress,
-            watchedAt: Date.now()
-        };
-
-        this.watchHistory.push(historyItem);
-        
-        // Keep only last 50 items
-        if (this.watchHistory.length > 50) {
-            this.watchHistory = this.watchHistory.slice(-50);
-        }
-
-        localStorage.setItem('silvastream-history', JSON.stringify(this.watchHistory));
-    }
-
-    showNotification(message) {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            z-index: 3000;
-            box-shadow: var(--shadow);
-            animation: slideIn 0.3s ease;
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-
-    setupMobileMenu() {
-        if (window.innerWidth <= 768) {
-            const menuBtn = document.createElement('button');
-            menuBtn.className = 'mobile-menu-btn';
-            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            
-            this.header.querySelector('.header-content').prepend(menuBtn);
-            
-            menuBtn.addEventListener('click', () => {
-                this.navLinks?.classList.toggle('mobile-open');
-            });
-        }
-    }
-
-    setupServiceWorker() {
+    checkForUpdates() {
+        // Check for app updates
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('Service Worker registered:', reg))
-                .catch(err => console.log('Service Worker failed:', err));
-        }
-    }
-
-    setupIntersectionObserver() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    
-                    // Lazy load images
-                    const img = entry.target.querySelector('img[data-src]');
-                    if (img) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    }
+            navigator.serviceWorker.getRegistration().then(reg => {
+                if (reg) {
+                    reg.update();
                 }
             });
-        }, { threshold: 0.1 });
-
-        // Observe all movie cards
-        document.querySelectorAll('.movie-card').forEach(card => {
-            observer.observe(card);
-        });
+        }
+        
+        // Check for content updates every 5 minutes
+        setInterval(() => {
+            this.loadFeaturedContent();
+        }, 300000);
     }
 
-    formatTime(seconds) {
-        const hrs = Math.floor(seconds / 3600);
-        const mins = Math.floor((seconds % 3600) / 60);
-        const secs = Math.floor(seconds % 60);
-        
-        if (hrs > 0) {
-            return `${hrs}h ${mins}m ${secs}s`;
+    // Performance optimization
+    prefetchContent() {
+        // Prefetch likely next pages
+        if (this.state.watchHistory.length > 0) {
+            const lastWatched = this.state.watchHistory[this.state.watchHistory.length - 1];
+            this.api.prefetch(Config.getApiUrl(`${Config.API_CONFIG.ENDPOINTS.MOVIE_INFO}/${lastWatched.id}`));
         }
-        return `${mins}m ${secs}s`;
+    }
+
+    // Analytics
+    trackEvent(event, data = {}) {
+        if (!Config.APP_CONFIG.ANALYTICS.ENABLED) return;
+        
+        const analyticsData = {
+            event,
+            userId: this.state.user.id,
+            timestamp: new Date().toISOString(),
+            ...data
+        };
+        
+        // In a real app, send to analytics server
+        console.log('Analytics Event:', analyticsData);
+        
+        // Store locally for offline sync
+        this.cache.append('analytics_events', analyticsData);
     }
 }
 
-// Initialize the application when DOM is loaded
+// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new SilvaStreamApp();
+    window.app = new SilvaStreamApp();
+    window.app.init();
 });
-
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    .movie-card.visible {
-        animation: fadeInUp 0.6s ease;
-    }
-    
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-`;
-document.head.appendChild(style);
