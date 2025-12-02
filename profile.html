@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Manage your SilvaStream profile, watch history, and preferences">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/profile.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/profile.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="profile-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>My Profile</h1>
+                <button class="settings-btn" id="profile-settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="profile-main">
+        <div class="container">
+            <!-- Profile Overview -->
+            <section class="profile-overview">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="avatar-container">
+                            <img src="https://ui-avatars.com/api/?name=User&background=e50914&color=fff&size=128" 
+                                 alt="Profile" class="profile-avatar" id="profile-avatar">
+                            <button class="avatar-edit" id="edit-avatar">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="profile-name">Welcome, User!</h2>
+                            <p class="profile-email" id="profile-email">user@example.com</p>
+                            <div class="profile-badges">
+                                <span class="badge free">Free Account</span>
+                                <span class="badge member">Member Since 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-eye"></i>
+                            <div>
+                                <span class="stat-number" id="watch-count">0</span>
+                                <span class="stat-label">Movies Watched</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <span class="stat-number" id="watch-hours">0</span>
+                                <span class="stat-label">Hours Watched</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-bookmark"></i>
+                            <div>
+                                <span class="stat-number" id="watchlist-count">0</span>
+                                <span class="stat-label">In Watchlist</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Tabs -->
+            <section class="profile-tabs">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="watchlist">
+                        <i class="fas fa-bookmark"></i> Watchlist
+                    </button>
+                    <button class="tab-btn" data-tab="history">
+                        <i class="fas fa-history"></i> History
+                    </button>
+                    <button class="tab-btn" data-tab="recommendations">
+                        <i class="fas fa-star"></i> Recommendations
+                    </button>
+                    <button class="tab-btn" data-tab="settings">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                </div>
+
+                <!-- Watchlist Tab -->
+                <div class="tab-content active" id="watchlist-tab">
+                    <div class="tab-header">
+                        <h3>My Watchlist</h3>
+                        <button class="btn-clear" id="clear-watchlist">
+                            Clear All
+                        </button>
+                    </div>
+                    
+                    <div class="watchlist-grid" id="watchlist-grid">
+                        <!-- Watchlist items will be populated here -->
+                    </div>
+                    
+                    <div class="empty-state" id="empty-watchlist">
+                        <i class="fas fa-bookmark fa-3x"></i>
+                        <h3>Your watchlist is empty</h3>
+                        <p>Start adding movies and shows you want to watch later</p>
+                        <a href="movies.html" class="btn btn-primary">Browse Movies</a>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-content" id="history-tab">
+                    <div class="tab-header">
+                        <h3>Watch History</h3>
+                        <div class="history-filters">
+                            <select id="history-filter" class="filter-select">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="history-list" id="history-list">
+                        <!-- History items will be populated here -->
+                    </div>
+                    
+                    <div class="empty-state" id="empty-history">
+                        <i class="fas fa-history fa-3x"></i>
+                        <h3>No watch history</h3>
+                        <p>Start watching movies to build your history</p>
+                        <a href="movies.html" class="btn btn-primary">Start Watching</a>
+                    </div>
+                </div>
+
+                <!-- Recommendations Tab -->
+                <div class="tab-content" id="recommendations-tab">
+                    <div class="tab-header">
+                        <h3>Personalized Recommendations</h3>
+                        <p class="tab-subtitle">Based on your viewing history and preferences</p>
+                    </div>
+                    
+                    <div class="recommendations-grid" id="recommendations-grid">
+                        <!-- Recommendations will be populated here -->
+                    </div>
+                    
+                    <div class="recommendations-empty" id="empty-recommendations">
+                        <i class="fas fa-robot fa-3x"></i>
+                        <h3>Building recommendations...</h3>
+                        <p>Watch a few movies to get personalized suggestions</p>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings-tab">
+                    <div class="settings-section">
+                        <h3>Account Settings</h3>
+                        
+                        <div class="settings-group">
+                            <h4>Profile Information</h4>
+                            <div class="setting-item">
+                                <label for="display-name">Display Name</label>
+                                <input type="text" id="display-name" value="User">
+                            </div>
+                            <div class="setting-item">
+                                <label for="profile-email-input">Email</label>
+                                <input type="email" id="profile-email-input" value="user@example.com">
+                            </div>
+                            <button class="btn btn-primary" id="save-profile">Save Changes</button>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h4>Preferences</h4>
+                            <div class="preference-item">
+                                <label>
+                                    <input type="checkbox" id="auto-play" checked>
+                                    <span>Auto-play next episode</span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <label>
+                                    <input type="checkbox" id="quality-auto" checked>
+                                    <span>Auto-select best quality</span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <label>
+                                    <input type="checkbox" id="notifications" checked>
+                                    <span>Enable notifications</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h4>Privacy</h4>
+                            <div class="preference-item">
+                                <label>
+                                    <input type="checkbox" id="watch-history-private">
+                                    <span>Keep watch history private</span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <label>
+                                    <input type="checkbox" id="profile-private">
+                                    <span>Make profile private</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group danger-zone">
+                            <h4>Danger Zone</h4>
+                            <button class="btn btn-danger" id="clear-history-btn">
+                                Clear All Watch History
+                            </button>
+                            <button class="btn btn-danger" id="delete-account-btn">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upgrade Card -->
+            <section class="upgrade-card">
+                <div class="upgrade-content">
+                    <div class="upgrade-text">
+                        <h3>Upgrade to Premium</h3>
+                        <p>Get access to exclusive content, 4K streaming, and no ads</p>
+                    </div>
+                    <button class="btn btn-premium" id="upgrade-btn">
+                        <i class="fas fa-crown"></i>
+                        Upgrade Now
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="profile-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>SilvaStream Profile • Your Entertainment Hub</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Avatar Editor Modal -->
+    <div class="modal" id="avatar-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Profile Picture</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-options">
+                    <div class="avatar-option" data-avatar="default">
+                        <img src="https://ui-avatars.com/api/?name=User&background=e50914&color=fff" alt="Default">
+                        <span>Default</span>
+                    </div>
+                    <!-- More avatar options -->
+                </div>
+                <div class="avatar-upload">
+                    <label for="avatar-upload" class="btn btn-secondary">
+                        <i class="fas fa-upload"></i> Upload Photo
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" hidden>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/profile.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profile = new UserProfile();
+            profile.loadProfile();
+        });
+    </script>
+</body>
+</html>
