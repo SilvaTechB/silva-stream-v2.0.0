@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="AI-powered movie and TV show recommendations">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/recommendations.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/recommendations.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="recommendations-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>AI Recommendations</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="refresh-recommendations">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="action-btn" id="recommendations-settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+        <div class="assistant-container">
+            <div class="assistant-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="assistant-message">
+                <h3>Your Personal Entertainment Assistant</h3>
+                <p>Discover content tailored just for you based on your tastes and viewing habits</p>
+            </div>
+            <button class="assistant-chat-btn" id="chat-assistant">
+                <i class="fas fa-comment"></i>
+                Ask for suggestions
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="recommendations-main">
+        <div class="container">
+            <!-- Preference Settings -->
+            <section class="preference-section">
+                <div class="preference-header">
+                    <h2>Refine Your Preferences</h2>
+                    <button class="btn btn-outline" id="edit-preferences">
+                        Edit Preferences
+                    </button>
+                </div>
+                <div class="preference-tags" id="preference-tags">
+                    <span class="preference-tag">Action</span>
+                    <span class="preference-tag">Sci-Fi</span>
+                    <span class="preference-tag">Comedy</span>
+                    <span class="preference-tag">2020s</span>
+                    <span class="preference-tag">HD Quality</span>
+                    <span class="preference-tag">High Rating</span>
+                </div>
+            </section>
+
+            <!-- Today's Top Picks -->
+            <section class="top-picks-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-crown"></i>
+                        Today's Top Picks For You
+                    </h2>
+                    <div class="match-score">
+                        <span class="score-label">Match Score:</span>
+                        <span class="score-value" id="match-score">95%</span>
+                    </div>
+                </div>
+
+                <div class="top-picks-slider" id="top-picks-slider">
+                    <!-- Top picks will be populated here -->
+                </div>
+            </section>
+
+            <!-- Recommendation Categories -->
+            <section class="recommendation-categories">
+                <div class="categories-tabs">
+                    <button class="category-tab active" data-category="personalized">
+                        <i class="fas fa-user"></i>
+                        Personalized
+                    </button>
+                    <button class="category-tab" data-category="trending">
+                        <i class="fas fa-fire"></i>
+                        Trending Now
+                    </button>
+                    <button class="category-tab" data-category="similar">
+                        <i class="fas fa-random"></i>
+                        Similar to Your Favorites
+                    </button>
+                    <button class="category-tab" data-category="hidden">
+                        <i class="fas fa-gem"></i>
+                        Hidden Gems
+                    </button>
+                    <button class="category-tab" data-category="critics">
+                        <i class="fas fa-star"></i>
+                        Critic's Choice
+                    </button>
+                </div>
+
+                <div class="category-content">
+                    <!-- Personalized Recommendations -->
+                    <div class="category-pane active" id="personalized-pane">
+                        <div class="pane-header">
+                            <h3>Made Just For You</h3>
+                            <p>Based on your watch history and ratings</p>
+                        </div>
+                        <div class="recommendation-grid" id="personalized-grid">
+                            <!-- Personalized recommendations will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Trending Recommendations -->
+                    <div class="category-pane" id="trending-pane">
+                        <div class="pane-header">
+                            <h3>What Everyone's Watching</h3>
+                            <p>Top trending content in your network</p>
+                        </div>
+                        <div class="recommendation-grid" id="trending-grid">
+                            <!-- Trending recommendations will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Similar to Favorites -->
+                    <div class="category-pane" id="similar-pane">
+                        <div class="pane-header">
+                            <h3>If You Liked...</h3>
+                            <p>More content similar to your favorites</p>
+                        </div>
+                        <div class="favorites-carousel" id="favorites-carousel">
+                            <!-- Favorite items will be populated here -->
+                        </div>
+                        <div class="similar-grid" id="similar-grid">
+                            <!-- Similar recommendations will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Hidden Gems -->
+                    <div class="category-pane" id="hidden-pane">
+                        <div class="pane-header">
+                            <h3>Underrated Masterpieces</h3>
+                            <p>Hidden gems you might have missed</p>
+                        </div>
+                        <div class="hidden-gems-grid" id="hidden-gems-grid">
+                            <!-- Hidden gems will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Critic's Choice -->
+                    <div class="category-pane" id="critics-pane">
+                        <div class="pane-header">
+                            <h3>Critically Acclaimed</h3>
+                            <p>Award-winning and highly rated content</p>
+                        </div>
+                        <div class="critics-grid" id="critics-grid">
+                            <!-- Critic's choice will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mood-Based Recommendations -->
+            <section class="mood-recommendations">
+                <div class="section-header">
+                    <h2>Based on Your Mood</h2>
+                    <p>Select your current mood for tailored suggestions</p>
+                </div>
+                <div class="mood-selector">
+                    <button class="mood-option active" data-mood="any">
+                        <i class="fas fa-random"></i>
+                        <span>Surprise Me</span>
+                    </button>
+                    <button class="mood-option" data-mood="happy">
+                        <i class="fas fa-laugh"></i>
+                        <span>Happy</span>
+                    </button>
+                    <button class="mood-option" data-mood="sad">
+                        <i class="fas fa-sad-tear"></i>
+                        <span>Sad</span>
+                    </button>
+                    <button class="mood-option" data-mood="excited">
+                        <i class="fas fa-bolt"></i>
+                        <span>Excited</span>
+                    </button>
+                    <button class="mood-option" data-mood="relaxed">
+                        <i class="fas fa-couch"></i>
+                        <span>Relaxed</span>
+                    </button>
+                    <button class="mood-option" data-mood="adventurous">
+                        <i class="fas fa-mountain"></i>
+                        <span>Adventurous</span>
+                    </button>
+                </div>
+                <div class="mood-results" id="mood-results">
+                    <!-- Mood-based recommendations will be populated here -->
+                </div>
+            </section>
+
+            <!-- AI Insights -->
+            <section class="ai-insights">
+                <div class="insights-header">
+                    <h2>
+                        <i class="fas fa-chart-line"></i>
+                        Your Entertainment Profile
+                    </h2>
+                </div>
+                <div class="insights-container">
+                    <div class="insight-card">
+                        <div class="insight-chart">
+                            <canvas id="genre-chart"></canvas>
+                        </div>
+                        <div class="insight-info">
+                            <h3>Genre Distribution</h3>
+                            <p>Your viewing habits across different genres</p>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-chart">
+                            <canvas id="rating-chart"></canvas>
+                        </div>
+                        <div class="insight-info">
+                            <h3>Rating Patterns</h3>
+                            <p>How you rate different types of content</p>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-stats">
+                            <div class="stat">
+                                <span class="stat-number" id="avg-watch-time">2.5</span>
+                                <span class="stat-label">Avg. Hours/Day</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="completion-rate">85%</span>
+                                <span class="stat-label">Completion Rate</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="preferred-decade">2010s</span>
+                                <span class="stat-label">Preferred Decade</span>
+                            </div>
+                        </div>
+                        <div class="insight-info">
+                            <h3>Viewing Habits</h3>
+                            <p>Your watching patterns and preferences</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback Section -->
+            <section class="feedback-section">
+                <div class="feedback-header">
+                    <h3>Help Improve Recommendations</h3>
+                    <p>Your feedback helps our AI learn your preferences better</p>
+                </div>
+                <div class="feedback-actions">
+                    <button class="feedback-btn like" id="like-recommendations">
+                        <i class="fas fa-thumbs-up"></i>
+                        Like These Suggestions
+                    </button>
+                    <button class="feedback-btn dislike" id="dislike-recommendations">
+                        <i class="fas fa-thumbs-down"></i>
+                        Not My Taste
+                    </button>
+                    <button class="feedback-btn reset" id="reset-profile">
+                        <i class="fas fa-redo"></i>
+                        Reset My Profile
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- AI Chat Assistant -->
+    <div class="ai-chat-modal" id="ai-chat-modal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <h3>SilvaStream Assistant</h3>
+                </div>
+                <button class="close-chat">&times;</button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message ai">
+                    <div class="message-content">
+                        Hi! I'm your entertainment assistant. I can help you find movies and shows based on your mood, preferences, or specific requests. What would you like to watch?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" 
+                       id="chat-input" 
+                       placeholder="Ask for recommendations...">
+                <button class="send-btn" id="send-chat">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="quick-suggestions">
+                <button class="quick-suggestion" data-suggestion="sci-fi">
+                    Recommend sci-fi movies
+                </button>
+                <button class="quick-suggestion" data-suggestion="comedy">
+                    I need a good comedy
+                </button>
+                <button class="quick-suggestion" data-suggestion="90s">
+                    Show me 90s classics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preferences Editor -->
+    <div class="modal" id="preferences-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Preferences</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preference-groups">
+                    <div class="preference-group">
+                        <h4>Favorite Genres</h4>
+                        <div class="genre-options" id="genre-options">
+                            <!-- Genre options will be populated here -->
+                        </div>
+                    </div>
+                    <div class="preference-group">
+                        <h4>Decade Preference</h4>
+                        <div class="decade-options" id="decade-options">
+                            <!-- Decade options will be populated here -->
+                        </div>
+                    </div>
+                    <div class="preference-group">
+                        <h4>Content Type</h4>
+                        <div class="type-options" id="type-options">
+                            <!-- Type options will be populated here -->
+                        </div>
+                    </div>
+                    <div class="preference-group">
+                        <h4>Quality Preference</h4>
+                        <div class="quality-options" id="quality-options">
+                            <!-- Quality options will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-preferences">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="save-preferences">
+                    Save Preferences
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="recommendations-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Powered by advanced AI algorithms for personalized entertainment</p>
+                <div class="ai-badge">
+                    <i class="fas fa-brain"></i>
+                    <span>AI-Powered Recommendations</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/recommendations.js"></script>
+    <script src="scripts/ai.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recommendations = new AIRecommendations();
+            recommendations.loadRecommendations();
+        });
+    </script>
+</body>
+</html>
