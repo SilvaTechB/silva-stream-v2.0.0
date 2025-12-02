@@ -1,110 +1,44 @@
-/* ==============================================
-   DARK/LIGHT THEME SYSTEM
-   Advanced theme switching with smooth transitions
-   ============================================== */
-
-/* ========== THEME TRANSITION ========== */
-
-/* Smooth theme transition for all properties */
-* {
-    transition: background-color 0.3s ease,
-                border-color 0.3s ease,
-                color 0.3s ease,
-                box-shadow 0.3s ease,
-                opacity 0.3s ease;
-}
-
-/* Disable transitions during initial load */
-.preload * {
-    transition: none !important;
-}
-
-/* ========== DARK THEME (DEFAULT) ========== */
-
+/* Theme Toggle & Dark/Light Mode */
 .dark-theme {
-    /* Color Palette */
-    --primary: #e50914;
-    --primary-dark: #b20710;
-    --primary-light: #ff3e2e;
-    --secondary: #0d47a1;
-    --accent: #00bcd4;
-    --success: #4caf50;
-    --warning: #ff9800;
-    --error: #f44336;
-    --info: #2196f3;
-    
-    /* Background Colors */
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #14141f;
-    --bg-tertiary: #1e1e2d;
-    --bg-card: #252536;
-    --bg-overlay: rgba(0, 0, 0, 0.85);
-    --bg-glass: rgba(255, 255, 255, 0.05);
-    
-    /* Text Colors */
-    --text-primary: #ffffff;
-    --text-secondary: #b0b0c0;
-    --text-tertiary: #808090;
-    --text-muted: #606070;
-    
-    /* Border Colors */
-    --border-color: #2d2d3d;
-    --border-light: #3d3d4d;
-    --border-dark: #1d1d2d;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
-    --gradient-dark: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    
-    /* Shadows */
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
-    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.4);
-    --shadow-primary: 0 4px 20px rgba(229, 9, 20, 0.3);
-    --shadow-glow: 0 0 20px rgba(229, 9, 20, 0.5);
+    color-scheme: dark;
 }
-
-/* ========== LIGHT THEME ========== */
 
 .light-theme {
-    /* Color Palette */
-    --primary: #e50914;
-    --primary-dark: #b20710;
-    --primary-light: #ff3e2e;
-    --secondary: #0d47a1;
-    --accent: #00bcd4;
-    --success: #4caf50;
-    --warning: #ff9800;
-    --error: #f44336;
-    --info: #2196f3;
-    
-    /* Background Colors */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f7;
-    --bg-tertiary: #e8e8ed;
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
     --bg-card: #ffffff;
-    --bg-overlay: rgba(255, 255, 255, 0.95);
-    --bg-glass: rgba(0, 0, 0, 0.05);
-    
-    /* Text Colors */
-    --text-primary: #1a1a2e;
-    --text-secondary: #4a4a5e;
-    --text-tertiary: #6a6a7e;
-    --text-muted: #8a8a9e;
-    
-    /* Border Colors */
-    --border-color: #e0e0e8;
-    --border-light: #d0d0d8;
-    --border-dark: #c0c0c8;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
-    --gradient-dark: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
-    
-    /* Shadows */
-    --shadow-sm
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --border-color: #dee2e6;
+}
+
+/* Theme Switch Animation */
+#theme-switch {
+    position: relative;
+    width: 60px;
+    height: 34px;
+    background: var(--bg-tertiary);
+    border-radius: 34px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+#theme-switch::before {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+.light-theme #theme-switch {
+    background: var(--primary);
+}
+
+.light-theme #theme-switch::before {
+    transform: translateX(26px);
+}
