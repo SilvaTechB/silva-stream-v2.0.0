@@ -1,298 +1,489 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-theme">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Series Details - SilvaStream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Series - SilvaStream</title>
     
     <!-- Meta Tags -->
-    <meta property="og:title" content="Series Details - SilvaStream">
-    <meta property="og:description" content="Watch this series now on SilvaStream">
-    <meta property="og:image" content="">
-    <meta property="og:url" content="">
+    <meta name="description" content="Browse thousands of TV series on SilvaStream">
     
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+    <!-- Preload -->
+    <link rel="preload" href="styles/series.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/animations.css">
-    <link rel="stylesheet" href="styles/details.css">
     <link rel="stylesheet" href="styles/series.css">
 </head>
-<body class="dark-mode">
+<body>
     <!-- Theme Toggle -->
     <div class="theme-toggle">
-        <button id="themeToggle" class="theme-btn">
+        <button id="theme-switch" class="theme-btn">
             <i class="fas fa-moon"></i>
             <i class="fas fa-sun"></i>
         </button>
     </div>
 
-    <!-- Navigation -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <div class="logo-text">
-                    <span class="logo-primary">Silva</span>
-                    <span class="logo-secondary">Stream</span>
-                </div>
-            </a>
-            
-            <a href="index.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Home</span>
-            </a>
-            
-            <div class="user-actions">
-                <button class="user-notification">
-                    <i class="fas fa-bell"></i>
-                </button>
-                
-                <div class="user-profile">
-                    <div class="profile-avatar" id="userAvatar">
-                        <i class="fas fa-user"></i>
-                    </div>
+    <!-- Header -->
+    <header class="series-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>TV Series</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="series-search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="action-btn" id="series-filter">
+                        <i class="fas fa-filter"></i>
+                    </button>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Series Details -->
-    <main class="series-details-page">
-        <div class="series-hero" id="seriesHero">
-            <div class="hero-backdrop" id="heroBackdrop"></div>
-            <div class="hero-overlay"></div>
-            
-            <div class="container">
-                <div class="series-header">
-                    <div class="series-poster" id="seriesPoster">
-                        <div class="poster-shimmer shimmer"></div>
+    <!-- Series Hero -->
+    <section class="series-hero">
+        <div class="hero-background">
+            <div class="background-overlay"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Endless Series Collection</h1>
+                    <p>Discover thousands of TV shows across all genres. From binge-worthy dramas to hilarious comedies.</p>
+                    
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <i class="fas fa-tv"></i>
+                            <div>
+                                <span class="stat-number">5,000+</span>
+                                <span class="stat-label">Series</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-play-circle"></i>
+                            <div>
+                                <span class="stat-number">100K+</span>
+                                <span class="stat-label">Episodes</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-globe"></i>
+                            <div>
+                                <span class="stat-number">50+</span>
+                                <span class="stat-label">Countries</span>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="series-info">
-                        <h1 class="series-title" id="seriesTitle">Loading...</h1>
-                        
-                        <div class="series-meta" id="seriesMeta">
-                            <span class="meta-item"><i class="fas fa-calendar"></i> <span id="seriesYear">-</span></span>
-                            <span class="meta-item"><i class="fas fa-list-ol"></i> <span id="seriesSeasons">-</span></span>
-                            <span class="meta-item"><i class="fas fa-star"></i> <span id="seriesRating">-</span></span>
-                            <span class="meta-item"><i class="fas fa-tv"></i> <span>TV Series</span></span>
-                        </div>
-                        
-                        <div class="series-genres" id="seriesGenres">
-                            <!-- Genres will be loaded here -->
-                        </div>
-                        
-                        <p class="series-description" id="seriesDescription">Loading description...</p>
-                        
-                        <div class="series-actions">
-                            <button class="btn btn-primary btn-lg" id="playSeries">
-                                <i class="fas fa-play"></i>
-                                <span>Watch Now</span>
-                            </button>
-                            
-                            <button class="btn btn-outline btn-lg" id="trailerBtn">
-                                <i class="fas fa-play-circle"></i>
-                                <span>Trailer</span>
-                            </button>
-                            
-                            <button class="btn btn-outline btn-lg" id="addToListBtn">
-                                <i class="fas fa-plus"></i>
-                                <span>My List</span>
-                            </button>
-                        </div>
+                    <div class="hero-search">
+                        <input type="text" 
+                               class="search-input" 
+                               id="series-search-input"
+                               placeholder="Search for series...">
+                        <button class="search-btn" id="hero-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Series Content -->
-        <div class="container">
-            <!-- Cast Section -->
-            <section class="section-cast">
-                <div class="section-header">
-                    <h2><i class="fas fa-users"></i> Cast</h2>
-                </div>
-                <div class="cast-grid" id="castGrid">
-                    <!-- Cast members will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Trailers Section -->
-            <section class="section-trailers" id="trailersSection" style="display: none;">
-                <div class="section-header">
-                    <h2><i class="fas fa-film"></i> Trailers & Clips</h2>
-                </div>
-                <div class="trailers-grid" id="trailersGrid">
-                    <!-- Trailers will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Seasons & Episodes -->
-            <section class="section-seasons" id="seasonsSection">
-                <div class="section-header">
-                    <h2><i class="fas fa-list-ol"></i> Seasons & Episodes</h2>
-                </div>
-                <div class="seasons-container" id="seasonsContainer">
-                    <!-- Seasons will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Similar Series -->
-            <section class="section-similar">
-                <div class="section-header">
-                    <h2><i class="fas fa-thumbs-up"></i> More Like This</h2>
-                </div>
-                <div class="similar-grid" id="similarGrid">
-                    <!-- Similar series will be loaded here -->
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- WhatsApp Section -->
-    <section class="whatsapp-section">
-        <div class="container">
-            <div class="section-header">
-                <h2><i class="fab fa-whatsapp"></i> Stay Updated</h2>
-                <p>Join our WhatsApp channels for exclusive content</p>
-            </div>
-            
-            <div class="whatsapp-channels">
-                <div class="channel-card">
-                    <div class="channel-header">
-                        <div class="channel-icon">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                        <span class="channel-badge">Official</span>
-                    </div>
-                    <div class="channel-content">
-                        <h3>SilvaStream Main Channel</h3>
-                        <p>Get daily series recommendations and updates</p>
-                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="channel-join">
-                            <i class="fab fa-whatsapp"></i>
-                            Join Channel
-                        </a>
+                
+                <div class="hero-image">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             alt="TV Series">
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Modals -->
-    <div class="modal" id="trailerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Watch Trailer</h3>
-                <button class="modal-close">&times;</button>
+    <!-- Series Navigation -->
+    <nav class="series-nav">
+        <div class="container">
+            <div class="nav-content">
+                <button class="nav-btn active" data-tab="popular">
+                    <i class="fas fa-fire"></i>
+                    Popular
+                </button>
+                <button class="nav-btn" data-tab="new">
+                    <i class="fas fa-newspaper"></i>
+                    New Releases
+                </button>
+                <button class="nav-btn" data-tab="continuing">
+                    <i class="fas fa-play-circle"></i>
+                    Continuing
+                </button>
+                <button class="nav-btn" data-tab="completed">
+                    <i class="fas fa-flag-checkered"></i>
+                    Completed
+                </button>
+                <button class="nav-btn" data-tab="genres">
+                    <i class="fas fa-th-large"></i>
+                    Genres
+                </button>
+                <button class="nav-btn" data-tab="networks">
+                    <i class="fas fa-satellite-dish"></i>
+                    Networks
+                </button>
             </div>
-            <div class="modal-body">
-                <div class="video-container" id="trailerVideo">
-                    <video controls id="trailerPlayer" width="100%">
-                        Your browser does not support the video tag.
-                    </video>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="series-main">
+        <div class="container">
+            <!-- Trending Series -->
+            <section class="trending-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-chart-line"></i>
+                        Trending Now
+                    </h2>
+                    <a href="#" class="view-all" id="view-all-trending">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="trending-slider" id="trending-slider">
+                    <!-- Trending series will be populated here -->
+                </div>
+            </section>
+
+            <!-- New Releases -->
+            <section class="new-releases-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-calendar-star"></i>
+                        New This Month
+                    </h2>
+                    <a href="#" class="view-all" id="view-all-new">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="new-releases-grid" id="new-releases-grid">
+                    <!-- New releases will be populated here -->
+                </div>
+            </section>
+
+            <!-- Genre Categories -->
+            <section class="genres-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-film"></i>
+                        Browse by Genre
+                    </h2>
+                </div>
+                
+                <div class="genres-grid" id="genres-grid">
+                    <div class="genre-card" data-genre="drama">
+                        <div class="genre-icon">
+                            <i class="fas fa-theater-masks"></i>
+                        </div>
+                        <div class="genre-info">
+                            <h3>Drama</h3>
+                            <p>1,200+ series</p>
+                        </div>
+                    </div>
+                    <div class="genre-card" data-genre="comedy">
+                        <div class="genre-icon">
+                            <i class="fas fa-laugh"></i>
+                        </div>
+                        <div class="genre-info">
+                            <h3>Comedy</h3>
+                            <p>850+ series</p>
+                        </div>
+                    </div>
+                    <!-- More genres -->
+                </div>
+            </section>
+
+            <!-- Editor's Picks -->
+            <section class="editors-picks-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-star"></i>
+                        Editor's Picks
+                    </h2>
+                    <p>Curated selection of must-watch series</p>
+                </div>
+                
+                <div class="editors-picks" id="editors-picks">
+                    <!-- Editor's picks will be populated here -->
+                </div>
+            </section>
+
+            <!-- Network Spotlight -->
+            <section class="networks-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-satellite-dish"></i>
+                        Network Spotlight
+                    </h2>
+                </div>
+                
+                <div class="networks-tabs">
+                    <button class="network-tab active" data-network="netflix">
+                        <i class="fab fa-netflix"></i>
+                        Netflix
+                    </button>
+                    <button class="network-tab" data-network="hbo">
+                        <i class="fab fa-hbo"></i>
+                        HBO
+                    </button>
+                    <button class="network-tab" data-network="disney">
+                        <i class="fab fa-disney"></i>
+                        Disney+
+                    </button>
+                    <button class="network-tab" data-network="amazon">
+                        <i class="fab fa-amazon"></i>
+                        Prime Video
+                    </button>
+                </div>
+                
+                <div class="network-content active" id="netflix-content">
+                    <div class="network-series" id="netflix-series">
+                        <!-- Netflix series will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- All Series Grid -->
+            <section class="all-series-section">
+                <div class="section-header">
+                    <h2>All Series</h2>
+                    <div class="series-controls">
+                        <select class="sort-select" id="series-sort">
+                            <option value="popular">Most Popular</option>
+                            <option value="newest">Newest First</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="title">Title A-Z</option>
+                            <option value="seasons">Most Seasons</option>
+                        </select>
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="series-grid grid-view" id="series-grid">
+                    <!-- All series will be populated here -->
+                </div>
+                
+                <div class="loading-series" id="loading-series">
+                    <div class="spinner"></div>
+                    <p>Loading series...</p>
+                </div>
+                
+                <div class="no-series" id="no-series" style="display: none;">
+                    <div class="no-series-message">
+                        <i class="fas fa-tv fa-3x"></i>
+                        <h3>No Series Found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                        <button class="btn btn-primary" id="reset-series-filters">
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="load-more-container">
+                    <button class="btn btn-load-more" id="load-more-series">
+                        Load More Series
+                    </button>
+                </div>
+            </section>
+
+            <!-- Series Features -->
+            <section class="series-features">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3>Download Episodes</h3>
+                        <p>Watch offline anytime, anywhere</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Episode Alerts</h3>
+                        <p>Get notified when new episodes air</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                        <h3>Track Progress</h3>
+                        <p>Keep track of watched episodes</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Watch Parties</h3>
+                        <p>Watch together with friends</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seasonal Highlights -->
+            <section class="seasonal-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-calendar-alt"></i>
+                        This Season's Highlights
+                    </h2>
+                    <p>Top series currently airing new episodes</p>
+                </div>
+                
+                <div class="seasonal-grid" id="seasonal-grid">
+                    <!-- Seasonal series will be populated here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel" id="series-filter-panel">
+        <div class="panel-header">
+            <h3>Filter Series</h3>
+            <button class="close-panel">&times;</button>
+        </div>
+        
+        <div class="panel-content">
+            <div class="filter-group">
+                <h4>Genre</h4>
+                <div class="genre-filters" id="genre-filters">
+                    <!-- Genre filters will be populated here -->
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Year</h4>
+                <div class="year-filters">
+                    <select id="year-select">
+                        <option value="all">All Years</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <!-- More years -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Status</h4>
+                <div class="status-filters">
+                    <label class="status-option">
+                        <input type="checkbox" name="status" value="continuing" checked>
+                        <span>Continuing</span>
+                    </label>
+                    <label class="status-option">
+                        <input type="checkbox" name="status" value="completed">
+                        <span>Completed</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Rating</h4>
+                <div class="rating-filters">
+                    <div class="rating-stars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Seasons</h4>
+                <div class="seasons-filter">
+                    <input type="range" 
+                           id="seasons-range" 
+                           min="1" 
+                           max="20" 
+                           value="1">
+                    <span class="seasons-value" id="seasons-value">1+ seasons</span>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="modal" id="episodeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Episode Details</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="episode-details" id="episodeDetails">
-                    <!-- Episode details will be loaded here -->
-                </div>
-            </div>
+        
+        <div class="panel-footer">
+            <button class="btn btn-secondary" id="reset-series-filters">
+                Reset
+            </button>
+            <button class="btn btn-primary" id="apply-series-filters">
+                Apply Filters
+            </button>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loader">
-                <div class="loader-film">
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
-                </div>
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="series-search-overlay">
+        <div class="search-container">
+            <div class="search-header">
+                <h2>Search Series</h2>
+                <button class="close-search">&times;</button>
             </div>
-            <p>Loading series details...</p>
+            <div class="search-input-container">
+                <input type="text" 
+                       class="search-input" 
+                       id="series-search-field"
+                       placeholder="Search for series by title, actor, or keyword...">
+                <button class="search-submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="search-suggestions" id="series-suggestions"></div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="main-footer">
+    <footer class="series-footer">
         <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
-                <p class="powered-by">
-                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
-                </p>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-tv"></i>
+                    <span>SilvaStream Series</span>
+                </div>
+                <p>Your ultimate destination for TV entertainment</p>
+                <div class="footer-links">
+                    <a href="movies.html">Movies</a>
+                    <a href="sports.html">Sports</a>
+                    <a href="categories.html">Categories</a>
+                    <a href="whatsapp.html">WhatsApp Updates</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
     <script src="scripts/api.js"></script>
-    <script src="scripts/cache.js"></script>
-    <script src="scripts/ui-manager.js"></script>
-    <script src="scripts/auth.js"></script>
+    <script src="scripts/series.js"></script>
     <script src="scripts/theme.js"></script>
-    <script src="scripts/series-details.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize theme
-            const theme = new ThemeManager();
-            theme.init();
-            
-            // Initialize series details
-            const seriesDetails = new SeriesDetails();
-            seriesDetails.init();
-            
-            // Modal close buttons
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
-            
-            // Close modal when clicking outside
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
-            
-            // Close modal with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('.modal').forEach(modal => {
-                        modal.style.display = 'none';
-                    });
-                }
-            });
-            
-            // Back button
-            const backBtn = document.querySelector('.back-btn');
-            if (backBtn) {
-                backBtn.addEventListener('click', () => {
-                    window.history.back();
-                });
-            }
+            const seriesPage = new SeriesPage();
+            seriesPage.loadSeries();
         });
     </script>
 </body>
