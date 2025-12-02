@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Manage your SilvaStream settings and preferences">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/settings.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/settings.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="settings-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>Settings</h1>
+                <button class="save-btn" id="save-settings">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="settings-main">
+        <div class="container">
+            <!-- Settings Navigation -->
+            <nav class="settings-nav">
+                <button class="nav-btn active" data-section="account">
+                    <i class="fas fa-user"></i>
+                    <span>Account</span>
+                </button>
+                <button class="nav-btn" data-section="playback">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Playback</span>
+                </button>
+                <button class="nav-btn" data-section="video">
+                    <i class="fas fa-video"></i>
+                    <span>Video Quality</span>
+                </button>
+                <button class="nav-btn" data-section="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </button>
+                <button class="nav-btn" data-section="privacy">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy</span>
+                </button>
+                <button class="nav-btn" data-section="data">
+                    <i class="fas fa-database"></i>
+                    <span>Data Usage</span>
+                </button>
+                <button class="nav-btn" data-section="parental">
+                    <i class="fas fa-child"></i>
+                    <span>Parental Controls</span>
+                </button>
+                <button class="nav-btn" data-section="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </button>
+            </nav>
+
+            <!-- Settings Content -->
+            <div class="settings-content">
+                <!-- Account Settings -->
+                <section class="settings-section active" id="account-section">
+                    <h2>Account Settings</h2>
+                    
+                    <div class="settings-group">
+                        <h3>Profile Information</h3>
+                        <div class="setting-item">
+                            <label for="display-name">Display Name</label>
+                            <input type="text" id="display-name" value="User">
+                        </div>
+                        <div class="setting-item">
+                            <label for="user-email">Email Address</label>
+                            <input type="email" id="user-email" value="user@example.com">
+                        </div>
+                        <div class="setting-item">
+                            <label>Profile Picture</label>
+                            <div class="avatar-upload">
+                                <img src="https://ui-avatars.com/api/?name=User&background=e50914&color=fff" 
+                                     alt="Avatar" id="settings-avatar">
+                                <button class="btn btn-outline" id="change-avatar">
+                                    Change Picture
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Subscription</h3>
+                        <div class="subscription-info">
+                            <div class="plan-card">
+                                <div class="plan-header">
+                                    <h4>Free Plan</h4>
+                                    <span class="plan-badge">Current</span>
+                                </div>
+                                <div class="plan-features">
+                                    <p><i class="fas fa-check"></i> SD Quality</p>
+                                    <p><i class="fas fa-check"></i> Limited Library</p>
+                                    <p><i class="fas fa-check"></i> With Ads</p>
+                                </div>
+                                <button class="btn btn-premium" id="upgrade-plan">
+                                    <i class="fas fa-crown"></i>
+                                    Upgrade to Premium
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Playback Settings -->
+                <section class="settings-section" id="playback-section">
+                    <h2>Playback Settings</h2>
+                    
+                    <div class="settings-group">
+                        <h3>Playback Behavior</h3>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Auto-play Next Episode</h4>
+                                <p>Automatically play next episode in a series</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="auto-play" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Skip Intro & Credits</h4>
+                                <p>Automatically skip intros and credits</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="skip-intro" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Remember Playback Position</h4>
+                                <p>Resume from where you left off</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="remember-position" checked>
+                                <span class="slider"></span>
+                            </div>
+                        <div class="setting-item">
+                            <label for="default-playback-speed">Default Playback Speed</label>
+                            <select id="default-playback-speed">
+                                <option value="0.5">0.5x</option>
+                                <option value="0.75">0.75x</option>
+                                <option value="1" selected>1x (Normal)</option>
+                                <option value="1.25">1.25x</option>
+                                <option value="1.5">1.5x</option>
+                                <option value="2">2x</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Subtitles & Audio</h3>
+                        <div class="setting-item">
+                            <label for="default-subtitle">Default Subtitle Language</label>
+                            <select id="default-subtitle">
+                                <option value="off">Off</option>
+                                <option value="en" selected>English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="auto">Auto (Based on content)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="default-audio">Default Audio Language</label>
+                            <select id="default-audio">
+                                <option value="original" selected>Original Language</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Video Quality Settings -->
+                <section class="settings-section" id="video-section">
+                    <h2>Video Quality Settings</h2>
+                    
+                    <div class="settings-group">
+                        <h3>Streaming Quality</h3>
+                        <div class="quality-options">
+                            <label class="quality-option">
+                                <input type="radio" name="streaming-quality" value="auto" checked>
+                                <div class="option-content">
+                                    <h4>Auto (Recommended)</h4>
+                                    <p>Adjusts quality based on your connection</p>
+                                </div>
+                            </label>
+                            <label class="quality-option">
+                                <input type="radio" name="streaming-quality" value="low">
+                                <div class="option-content">
+                                    <h4>Low (480p)</h4>
+                                    <p>Save data, faster streaming</p>
+                                </div>
+                            </label>
+                            <label class="quality-option">
+                                <input type="radio" name="streaming-quality" value="medium">
+                                <div class="option-content">
+                                    <h4>Medium (720p)</h4>
+                                    <p>Good quality, balanced data usage</p>
+                                </div>
+                            </label>
+                            <label class="quality-option">
+                                <input type="radio" name="streaming-quality" value="high">
+                                <div class="option-content">
+                                    <h4>High (1080p)</h4>
+                                    <p>Best quality, higher data usage</p>
+                                </div>
+                            </label>
+                            <label class="quality-option premium">
+                                <input type="radio" name="streaming-quality" value="ultra">
+                                <div class="option-content">
+                                    <h4>Ultra HD (4K)</h4>
+                                    <p>Premium quality, requires fast connection</p>
+                                    <span class="premium-badge">Premium</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Download Quality</h3>
+                        <div class="setting-item">
+                            <label for="download-quality">Default Download Quality</label>
+                            <select id="download-quality">
+                                <option value="480p">480p (Smallest)</option>
+                                <option value="720p" selected>720p (Recommended)</option>
+                                <option value="1080p">1080p (High Quality)</option>
+                                <option value="4k">4K (Best Quality)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Download Over Wi-Fi Only</h4>
+                                <p>Prevent mobile data usage for downloads</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="wifi-only" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notification Settings -->
+                <section class="settings-section" id="notifications-section">
+                    <h2>Notification Settings</h2>
+                    
+                    <div class="settings-group">
+                        <h3>Email Notifications</h3>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>New Releases</h4>
+                                <p>Get notified about new movies and shows</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="email-releases" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Recommendations</h4>
+                                <p>Weekly personalized recommendations</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="email-recommendations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Push Notifications</h3>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Enable Push Notifications</h4>
+                                <p>Receive notifications in your browser</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="push-enabled" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-types">
+                            <label class="notification-type">
+                                <input type="checkbox" id="notify-updates" checked>
+                                <span>App Updates & Features</span>
+                            </label>
+                            <label class="notification-type">
+                                <input type="checkbox" id="notify-promotions" checked>
+                                <span>Special Offers & Promotions</span>
+                            </label>
+                            <label class="notification-type">
+                                <input type="checkbox" id="notify-following" checked>
+                                <span>New from Following</span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Privacy Settings -->
+                <section class="settings-section" id="privacy-section">
+                    <h2>Privacy Settings</h2>
+                    
+                    <div class="settings-group">
+                        <h3>Profile Privacy</h3>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Public Profile</h4>
+                                <p>Allow others to see your profile</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="public-profile">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Show Watch History</h4>
+                                <p>Allow others to see what you've watched</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="show-history">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Show Watchlist</h4>
+                                <p>Allow others to see your watchlist</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="show-watchlist">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Data Collection</h3>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Collect Viewing Data</h4>
+                                <p>Allow us to collect data to improve recommendations</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="collect-data" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Personalized Ads</h4>
+                                <p>Show ads based on your interests</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="personalized-ads">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Data Usage Settings -->
+                <section class="settings-section" id="data-section">
+                    <h2>Data Usage Settings</h2>
+                    
+                    <div class="settings-group">
+                        <h3>Streaming Data Limits</h3>
+                        <div class="data-usage-info">
+                            <div class="data-stats">
+                                <div class="data-stat">
+                                    <span class="stat-label">This Month</span>
+                                    <span class="stat-value" id="monthly-data">2.4 GB</span>
+                                </div>
+                                <div class="data-stat">
+                                    <span class="stat-label">Daily Average</span>
+                                    <span class="stat-value" id="daily-average">120 MB</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline" id="reset-data-stats">
+                                Reset Statistics
+                            </button>
+                        </div>
+                        <div class="setting-item">
+                            <label for="data-limit">Monthly Data Limit</label>
+                            <select id="data-limit">
+                                <option value="unlimited">Unlimited</option>
+                                <option value="1">1 GB</option>
+                                <option value="3" selected>3 GB</option>
+                                <option value="5">5 GB</option>
+                                <option value="10">10 GB</option>
+                            </select>
+                        </div>
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Data Saver Mode</h4>
+                                <p>Reduce data usage by lowering video quality</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="data-saver">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Parental Controls -->
+                <section class="settings-section" id="parental-section">
+                    <h2>Parental Controls</h2>
+                    
+                    <div class="settings-group">
+                        <div class="setting-item toggle">
+                            <div class="setting-info">
+                                <h4>Enable Parental Controls</h4>
+                                <p>Restrict access to mature content</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="parental-enabled">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="parental-settings" id="parental-settings" style="display: none;">
+                            <div class="setting-item">
+                                <label for="parental-pin">Parental Control PIN</label>
+                                <input type="password" id="parental-pin" placeholder="Enter 4-digit PIN" maxlength="4">
+                            </div>
+                            
+                            <div class="setting-item">
+                                <label for="content-rating">Maximum Content Rating</label>
+                                <select id="content-rating">
+                                    <option value="G">G - General Audience</option>
+                                    <option value="PG">PG - Parental Guidance</option>
+                                    <option value="PG-13">PG-13 - Teens & Above</option>
+                                    <option value="R">R - Restricted</option>
+                                    <option value="NC-17">NC-17 - Adults Only</option>
+                                </select>
+                            </div>
+                            
+                            <div class="blocked-content">
+                                <h4>Block Specific Content</h4>
+                                <div class="block-options">
+                                    <label class="block-option">
+                                        <input type="checkbox" id="block-violence">
+                                        <span>Violence</span>
+                                    </label>
+                                    <label class="block-option">
+                                        <input type="checkbox" id="block-language">
+                                        <span>Strong Language</span>
+                                    </label>
+                                    <label class="block-option">
+                                        <input type="checkbox" id="block-nudity">
+                                        <span>Nudity</span>
+                                    </label>
+                                    <label class="block-option">
+                                        <input type="checkbox" id="block-horror">
+                                        <span>Horror</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- About Section -->
+                <section class="settings-section" id="about-section">
+                    <h2>About SilvaStream</h2>
+                    
+                    <div class="about-info">
+                        <div class="app-logo">
+                            <i class="fas fa-play-circle"></i>
+                            <span>SilvaStream</span>
+                        </div>
+                        
+                        <div class="app-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Version</span>
+                                <span class="detail-value" id="app-version">3.2.1</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Build Date</span>
+                                <span class="detail-value">December 2024</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Last Updated</span>
+                                <span class="detail-value">Today</span>
+                            </div>
+                        </div>
+                        
+                        <div class="about-links">
+                            <a href="terms.html" class="about-link">
+                                <i class="fas fa-file-contract"></i>
+                                Terms of Service
+                            </a>
+                            <a href="privacy.html" class="about-link">
+                                <i class="fas fa-shield-alt"></i>
+                                Privacy Policy
+                            </a>
+                            <a href="https://silvatech.top" target="_blank" class="about-link">
+                                <i class="fas fa-globe"></i>
+                                Silva Tech Nexus
+                            </a>
+                            <button class="about-link" id="check-updates">
+                                <i class="fas fa-sync-alt"></i>
+                                Check for Updates
+                            </button>
+                        </div>
+                        
+                        <div class="storage-info">
+                            <h4>Storage Usage</h4>
+                            <div class="storage-bar">
+                                <div class="storage-fill" style="width: 65%"></div>
+                            </div>
+                            <div class="storage-stats">
+                                <span>2.6 GB of 4 GB used</span>
+                                <button class="btn-text" id="clear-cache">
+                                    Clear Cache
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Confirmation Dialog -->
+    <div class="modal" id="settings-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Changes</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Your settings have been saved successfully!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="confirm-ok">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Upload Modal -->
+    <div class="modal" id="avatar-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Profile Picture</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-options">
+                    <div class="avatar-option" data-avatar="default">
+                        <img src="https://ui-avatars.com/api/?name=User&background=e50914&color=fff" alt="Default">
+                        <span>Default</span>
+                    </div>
+                    <!-- More avatar options -->
+                </div>
+                <div class="avatar-upload">
+                    <label for="avatar-file" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Photo
+                    </label>
+                    <input type="file" id="avatar-file" accept="image/*" hidden>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="settings-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>SilvaStream Settings • Customize your experience</p>
+                <button class="btn-text" id="reset-settings">
+                    Reset to Default
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/settings.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const settings = new SettingsManager();
+            settings.loadSettings();
+        });
+    </script>
+</body>
+</html>
