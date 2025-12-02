@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Updates - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Stay updated with SilvaStream on WhatsApp">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/whatsapp.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/whatsapp.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="whatsapp-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>WhatsApp Updates</h1>
+                <div class="whatsapp-badge">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="whatsapp-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="hero-text">
+                    <h1>Stay Connected with SilvaStream</h1>
+                    <p class="hero-description">
+                        Get daily movie updates, recommendations, and exclusive content directly on WhatsApp. 
+                        Never miss out on what's trending!
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <span class="stat-number">50,000+</span>
+                                <span class="stat-label">Subscribers</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-bell"></i>
+                            <div>
+                                <span class="stat-number">Daily</span>
+                                <span class="stat-label">Updates</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-star"></i>
+                            <div>
+                                <span class="stat-number">4.8</span>
+                                <span class="stat-label">Rating</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="whatsapp-main">
+        <div class="container">
+            <!-- Channels Section -->
+            <section class="channels-section">
+                <div class="section-header">
+                    <h2>Our WhatsApp Channels</h2>
+                    <p>Choose the channels that interest you</p>
+                </div>
+
+                <div class="channels-grid">
+                    <!-- SilvaStream Channel -->
+                    <div class="channel-card primary">
+                        <div class="channel-header">
+                            <div class="channel-avatar">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="channel-info">
+                                <h3>SilvaStream Movies</h3>
+                                <p class="channel-subscribers">45K+ subscribers</p>
+                            </div>
+                            <div class="channel-badge">Main</div>
+                        </div>
+                        
+                        <div class="channel-description">
+                            <p>Daily movie recommendations, new releases, trending content, and exclusive SilvaStream updates.</p>
+                        </div>
+                        
+                        <div class="channel-features">
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Daily Movie Updates</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>New Release Alerts</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Exclusive Content</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>App Updates</span>
+                            </div>
+                        </div>
+                        
+                        <div class="channel-actions">
+                            <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                               target="_blank" 
+                               class="btn btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                                Join Channel
+                            </a>
+                            <button class="btn btn-outline" id="preview-channel">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Silva Tech Nexus Channel -->
+                    <div class="channel-card secondary">
+                        <div class="channel-header">
+                            <div class="channel-avatar">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="channel-info">
+                                <h3>Silva Tech Nexus</h3>
+                                <p class="channel-subscribers">15K+ subscribers</p>
+                            </div>
+                            <div class="channel-badge">Tech</div>
+                        </div>
+                        
+                        <div class="channel-description">
+                            <p>Tech updates, development insights, behind-the-scenes content, and SilvaStream technical updates.</p>
+                        </div>
+                        
+                        <div class="channel-features">
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Tech Updates</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Development Insights</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Behind the Scenes</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Feature Previews</span>
+                            </div>
+                        </div>
+                        
+                        <div class="channel-actions">
+                            <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" 
+                               target="_blank" 
+                               class="btn btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                                Join Channel
+                            </a>
+                            <button class="btn btn-outline" id="preview-tech">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VIP Channel -->
+                    <div class="channel-card premium">
+                        <div class="channel-header">
+                            <div class="channel-avatar">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="channel-info">
+                                <h3>SilvaStream VIP</h3>
+                                <p class="channel-subscribers">VIP Only</p>
+                            </div>
+                            <div class="channel-badge">Premium</div>
+                        </div>
+                        
+                        <div class="channel-description">
+                            <p>Exclusive content, early access to features, premium movie recommendations, and VIP-only updates.</p>
+                        </div>
+                        
+                        <div class="channel-features">
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Exclusive Content</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Early Access</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>VIP Recommendations</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check"></i>
+                                <span>Priority Support</span>
+                            </div>
+                        </div>
+                        
+                        <div class="channel-actions">
+                            <button class="btn btn-premium" id="join-vip">
+                                <i class="fas fa-crown"></i>
+                                Become VIP
+                            </button>
+                            <button class="btn btn-outline" id="learn-vip">
+                                Learn More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Benefits Section -->
+            <section class="benefits-section">
+                <div class="section-header">
+                    <h2>Why Join Our WhatsApp Channels?</h2>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Instant Updates</h3>
+                        <p>Get real-time notifications about new movies and shows</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Personalized Recommendations</h3>
+                        <p>Receive content suggestions based on your interests</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h3>Exclusive Content</h3>
+                        <p>Access to content not available elsewhere</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>Direct Support</h3>
+                        <p>Get help and support directly through WhatsApp</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>Release Calendar</h3>
+                        <p>Stay updated with upcoming releases</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Community</h3>
+                        <p>Connect with fellow movie enthusiasts</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works -->
+            <section class="how-it-works">
+                <div class="section-header">
+                    <h2>How to Join</h2>
+                    <p>Simple steps to start receiving updates</p>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Choose Your Channel</h3>
+                            <p>Select the WhatsApp channels that interest you</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Click Join</h3>
+                            <p>Tap the join button on your preferred channel</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Confirm Subscription</h3>
+                            <p>Open WhatsApp and confirm your subscription</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Start Receiving Updates</h3>
+                            <p>You'll start getting daily movie updates</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Channel Preview -->
+            <section class="preview-section">
+                <div class="section-header">
+                    <h2>Channel Preview</h2>
+                    <p>See what kind of updates you'll receive</p>
+                </div>
+
+                <div class="preview-container">
+                    <div class="preview-messages">
+                        <div class="message incoming">
+                            <div class="message-content">
+                                <strong>🎬 New Release Alert!</strong>
+                                <p>The new action movie "Midnight Run" is now available on SilvaStream. Watch it now!</p>
+                                <div class="message-meta">
+                                    <span>Today, 10:00 AM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="message incoming">
+                            <div class="message-content">
+                                <strong>🔥 Trending Now</strong>
+                                <p>"The Last Stand" is trending with 500K+ views this week. Don't miss out!</p>
+                                <div class="message-meta">
+                                    <span>Yesterday, 3:00 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="message incoming">
+                            <div class="message-content">
+                                <strong>⭐ Movie Recommendation</strong>
+                                <p>If you liked "Inception", you'll love "Dreamscape". Now streaming in 4K!</p>
+                                <div class="message-meta">
+                                    <span>2 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="faq-section">
+                <div class="section-header">
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Is it free to join?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! All our WhatsApp channels are completely free to join and receive updates from.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            How often will I receive updates?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We send 1-2 updates per day, usually in the morning and evening. We won't spam your inbox.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Can I leave the channel anytime?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes, you can leave the channel anytime by opening the channel in WhatsApp and selecting "Leave Channel".</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Will my number be shared?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>No, your privacy is important to us. Your phone number remains private and is not shared with anyone.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Can I suggest content?
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! You can reply to any message with your suggestions, and we'll consider them for future updates.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials -->
+            <section class="testimonials-section">
+                <div class="section-header">
+                    <h2>What Our Subscribers Say</h2>
+                </div>
+
+                <div class="testimonials-slider" id="testimonials-slider">
+                    <div class="testimonial">
+                        <div class="testimonial-content">
+                            <p>"The daily movie updates are fantastic! I never miss new releases anymore."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <span class="author-name">Alex M.</span>
+                            <span class="author-role">Subscriber for 6 months</span>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial">
+                        <div class="testimonial-content">
+                            <p>"Best way to stay updated with SilvaStream. The recommendations are always spot on!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <span class="author-name">Sarah K.</span>
+                            <span class="author-role">Subscriber for 1 year</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner">
+        <div class="container">
+            <div class="banner-content">
+                <h2>Ready to Get Updates?</h2>
+                <p>Join thousands of movie enthusiasts already receiving our WhatsApp updates</p>
+                <div class="banner-actions">
+                    <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                       target="_blank" 
+                       class="btn btn-whatsapp-lg">
+                        <i class="fab fa-whatsapp"></i>
+                        Join SilvaStream Channel
+                    </a>
+                    <a href="https://whatsapp.com/channel/0029VaAkETLLY6d8qhLmZt2v" 
+                       target="_blank" 
+                       class="btn btn-outline-light">
+                        <i class="fas fa-code"></i>
+                        Join Tech Channel
+                    </a>
+                </div>
+                <p class="banner-note">
+                    <i class="fas fa-lock"></i>
+                    Your privacy is protected. No spam, unsubscribe anytime.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="whatsapp-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>SilvaStream WhatsApp</span>
+                    </div>
+                    <p>Your direct connection to the best entertainment updates</p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="movies.html">Movies</a>
+                    <a href="series.html">TV Series</a>
+                    <a href="contact.html">Contact Us</a>
+                </div>
+                
+                <div class="footer-social">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 SilvaStream. All rights reserved.</p>
+                <p class="footer-note">
+                    WhatsApp is a registered trademark of Meta Platforms, Inc.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Preview Modal -->
+    <div class="modal" id="preview-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Channel Preview</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-messages">
+                    <!-- Preview messages will be shown here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                   target="_blank" 
+                   class="btn btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    Join Channel Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIP Info Modal -->
+    <div class="modal" id="vip-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>VIP Channel Benefits</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="vip-benefits">
+                    <div class="vip-benefit">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <h4>Exclusive Content</h4>
+                            <p>Access to movies and shows before public release</p>
+                        </div>
+                    </div>
+                    <div class="vip-benefit">
+                        <i class="fas fa-headset"></i>
+                        <div>
+                            <h4>Priority Support</h4>
+                            <p>24/7 dedicated support for VIP members</p>
+                        </div>
+                    </div>
+                    <div class="vip-benefit">
+                        <i class="fas fa-gift"></i>
+                        <div>
+                            <h4>Special Offers</h4>
+                            <p>Exclusive discounts and promotions</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="vip-cta">
+                    <a href="premium.html" class="btn btn-premium">
+                        <i class="fas fa-crown"></i>
+                        Upgrade to VIP
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/whatsapp.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const whatsapp = new WhatsAppIntegration();
+            whatsapp.init();
+        });
+    </script>
+</body>
+</html>
