@@ -1,355 +1,324 @@
-// Cache Manager with improved performance and error handling
+// Cache Management for SilvaStream
 class CacheManager {
     constructor() {
-        this.prefix = 'silvastream_';
-        this.defaultTTL = 3600000; // 1 hour
-        this.memoryCache = new Map();
+        this.cacheName = 'silvastream-v3';
+        this.cacheDuration = 3600000; // 1 hour in milliseconds
+        this.maxItems = 100;
         this.init();
     }
 
-    init() {
-        // Clean up expired items on init
-        this.cleanup();
-        
-        // Listen for storage events (cross-tab communication)
-        window.addEventListener('storage', (e) => {
-            if (e.key && e.key.startsWith(this.prefix)) {
-                this.handleStorageEvent(e);
-            }
-        });
-        
-        // Listen for online/offline events
-        window.addEventListener('online', () => {
-            this.syncOfflineData();
-        });
+    async init() {
+        // Check if cache API is available
+        if ('caches' in window) {
+            await this.cleanupOldCaches();
+        }
     }
 
-    set(key, value, ttl = this.defaultTTL) {
-        const cacheKey = this.prefix + key;
-        const item = {
-            value: value,
-            expiry: Date.now() + ttl,
-            timestamp: Date.now()
+    async set(key, data, duration = this.cacheDuration) {
+        const cacheData = {
+            data: data,
+            timestamp: Date.now(),
+            expires: Date.now() + duration
         };
-        
+
         try {
-            // Store in memory cache
-            this.memoryCache.set(cacheKey, item);
-            
-            // Store in localStorage
-            localStorage.setItem(cacheKey, JSON.stringify(item));
-            
-            // Broadcast to other tabs
-            this.broadcastUpdate(key, value);
-            
-            return true;
+            // Try IndexedDB first
+            if ('indexedDB' in window) {
+                await this.setIndexedDB(key, cacheData);
+            } else {
+                // Fallback to localStorage
+                localStorage.setItem(`cache_${key}`, JSON.stringify(cacheData));
+            }
+
+            // Also store in memory cache for quick access
+            sessionStorage.setItem(`cache_${key}`, JSON.stringify(cacheData));
         } catch (error) {
             console.error('Cache set error:', error);
-            
-            // If localStorage is full, try to clean up
-            if (error.name === 'QuotaExceededError') {
-                this.clearOldest(10); // Remove 10 oldest items
-                try {
-                    localStorage.setItem(cacheKey, JSON.stringify(item));
-                    return true;
-                } catch (e) {
-                    console.error('Cache cleanup failed:', e);
-                }
-            }
-            
-            return false;
         }
     }
 
-    get(key) {
-        const cacheKey = this.prefix + key;
-        
+    async get(key) {
         // Check memory cache first
-        if (this.memoryCache.has(cacheKey)) {
-            const item = this.memoryCache.get(cacheKey);
-            if (this.isValid(item)) {
-                return item.value;
-            } else {
-                this.memoryCache.delete(cacheKey);
+        const memoryCache = sessionStorage.getItem(`cache_${key}`);
+        if (memoryCache) {
+            const parsed = JSON.parse(memoryCache);
+            if (parsed.expires > Date.now()) {
+                return parsed.data;
             }
+            sessionStorage.removeItem(`cache_${key}`);
         }
-        
-        // Check localStorage
+
         try {
-            const itemStr = localStorage.getItem(cacheKey);
-            if (!itemStr) return null;
-            
-            const item = JSON.parse(itemStr);
-            
-            if (!this.isValid(item)) {
-                localStorage.removeItem(cacheKey);
+            let cacheData = null;
+
+            // Try IndexedDB
+            if ('indexedDB' in window) {
+                cacheData = await this.getIndexedDB(key);
+            } else {
+                // Try localStorage
+                const localData = localStorage.getItem(`cache_${key}`);
+                if (localData) {
+                    cacheData = JSON.parse(localData);
+                }
+            }
+
+            if (!cacheData) return null;
+
+            // Check if expired
+            if (cacheData.expires <= Date.now()) {
+                await this.remove(key);
                 return null;
             }
-            
+
             // Update memory cache
-            this.memoryCache.set(cacheKey, item);
-            
-            return item.value;
+            sessionStorage.setItem(`cache_${key}`, JSON.stringify(cacheData));
+
+            return cacheData.data;
         } catch (error) {
             console.error('Cache get error:', error);
-            localStorage.removeItem(cacheKey);
             return null;
         }
     }
 
-    append(key, value, ttl = this.defaultTTL) {
-        const existing = this.get(key) || [];
-        if (Array.isArray(existing)) {
-            existing.push(value);
-            this.set(key, existing, ttl);
-        }
-    }
+    async remove(key) {
+        try {
+            sessionStorage.removeItem(`cache_${key}`);
+            localStorage.removeItem(`cache_${key}`);
 
-    remove(key) {
-        const cacheKey = this.prefix + key;
-        
-        // Remove from memory cache
-        this.memoryCache.delete(cacheKey);
-        
-        // Remove from localStorage
-        localStorage.removeItem(cacheKey);
-        
-        // Broadcast removal
-        this.broadcastRemoval(key);
-    }
-
-    clear(prefix = '') {
-        const searchKey = this.prefix + prefix;
-        
-        // Clear memory cache
-        for (const key of this.memoryCache.keys()) {
-            if (key.startsWith(searchKey)) {
-                this.memoryCache.delete(key);
+            if ('indexedDB' in window) {
+                await this.removeIndexedDB(key);
             }
-        }
-        
-        // Clear localStorage
-        for (let i = localStorage.length - 1; i >= 0; i--) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith(searchKey)) {
-                localStorage.removeItem(key);
-            }
-        }
-        
-        console.log(`Cache cleared for prefix: ${prefix}`);
-    }
-
-    clearOldest(count = 10) {
-        const items = [];
-        
-        // Collect all cache items
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith(this.prefix)) {
-                try {
-                    const itemStr = localStorage.getItem(key);
-                    const item = JSON.parse(itemStr);
-                    items.push({
-                        key: key,
-                        timestamp: item.timestamp || 0
-                    });
-                } catch (error) {
-                    // Remove invalid items
-                    localStorage.removeItem(key);
-                }
-            }
-        }
-        
-        // Sort by timestamp (oldest first)
-        items.sort((a, b) => a.timestamp - b.timestamp);
-        
-        // Remove oldest items
-        const toRemove = items.slice(0, Math.min(count, items.length));
-        toRemove.forEach(item => {
-            localStorage.removeItem(item.key);
-            this.memoryCache.delete(item.key);
-        });
-        
-        console.log(`Removed ${toRemove.length} oldest cache items`);
-    }
-
-    cleanup() {
-        const now = Date.now();
-        let removed = 0;
-        
-        for (let i = localStorage.length - 1; i >= 0; i--) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith(this.prefix)) {
-                try {
-                    const itemStr = localStorage.getItem(key);
-                    const item = JSON.parse(itemStr);
-                    
-                    if (item.expiry && now > item.expiry) {
-                        localStorage.removeItem(key);
-                        this.memoryCache.delete(key);
-                        removed++;
-                    }
-                } catch (error) {
-                    // Remove invalid items
-                    localStorage.removeItem(key);
-                    removed++;
-                }
-            }
-        }
-        
-        if (removed > 0) {
-            console.log(`Cache cleanup removed ${removed} expired items`);
+        } catch (error) {
+            console.error('Cache remove error:', error);
         }
     }
 
-    isValid(item) {
-        if (!item || !item.expiry) return false;
-        return Date.now() < item.expiry;
-    }
-
-    broadcastUpdate(key, value) {
-        // Create a custom event for cross-tab communication
-        const event = new CustomEvent('cacheUpdate', {
-            detail: { key: key, value: value }
-        });
-        window.dispatchEvent(event);
-    }
-
-    broadcastRemoval(key) {
-        const event = new CustomEvent('cacheRemoval', {
-            detail: { key: key }
-        });
-        window.dispatchEvent(event);
-    }
-
-    handleStorageEvent(event) {
-        if (event.newValue) {
-            try {
-                const item = JSON.parse(event.newValue);
-                const key = event.key.replace(this.prefix, '');
-                this.memoryCache.set(event.key, item);
-                
-                // Dispatch internal event
-                const internalEvent = new CustomEvent('cacheUpdate', {
-                    detail: { key: key, value: item.value }
-                });
-                window.dispatchEvent(internalEvent);
-            } catch (error) {
-                console.error('Failed to parse storage event:', error);
-            }
-        } else if (event.oldValue) {
-            const key = event.key.replace(this.prefix, '');
-            this.memoryCache.delete(event.key);
+    async clear() {
+        try {
+            sessionStorage.clear();
             
-            // Dispatch internal event
-            const internalEvent = new CustomEvent('cacheRemoval', {
-                detail: { key: key }
+            // Clear all cache items from localStorage
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('cache_')) {
+                    localStorage.removeItem(key);
+                }
             });
-            window.dispatchEvent(internalEvent);
+
+            if ('indexedDB' in window) {
+                await this.clearIndexedDB();
+            }
+
+            // Clear service worker cache
+            if ('caches' in window) {
+                const cacheKeys = await caches.keys();
+                await Promise.all(
+                    cacheKeys.map(key => caches.delete(key))
+                );
+            }
+        } catch (error) {
+            console.error('Cache clear error:', error);
         }
     }
 
-    async syncOfflineData() {
-        // Get offline queue
-        const offlineQueue = this.get('offline_queue') || [];
-        
-        if (offlineQueue.length > 0) {
-            console.log(`Syncing ${offlineQueue.length} offline items...`);
-            
-            for (const item of offlineQueue) {
-                try {
-                    // Attempt to sync each item
-                    await this.syncItem(item);
-                } catch (error) {
-                    console.error('Failed to sync item:', error);
-                    // Keep in queue for next sync
+    async cleanupOldCaches() {
+        try {
+            if (!('caches' in window)) return;
+
+            const cacheKeys = await caches.keys();
+            const currentCache = await caches.open(this.cacheName);
+
+            // Clean up old cache versions
+            for (const key of cacheKeys) {
+                if (key !== this.cacheName) {
+                    await caches.delete(key);
                 }
             }
-            
-            // Clear successful items from queue
-            this.set('offline_queue', []);
-        }
-    }
 
-    async syncItem(item) {
-        // Implement based on your sync requirements
-        // This would typically send data to your backend
-        return new Promise((resolve) => {
-            setTimeout(resolve, 100);
-        });
-    }
+            // Clean up expired items from current cache
+            const requests = await currentCache.keys();
+            const now = Date.now();
 
-    // Cache statistics
-    getStats() {
-        const stats = {
-            total: 0,
-            memory: 0,
-            localStorage: 0,
-            expired: 0
-        };
-        
-        // Count memory cache
-        stats.memory = this.memoryCache.size;
-        
-        // Count localStorage cache
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith(this.prefix)) {
-                stats.localStorage++;
-                
-                try {
-                    const itemStr = localStorage.getItem(key);
-                    const item = JSON.parse(itemStr);
-                    if (!this.isValid(item)) {
-                        stats.expired++;
+            for (const request of requests) {
+                const response = await currentCache.match(request);
+                if (response) {
+                    const cachedDate = new Date(response.headers.get('cached-date'));
+                    if (now - cachedDate.getTime() > this.cacheDuration) {
+                        await currentCache.delete(request);
                     }
-                } catch (error) {
-                    stats.expired++;
                 }
             }
+        } catch (error) {
+            console.error('Cache cleanup error:', error);
         }
-        
-        stats.total = stats.localStorage;
-        
-        return stats;
     }
 
-    // Image caching
-    cacheImage(url) {
+    // IndexedDB methods
+    async initIndexedDB() {
         return new Promise((resolve, reject) => {
-            if (!url) {
-                reject(new Error('No URL provided'));
-                return;
-            }
-            
-            const cacheKey = this.prefix + 'img_' + this.hashString(url);
-            
-            // Check if already cached
-            const cached = this.get(cacheKey);
-            if (cached) {
-                resolve(cached);
-                return;
-            }
-            
-            // Fetch and cache the image
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to fetch image');
-                    return response.blob();
-                })
-                .then(blob => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const base64data = reader.result;
-                        this.set(cacheKey, base64data, 86400000); // Cache for 24 hours
-                        resolve(base64data);
-                    };
-                    reader.readAsDataURL(blob);
-                })
-                .catch(reject);
+            const request = indexedDB.open('SilvaStreamCache', 1);
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve(request.result);
+
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('cache')) {
+                    const store = db.createObjectStore('cache', { keyPath: 'key' });
+                    store.createIndex('expires', 'expires', { unique: false });
+                }
+            };
         });
     }
 
+    async setIndexedDB(key, data) {
+        try {
+            const db = await this.initIndexedDB();
+            const transaction = db.transaction('cache', 'readwrite');
+            const store = transaction.objectStore('cache');
+            
+            await store.put({
+                key: key,
+                ...data
+            });
+
+            return transaction.complete;
+        } catch (error) {
+            console.error('IndexedDB set error:', error);
+        }
+    }
+
+    async getIndexedDB(key) {
+        try {
+            const db = await this.initIndexedDB();
+            const transaction = db.transaction('cache', 'readonly');
+            const store = transaction.objectStore('cache');
+            
+            return new Promise((resolve, reject) => {
+                const request = store.get(key);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        } catch (error) {
+            console.error('IndexedDB get error:', error);
+            return null;
+        }
+    }
+
+    async removeIndexedDB(key) {
+        try {
+            const db = await this.initIndexedDB();
+            const transaction = db.transaction('cache', 'readwrite');
+            const store = transaction.objectStore('cache');
+            
+            await store.delete(key);
+            return transaction.complete;
+        } catch (error) {
+            console.error('IndexedDB remove error:', error);
+        }
+    }
+
+    async clearIndexedDB() {
+        try {
+            const db = await this.initIndexedDB();
+            const transaction = db.transaction('cache', 'readwrite');
+            const store = transaction.objectStore('cache');
+            
+            await store.clear();
+            return transaction.complete;
+        } catch (error) {
+            console.error('IndexedDB clear error:', error);
+        }
+    }
+
+    // API Response Caching
+    async cacheApiResponse(url, response, duration = this.cacheDuration) {
+        try {
+            if ('caches' in window) {
+                const cache = await caches.open(this.cacheName);
+                const headers = new Headers(response.headers);
+                headers.set('cached-date', new Date().toISOString());
+                
+                const cachedResponse = new Response(response.body, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: headers
+                });
+
+                await cache.put(url, cachedResponse);
+            }
+
+            // Also store in data cache
+            const data = await response.clone().json();
+            await this.set(`api_${this.hashString(url)}`, data, duration);
+
+            return data;
+        } catch (error) {
+            console.error('API cache error:', error);
+            return null;
+        }
+    }
+
+    async getCachedApiResponse(url) {
+        try {
+            // Check memory/data cache first
+            const cacheKey = `api_${this.hashString(url)}`;
+            const cachedData = await this.get(cacheKey);
+            
+            if (cachedData) {
+                return new Response(JSON.stringify(cachedData), {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+
+            // Check service worker cache
+            if ('caches' in window) {
+                const cache = await caches.open(this.cacheName);
+                const cachedResponse = await cache.match(url);
+                
+                if (cachedResponse) {
+                    const cachedDate = new Date(cachedResponse.headers.get('cached-date'));
+                    if (Date.now() - cachedDate.getTime() < this.cacheDuration) {
+                        return cachedResponse;
+                    }
+                    await cache.delete(url);
+                }
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Get cached API error:', error);
+            return null;
+        }
+    }
+
+    // Image Caching
+    async cacheImage(url) {
+        try {
+            if ('caches' in window) {
+                const cache = await caches.open('silvastream-images');
+                const cached = await cache.match(url);
+                
+                if (!cached) {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        await cache.put(url, response.clone());
+                    }
+                    return response;
+                }
+                
+                return cached;
+            }
+            
+            // Fallback to regular fetch
+            return fetch(url);
+        } catch (error) {
+            console.error('Image cache error:', error);
+            return fetch(url);
+        }
+    }
+
+    // Helper methods
     hashString(str) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -357,56 +326,54 @@ class CacheManager {
             hash = ((hash << 5) - hash) + char;
             hash = hash & hash;
         }
-        return Math.abs(hash).toString(16);
+        return hash.toString();
     }
 
-    // Batch operations
-    setMany(items, ttl = this.defaultTTL) {
-        const results = [];
-        
-        for (const [key, value] of Object.entries(items)) {
-            const success = this.set(key, value, ttl);
-            results.push({ key, success });
+    getCacheStats() {
+        const stats = {
+            sessionStorage: Object.keys(sessionStorage).filter(k => k.startsWith('cache_')).length,
+            localStorage: Object.keys(localStorage).filter(k => k.startsWith('cache_')).length,
+            memoryUsage: this.getMemoryUsage(),
+            totalCached: 0
+        };
+
+        stats.totalCached = stats.sessionStorage + stats.localStorage;
+        return stats;
+    }
+
+    getMemoryUsage() {
+        if (performance.memory) {
+            return {
+                used: (performance.memory.usedJSHeapSize / 1048576).toFixed(2) + ' MB',
+                total: (performance.memory.totalJSHeapSize / 1048576).toFixed(2) + ' MB',
+                limit: (performance.memory.jsHeapSizeLimit / 1048576).toFixed(2) + ' MB'
+            };
         }
-        
-        return results;
+        return 'Not available';
     }
 
-    getMany(keys) {
-        const results = {};
-        
-        for (const key of keys) {
-            results[key] = this.get(key);
-        }
-        
-        return results;
-    }
+    // Cache warming for frequently accessed data
+    async warmCache() {
+        const urlsToCache = [
+            '/api/categories',
+            '/api/genres',
+            '/api/trending'
+        ];
 
-    // Cache warming
-    warmCache(keys) {
-        keys.forEach(key => {
-            if (!this.get(key)) {
-                // Trigger fetch for missing cache items
-                this.prefetch(key);
+        try {
+            for (const url of urlsToCache) {
+                const response = await fetch(url);
+                if (response.ok) {
+                    await this.cacheApiResponse(url, response.clone());
+                }
             }
-        });
-    }
-
-    prefetch(key) {
-        // Implement based on your data fetching logic
-        // This would typically fetch data and cache it
-        console.log(`Prefetching: ${key}`);
+        } catch (error) {
+            console.error('Cache warming error:', error);
+        }
     }
 }
 
-// Create global instance
-const cacheManager = new CacheManager();
+// Global cache instance
+const CACHE = new CacheManager();
 
-// Make available globally
-window.CacheManager = CacheManager;
-window.cacheManager = cacheManager;
-
-// Auto-cleanup every 5 minutes
-setInterval(() => {
-    cacheManager.cleanup();
-}, 300000);
+export { CACHE };
