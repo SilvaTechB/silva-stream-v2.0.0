@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Categories - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Browse all movie and TV show categories on SilvaStream">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/categories.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/categories.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="categories-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>Browse Categories</h1>
+                <div class="header-search">
+                    <input type="text" 
+                           class="search-input" 
+                           placeholder="Search categories..."
+                           id="category-search">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="categories-main">
+        <div class="container">
+            <!-- Categories Grid -->
+            <section class="categories-section">
+                <div class="section-header">
+                    <h2>All Categories</h2>
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="categories-container">
+                    <!-- Genre Categories -->
+                    <div class="category-group">
+                        <h3 class="group-title">
+                            <i class="fas fa-film"></i> Genres
+                        </h3>
+                        <div class="categories-grid" id="genre-categories">
+                            <!-- Genres will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Content Type Categories -->
+                    <div class="category-group">
+                        <h3 class="group-title">
+                            <i class="fas fa-tv"></i> Content Types
+                        </h3>
+                        <div class="categories-grid" id="type-categories">
+                            <div class="category-card" data-category="movies">
+                                <div class="category-icon">
+                                    <i class="fas fa-film"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h3>Movies</h3>
+                                    <p>10,000+ titles</p>
+                                </div>
+                                <span class="category-count">10K+</span>
+                            </div>
+                            <div class="category-card" data-category="series">
+                                <div class="category-icon">
+                                    <i class="fas fa-tv"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h3>TV Series</h3>
+                                    <p>5,000+ shows</p>
+                                </div>
+                                <span class="category-count">5K+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Regional Categories -->
+                    <div class="category-group">
+                        <h3 class="group-title">
+                            <i class="fas fa-globe"></i> Regional
+                        </h3>
+                        <div class="categories-grid" id="regional-categories">
+                            <div class="category-card" data-category="hollywood">
+                                <div class="category-icon">
+                                    <i class="fas fa-landmark"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h3>Hollywood</h3>
+                                    <p>Latest US movies</p>
+                                </div>
+                                <span class="category-count">4K+</span>
+                            </div>
+                            <div class="category-card" data-category="bollywood">
+                                <div class="category-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h3>Bollywood</h3>
+                                    <p>Indian cinema</p>
+                                </div>
+                                <span class="category-count">2K+</span>
+                            </div>
+                            <!-- More regional categories -->
+                        </div>
+                    </div>
+
+                    <!-- Year Categories -->
+                    <div class="category-group">
+                        <h3 class="group-title">
+                            <i class="fas fa-calendar"></i> By Year
+                        </h3>
+                        <div class="year-categories" id="year-categories">
+                            <!-- Year categories will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular in Categories -->
+            <section class="popular-categories">
+                <div class="section-header">
+                    <h2>Most Popular Categories</h2>
+                </div>
+                
+                <div class="popular-grid">
+                    <div class="popular-card trending">
+                        <div class="popular-content">
+                            <div class="popular-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="popular-info">
+                                <h3>Trending Now</h3>
+                                <p>What everyone is watching</p>
+                            </div>
+                            <div class="popular-badge">Hot</div>
+                        </div>
+                        <a href="category.html?cat=trending" class="popular-link">
+                            Explore <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="popular-card new">
+                        <div class="popular-content">
+                            <div class="popular-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div class="popular-info">
+                                <h3>New Releases</h3>
+                                <p>Latest movies & shows</p>
+                            </div>
+                            <div class="popular-badge">New</div>
+                        </div>
+                        <a href="category.html?cat=new" class="popular-link">
+                            Explore <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="popular-card premium">
+                        <div class="popular-content">
+                            <div class="popular-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="popular-info">
+                                <h3>Premium Content</h3>
+                                <p>Exclusive 4K movies</p>
+                            </div>
+                            <div class="popular-badge">VIP</div>
+                        </div>
+                        <a href="category.html?cat=premium" class="popular-link">
+                            Explore <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Category Features -->
+            <section class="category-features">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-filter"></i>
+                        <h3>Smart Filters</h3>
+                        <p>Filter by year, rating, genre, and more</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-sort-amount-down"></i>
+                        <h3>Advanced Sorting</h3>
+                        <p>Sort by popularity, rating, or release date</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-eye"></i>
+                        <h3>Recently Viewed</h3>
+                        <p>Quick access to your history</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-star"></i>
+                        <h3>Personalized</h3>
+                        <p>Recommendations based on your taste</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Quick Filters -->
+    <div class="quick-filters" id="quick-filters">
+        <div class="filters-header">
+            <h4>Quick Filters</h4>
+            <button class="clear-filters" id="clear-filters">
+                Clear All
+            </button>
+        </div>
+        <div class="filters-content">
+            <div class="filter-group">
+                <h5>Type</h5>
+                <div class="filter-tags">
+                    <span class="filter-tag active" data-filter="movie">Movies</span>
+                    <span class="filter-tag active" data-filter="series">TV Shows</span>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h5>Year</h5>
+                <div class="year-filter">
+                    <input type="range" 
+                           id="year-range" 
+                           min="2000" 
+                           max="2024" 
+                           value="2024">
+                    <span class="year-value" id="year-value">2024</span>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h5>Rating</h5>
+                <div class="rating-filter">
+                    <div class="stars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star active" data-rating="5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary apply-filters" id="apply-filters">
+            Apply Filters
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="categories-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Browse thousands of movies and shows across categories</p>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="movies.html">Movies</a>
+                    <a href="series.html">TV Shows</a>
+                    <a href="sports.html">Sports</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/categories.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categoriesPage = new CategoriesPage();
+            categoriesPage.loadCategories();
+        });
+    </script>
+</body>
+</html>
