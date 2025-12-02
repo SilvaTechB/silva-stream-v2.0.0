@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Browse movies and shows by category">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/category.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/category.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="category-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="categories.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 id="category-title">Category</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="category-filter">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                    <button class="action-btn" id="category-sort">
+                        <i class="fas fa-sort"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Hero -->
+    <section class="category-hero" id="category-hero">
+        <div class="hero-backdrop">
+            <div class="backdrop-overlay"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="category-info">
+                    <div class="category-icon" id="category-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <div class="category-details">
+                        <h1 id="category-name">Category Name</h1>
+                        <p class="category-description" id="category-description">
+                            Browse all movies and shows in this category
+                        </p>
+                        <div class="category-stats">
+                            <div class="stat">
+                                <i class="fas fa-film"></i>
+                                <span id="total-titles">0</span>
+                                <span>Titles</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-clock"></i>
+                                <span id="avg-rating">0</span>
+                                <span>Avg. Rating</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-calendar"></i>
+                                <span id="latest-year">2024</span>
+                                <span>Latest</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category-actions">
+                    <button class="btn btn-primary" id="shuffle-play">
+                        <i class="fas fa-random"></i>
+                        Shuffle Play
+                    </button>
+                    <button class="btn btn-secondary" id="play-trailer">
+                        <i class="fas fa-play-circle"></i>
+                        Watch Trailer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Navigation -->
+    <nav class="category-nav">
+        <div class="container">
+            <div class="nav-content">
+                <button class="nav-tab active" data-tab="all">
+                    All Content
+                </button>
+                <button class="nav-tab" data-tab="movies">
+                    Movies Only
+                </button>
+                <button class="nav-tab" data-tab="series">
+                    TV Series Only
+                </button>
+                <button class="nav-tab" data-tab="popular">
+                    Most Popular
+                </button>
+                <button class="nav-tab" data-tab="new">
+                    New Releases
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="category-main">
+        <div class="container">
+            <!-- Featured Content -->
+            <section class="featured-section">
+                <div class="section-header">
+                    <h2>Featured in This Category</h2>
+                    <a href="#" class="view-all" id="view-all-featured">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="featured-slider" id="featured-slider">
+                    <!-- Featured items will be populated here -->
+                </div>
+            </section>
+
+            <!-- Content Grid -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>All Titles</h2>
+                    <div class="content-controls">
+                        <select class="sort-select" id="content-sort">
+                            <option value="popular">Most Popular</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="title">Title A-Z</option>
+                        </select>
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-grid grid-view" id="content-grid">
+                    <!-- Content items will be populated here -->
+                </div>
+                
+                <div class="loading-content" id="loading-content">
+                    <div class="spinner"></div>
+                    <p>Loading content...</p>
+                </div>
+                
+                <div class="no-content" id="no-content" style="display: none;">
+                    <div class="no-content-message">
+                        <i class="fas fa-film fa-3x"></i>
+                        <h3>No Content Found</h3>
+                        <p>Try adjusting your filters or browse other categories</p>
+                        <a href="categories.html" class="btn btn-primary">
+                            Browse Categories
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="load-more-container">
+                    <button class="btn btn-load-more" id="load-more">
+                        Load More
+                    </button>
+                </div>
+            </section>
+
+            <!-- Subcategories -->
+            <section class="subcategories-section">
+                <div class="section-header">
+                    <h2>Related Categories</h2>
+                </div>
+                
+                <div class="subcategories-grid" id="subcategories-grid">
+                    <!-- Subcategories will be populated here -->
+                </div>
+            </section>
+
+            <!-- Top Rated -->
+            <section class="top-rated-section">
+                <div class="section-header">
+                    <h2>Top Rated in This Category</h2>
+                    <a href="#" class="view-all" id="view-all-top-rated">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="top-rated-slider" id="top-rated-slider">
+                    <!-- Top rated items will be populated here -->
+                </div>
+            </section>
+
+            <!-- Category Insights -->
+            <section class="insights-section">
+                <div class="insights-header">
+                    <h2>Category Insights</h2>
+                    <p>Interesting facts about this category</p>
+                </div>
+                
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Most Awarded</h3>
+                            <div class="insight-value" id="most-awarded">Movie Title</div>
+                            <p class="insight-desc">Won 5 Oscars</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Highest Grossing</h3>
+                            <div class="insight-value" id="highest-grossing">$2.8B</div>
+                            <p class="insight-desc">Avengers: Endgame</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Most Popular</h3>
+                            <div class="insight-value" id="most-popular">1.2M Views</div>
+                            <p class="insight-desc">Most watched title</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Golden Era</h3>
+                            <div class="insight-value" id="golden-era">1990s</div>
+                            <p class="insight-desc">Peak production years</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Filter Sidebar -->
+    <div class="category-sidebar" id="category-sidebar">
+        <div class="sidebar-header">
+            <h3>Filters</h3>
+            <button class="close-sidebar">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="filter-group">
+                <h4>Year Range</h4>
+                <div class="year-range">
+                    <input type="number" id="year-from" placeholder="From" min="1900" max="2024">
+                    <span>to</span>
+                    <input type="number" id="year-to" placeholder="To" min="1900" max="2024">
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Rating</h4>
+                <div class="rating-filter">
+                    <div class="stars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star active" data-rating="5"></i>
+                    </div>
+                    <span class="rating-text">4+ stars</span>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Content Type</h4>
+                <div class="type-filter">
+                    <label class="type-option">
+                        <input type="checkbox" name="type" value="movie" checked>
+                        <span>Movies</span>
+                    </label>
+                    <label class="type-option">
+                        <input type="checkbox" name="type" value="series" checked>
+                        <span>TV Series</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Quality</h4>
+                <div class="quality-filter">
+                    <label class="quality-option">
+                        <input type="checkbox" name="quality" value="hd" checked>
+                        <span>HD</span>
+                    </label>
+                    <label class="quality-option">
+                        <input type="checkbox" name="quality" value="4k">
+                        <span>4K</span>
+                    </label>
+                    <label class="quality-option">
+                        <input type="checkbox" name="quality" value="sd">
+                        <span>SD</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Sort By</h4>
+                <select class="sort-select" id="sidebar-sort">
+                    <option value="popular">Popularity</option>
+                    <option value="newest">Newest</option>
+                    <option value="rating">Rating</option>
+                    <option value="title">Title</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="btn btn-secondary" id="reset-filters">
+                Reset
+            </button>
+            <button class="btn btn-primary" id="apply-filters">
+                Apply Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- Sort Options Modal -->
+    <div class="modal" id="sort-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sort Options</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="sort-options">
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="popular" checked>
+                        <span>Most Popular</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="newest">
+                        <span>Newest First</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="oldest">
+                        <span>Oldest First</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="rating">
+                        <span>Highest Rated</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="title">
+                        <span>Title A-Z</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="apply-sort">
+                    Apply Sort
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="category-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Explore thousands of titles in this category</p>
+                <div class="footer-links">
+                    <a href="categories.html">All Categories</a>
+                    <a href="movies.html">Movies</a>
+                    <a href="series.html">TV Shows</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/category.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categoryPage = new CategoryPage();
+            
+            // Get category from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('cat');
+            
+            if (category) {
+                categoryPage.loadCategory(category);
+            } else {
+                window.location.href = 'categories.html';
+            }
+        });
+    </script>
+</body>
+</html>
