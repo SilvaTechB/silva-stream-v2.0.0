@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Watchlist - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Manage your watchlist on SilvaStream">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/watchlist.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/watchlist.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="watchlist-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>My Watchlist</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="sort-watchlist">
+                        <i class="fas fa-sort"></i>
+                    </button>
+                    <button class="action-btn" id="edit-watchlist">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="watchlist-main">
+        <div class="container">
+            <!-- Watchlist Stats -->
+            <section class="watchlist-stats">
+                <div class="stats-card">
+                    <div class="stat-item">
+                        <i class="fas fa-bookmark"></i>
+                        <div>
+                            <span class="stat-number" id="total-items">0</span>
+                            <span class="stat-label">Total Items</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-film"></i>
+                        <div>
+                            <span class="stat-number" id="movies-count">0</span>
+                            <span class="stat-label">Movies</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-tv"></i>
+                        <div>
+                            <span class="stat-number" id="series-count">0</span>
+                            <span class="stat-label">TV Shows</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="stat-number" id="watch-time">0</span>
+                            <span class="stat-label">Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Watchlist Content -->
+            <section class="watchlist-content">
+                <div class="content-header">
+                    <div class="view-options">
+                        <button class="view-option active" data-view="grid">
+                            <i class="fas fa-th"></i> Grid
+                        </button>
+                        <button class="view-option" data-view="list">
+                            <i class="fas fa-list"></i> List
+                        </button>
+                    </div>
+                    <div class="filter-options">
+                        <select class="filter-select" id="watchlist-filter">
+                            <option value="all">All Items</option>
+                            <option value="unwatched">Unwatched</option>
+                            <option value="watched">Watched</option>
+                            <option value="movies">Movies Only</option>
+                            <option value="series">TV Shows Only</option>
+                            <option value="recent">Recently Added</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Watchlist Items -->
+                <div class="watchlist-items grid-view" id="watchlist-items">
+                    <!-- Items will be populated here -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-watchlist" id="empty-watchlist">
+                    <div class="empty-content">
+                        <i class="fas fa-bookmark fa-4x"></i>
+                        <h2>Your Watchlist is Empty</h2>
+                        <p>Add movies and shows you want to watch later</p>
+                        <div class="empty-actions">
+                            <a href="movies.html" class="btn btn-primary">
+                                <i class="fas fa-film"></i> Browse Movies
+                            </a>
+                            <a href="series.html" class="btn btn-secondary">
+                                <i class="fas fa-tv"></i> Browse TV Shows
+                            </a>
+                        </div>
+                        <div class="empty-tips">
+                            <h4>Tips for your watchlist:</h4>
+                            <ul>
+                                <li>Click the bookmark icon on any movie/show to add it</li>
+                                <li>Organize by priority using drag & drop</li>
+                                <li>Mark items as watched to track progress</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendations -->
+            <section class="watchlist-recommendations">
+                <div class="section-header">
+                    <h2>Based on Your Watchlist</h2>
+                    <a href="recommendations.html" class="view-all">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="recommendations-grid" id="watchlist-recommendations">
+                    <!-- Recommendations will be populated here -->
+                </div>
+            </section>
+
+            <!-- Watchlist Actions -->
+            <section class="watchlist-actions">
+                <div class="action-cards">
+                    <div class="action-card">
+                        <i class="fas fa-download"></i>
+                        <h3>Download All</h3>
+                        <p>Download your entire watchlist for offline viewing</p>
+                        <button class="btn btn-outline" id="download-all-btn">
+                            Download
+                        </button>
+                    </div>
+                    <div class="action-card">
+                        <i class="fas fa-share-alt"></i>
+                        <h3>Share Watchlist</h3>
+                        <p>Share your watchlist with friends</p>
+                        <button class="btn btn-outline" id="share-watchlist-btn">
+                            Share
+                        </button>
+                    </div>
+                    <div class="action-card">
+                        <i class="fas fa-trash"></i>
+                        <h3>Clear Watchlist</h3>
+                        <p>Remove all items from your watchlist</p>
+                        <button class="btn btn-danger" id="clear-all-btn">
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Edit Mode -->
+    <div class="edit-mode" id="edit-mode">
+        <div class="edit-header">
+            <h3>Edit Watchlist</h3>
+            <div class="edit-actions">
+                <button class="btn btn-secondary" id="select-all-btn">
+                    Select All
+                </button>
+                <button class="btn btn-danger" id="delete-selected-btn">
+                    <i class="fas fa-trash"></i> Delete Selected
+                </button>
+                <button class="btn btn-primary" id="done-editing-btn">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sort Options -->
+    <div class="modal" id="sort-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sort Watchlist</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="sort-options">
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="date-added" checked>
+                        <span>Date Added</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="title">
+                        <span>Title A-Z</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="release-date">
+                        <span>Release Date</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="rating">
+                        <span>Rating</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="custom">
+                        <span>Custom Order</span>
+                    </label>
+                </div>
+                <div class="sort-direction">
+                    <label>
+                        <input type="checkbox" id="sort-desc">
+                        Descending Order
+                    </label>
+                </div>
+                <button class="btn btn-primary" id="apply-sort">
+                    Apply Sort
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="watchlist-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Your personal entertainment collection</p>
+                <div class="footer-links">
+                    <a href="profile.html">Profile</a>
+                    <a href="history.html">History</a>
+                    <a href="recommendations.html">Recommendations</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/watchlist.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const watchlist = new WatchlistManager();
+            watchlist.loadWatchlist();
+        });
+    </script>
+</body>
+</html>
