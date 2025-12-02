@@ -2,39 +2,35 @@
 
 A modern, responsive movie streaming platform powered by the Gifted Tech API.  
 ```
-silvastream/
-├── index.html (enhanced)
-├── movie-details.html (enhanced)
-├── series-details.html (enhanced)
-├── search.html (new)
-├── category.html (new)
-├── mylist.html (new)
-├── profile.html (new)
-├── sports.html
-├── styles/
-│   ├── main.css
-│   ├── details.css
-│   ├── search.css
-│   ├── category.css
-│   ├── sports.css
-│   └── entertainment.css (new)
-├── scripts/
-│   ├── api.js (enhanced)
-│   ├── app.js (enhanced)
-│   ├── movie-details.js (enhanced)
-│   ├── series-details.js (enhanced)
-│   ├── search.js (new)
-│   ├── category.js (new)
-│   ├── mylist.js (new)
-│   ├── profile.js (new)
-│   ├── player.js (enhanced)
-│   ├── sports.js
-│   ├── user-profiles.js (new)
-│   ├── entertainment.js (new)
-│   └── pwa.js (new)
-├── service-worker.js (enhanced)
-├── manifest.json (enhanced)
-└── icons/ (folder for PWA icons)
+styles/
+├── main.css              (you already have)
+├── animations.css        (you already have)
+├── details.css           (you already have)
+├── player.css            (you already have)
+├── profile.css           (you already have)
+├── responsive.css        (you already have)
+├── search.css            (you already have)
+└── components.css       ← NEW (missing components)
+└── theme.css             ← NEW (theme & dark mode fixes)
+└── utilities.css         ← NEW (utility classes)
+
+scripts/
+├── config.js             ← NEW
+├── utils.js              ← NEW
+├── api.js                (you already have)
+├── app.js                (you already have)
+├── movie-details.js      (you already have)
+├── series-details.js     (you already have)
+├── playback.js           (you already have)
+├── categories.js         ← NEW
+├── movies.js             ← NEW
+├── series.js             ← NEW
+├── sports.js             (you already have)
+├── profile.js            ← NEW
+├── watchlist.js          ← NEW
+├── theme.js              ← NEW
+├── ui.js                 ← NEW
+└── pwa.js                ← NEW
 ```
 ## Features
 
