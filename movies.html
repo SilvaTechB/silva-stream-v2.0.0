@@ -1,395 +1,544 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-theme">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies - SilvaStream</title>
     
     <!-- Meta Tags -->
-    <meta property="og:title" content="Movies - SilvaStream">
-    <meta property="og:description" content="Browse thousands of movies on SilvaStream">
-    <meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
-    <meta property="og:url" content="https://stream.silvatech.top/movies.html">
+    <meta name="description" content="Browse thousands of movies on SilvaStream">
     
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+    <!-- Preload -->
+    <link rel="preload" href="styles/movies.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/animations.css">
-    <link rel="stylesheet" href="styles/category.css">
+    <link rel="stylesheet" href="styles/movies.css">
 </head>
-<body class="dark-mode">
+<body>
     <!-- Theme Toggle -->
     <div class="theme-toggle">
-        <button id="themeToggle" class="theme-btn">
+        <button id="theme-switch" class="theme-btn">
             <i class="fas fa-moon"></i>
             <i class="fas fa-sun"></i>
         </button>
     </div>
 
-    <!-- Navigation -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <div class="logo-text">
-                    <span class="logo-primary">Silva</span>
-                    <span class="logo-secondary">Stream</span>
-                </div>
-            </a>
-            
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
+    <!-- Header -->
+    <header class="movies-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
                 </a>
-                <a href="movies.html" class="nav-link active">
-                    <i class="fas fa-film"></i>
-                    <span>Movies</span>
-                </a>
-                <a href="series.html" class="nav-link">
-                    <i class="fas fa-tv"></i>
-                    <span>TV Series</span>
-                </a>
-                <a href="sports.html" class="nav-link">
-                    <i class="fas fa-futbol"></i>
-                    <span>Sports</span>
-                </a>
-                <a href="search.html" class="nav-link search-trigger">
-                    <i class="fas fa-search"></i>
-                    <span>Search</span>
-                </a>
-            </div>
-            
-            <div class="user-actions">
-                <button class="user-notification">
-                    <i class="fas fa-bell"></i>
-                </button>
-                
-                <div class="user-profile">
-                    <div class="profile-avatar" id="userAvatar">
-                        <i class="fas fa-user"></i>
-                    </div>
+                <h1>Movies</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="movies-search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="action-btn" id="movies-filter">
+                        <i class="fas fa-filter"></i>
+                    </button>
                 </div>
             </div>
-            
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </div>
-    </nav>
-
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav" id="mobileNav">
-        <div class="mobile-nav-content">
-            <a href="index.html" class="mobile-nav-link">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="movies.html" class="mobile-nav-link active">
-                <i class="fas fa-film"></i>
-                <span>Movies</span>
-            </a>
-            <a href="series.html" class="mobile-nav-link">
-                <i class="fas fa-tv"></i>
-                <span>TV Series</span>
-            </a>
-            <a href="sports.html" class="mobile-nav-link">
-                <i class="fas fa-futbol"></i>
-                <span>Sports</span>
-            </a>
-            <a href="search.html" class="mobile-nav-link">
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-            </a>
-        </div>
-    </div>
+    </header>
 
     <!-- Movies Hero -->
-    <section class="category-hero movies-hero">
-        <div class="container">
-            <div class="category-hero-content">
-                <h1 class="animate-pop"><i class="fas fa-film"></i> Movies</h1>
-                <p class="hero-subtitle animate-fade-in">Browse thousands of movies from Hollywood, Nollywood, and worldwide</p>
-                <div class="hero-stats animate-slide-up">
-                    <div class="stat">
-                        <i class="fas fa-video"></i>
-                        <span>10,000+ Movies</span>
+    <section class="movies-hero">
+        <div class="hero-slider" id="movies-hero-slider">
+            <!-- Hero slides will be populated here -->
+        </div>
+        
+        <div class="hero-overlay">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Cinematic Universe Awaits</h1>
+                    <p class="hero-description">
+                        Discover blockbusters, indie gems, and timeless classics in our vast movie collection
+                    </p>
+                    
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <i class="fas fa-film"></i>
+                            <div>
+                                <span class="stat-number">10,000+</span>
+                                <span class="stat-label">Movies</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-award"></i>
+                            <div>
+                                <span class="stat-number">500+</span>
+                                <span class="stat-label">Award Winners</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-globe"></i>
+                            <div>
+                                <span class="stat-number">100+</span>
+                                <span class="stat-label">Countries</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <i class="fas fa-hd"></i>
-                        <span>HD Quality</span>
-                    </div>
-                    <div class="stat">
-                        <i class="fas fa-globe"></i>
-                        <span>Multiple Languages</span>
+                    
+                    <div class="hero-search">
+                        <input type="text" 
+                               class="search-input" 
+                               id="movies-search-input"
+                               placeholder="Search movies by title, actor, director...">
+                        <button class="search-btn" id="movies-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <div class="search-quick">
+                            <span class="quick-label">Quick:</span>
+                            <button class="quick-tag" data-tag="action">Action</button>
+                            <button class="quick-tag" data-tag="comedy">Comedy</button>
+                            <button class="quick-tag" data-tag="2024">2024</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Movies Content -->
-    <main class="category-content">
+    <!-- Movies Navigation -->
+    <nav class="movies-nav">
         <div class="container">
-            <!-- Filters -->
-            <div class="category-filters">
-                <div class="filter-section">
-                    <h3><i class="fas fa-filter"></i> Filter Movies</h3>
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="trending">Trending</button>
-                        <button class="filter-btn" data-filter="new">New Releases</button>
-                        <button class="filter-btn" data-filter="popular">Popular</button>
-                        <button class="filter-btn" data-filter="hd">HD Only</button>
-                    </div>
-                </div>
-                
-                <div class="filter-section">
-                    <h3><i class="fas fa-tags"></i> Genres</h3>
-                    <div class="genre-buttons">
-                        <button class="genre-btn" data-genre="action">Action</button>
-                        <button class="genre-btn" data-genre="comedy">Comedy</button>
-                        <button class="genre-btn" data-genre="drama">Drama</button>
-                        <button class="genre-btn" data-genre="horror">Horror</button>
-                        <button class="genre-btn" data-genre="romance">Romance</button>
-                        <button class="genre-btn" data-genre="sci-fi">Sci-Fi</button>
-                        <button class="genre-btn" data-genre="thriller">Thriller</button>
-                        <button class="genre-btn" data-genre="animation">Animation</button>
-                    </div>
-                </div>
-                
-                <div class="filter-section">
-                    <h3><i class="fas fa-sort"></i> Sort By</h3>
-                    <select class="sort-select" id="sortSelect">
-                        <option value="popularity">Popularity</option>
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="rating">Highest Rated</option>
-                        <option value="title">Title A-Z</option>
-                    </select>
-                </div>
+            <div class="nav-content">
+                <button class="nav-btn active" data-tab="featured">
+                    <i class="fas fa-star"></i>
+                    Featured
+                </button>
+                <button class="nav-btn" data-tab="new">
+                    <i class="fas fa-newspaper"></i>
+                    New Releases
+                </button>
+                <button class="nav-btn" data-tab="trending">
+                    <i class="fas fa-fire"></i>
+                    Trending
+                </button>
+                <button class="nav-btn" data-tab="genres">
+                    <i class="fas fa-th-large"></i>
+                    Genres
+                </button>
+                <button class="nav-btn" data-tab="collections">
+                    <i class="fas fa-layer-group"></i>
+                    Collections
+                </button>
+                <button class="nav-btn" data-tab="year">
+                    <i class="fas fa-calendar"></i>
+                    By Year
+                </button>
             </div>
+        </div>
+    </nav>
 
-            <!-- Movies Grid -->
-            <section class="movies-grid-section">
+    <!-- Main Content -->
+    <main class="movies-main">
+        <div class="container">
+            <!-- Now in Cinemas -->
+            <section class="cinema-section">
                 <div class="section-header">
-                    <h2>Featured Movies</h2>
-                    <div class="movies-count" id="moviesCount">Loading movies...</div>
+                    <h2>
+                        <i class="fas fa-ticket-alt"></i>
+                        Now in Cinemas
+                    </h2>
+                    <a href="#" class="view-all" id="view-all-cinema">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
                 
-                <div class="movies-grid" id="moviesGrid">
-                    <!-- Movies will be loaded here -->
+                <div class="cinema-slider" id="cinema-slider">
+                    <!-- Cinema movies will be populated here -->
+                </div>
+            </section>
+
+            <!-- Featured Movies -->
+            <section class="featured-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-crown"></i>
+                        Featured Movies
+                    </h2>
+                    <p>Handpicked selection of must-watch films</p>
+                </div>
+                
+                <div class="featured-grid" id="featured-grid">
+                    <!-- Featured movies will be populated here -->
+                </div>
+            </section>
+
+            <!-- Genre Quick Access -->
+            <section class="genres-section">
+                <div class="section-header">
+                    <h2>Browse by Genre</h2>
+                </div>
+                
+                <div class="genres-grid" id="genres-grid">
+                    <div class="genre-card" data-genre="action">
+                        <div class="genre-icon">
+                            <i class="fas fa-explosion"></i>
+                        </div>
+                        <div class="genre-info">
+                            <h3>Action</h3>
+                            <p>1,500+ movies</p>
+                        </div>
+                        <div class="genre-badge">Popular</div>
+                    </div>
+                    <!-- More genres -->
+                </div>
+            </section>
+
+            <!-- Trending Movies -->
+            <section class="trending-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-chart-line"></i>
+                        Trending This Week
+                    </h2>
+                    <a href="#" class="view-all" id="view-all-trending">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="trending-list" id="trending-list">
+                    <!-- Trending movies will be populated here -->
+                </div>
+            </section>
+
+            <!-- Collections -->
+            <section class="collections-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-layer-group"></i>
+                        Movie Collections
+                    </h2>
+                </div>
+                
+                <div class="collections-tabs">
+                    <button class="collection-tab active" data-collection="marvel">
+                        <i class="fas fa-superpowers"></i>
+                        Marvel Universe
+                    </button>
+                    <button class="collection-tab" data-collection="dc">
+                        <i class="fas fa-bolt"></i>
+                        DC Comics
+                    </button>
+                    <button class="collection-tab" data-collection="starwars">
+                        <i class="fas fa-jedi"></i>
+                        Star Wars
+                    </button>
+                    <button class="collection-tab" data-collection="pixar">
+                        <i class="fas fa-film"></i>
+                        Pixar
+                    </button>
+                </div>
+                
+                <div class="collection-content active" id="marvel-collection">
+                    <div class="collection-movies" id="marvel-movies">
+                        <!-- Marvel movies will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Oscar Winners -->
+            <section class="oscar-section">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-award"></i>
+                        Oscar Winners & Nominees
+                    </h2>
+                    <p>Academy Award recognized films</p>
+                </div>
+                
+                <div class="oscar-grid" id="oscar-grid">
+                    <!-- Oscar movies will be populated here -->
+                </div>
+            </section>
+
+            <!-- All Movies Grid -->
+            <section class="all-movies-section">
+                <div class="section-header">
+                    <h2>All Movies</h2>
+                    <div class="movies-controls">
+                        <select class="sort-select" id="movies-sort">
+                            <option value="popular">Most Popular</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="title">Title A-Z</option>
+                            <option value="boxoffice">Box Office</option>
+                        </select>
+                        <div class="view-toggle">
+                            <button class="view-btn active" data-view="grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button class="view-btn" data-view="poster">
+                                <i class="fas fa-image"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="movies-grid grid-view" id="movies-grid">
+                    <!-- All movies will be populated here -->
+                </div>
+                
+                <div class="loading-movies" id="loading-movies">
+                    <div class="spinner"></div>
+                    <p>Loading movies...</p>
+                </div>
+                
+                <div class="no-movies" id="no-movies" style="display: none;">
+                    <div class="no-movies-message">
+                        <i class="fas fa-film fa-3x"></i>
+                        <h3>No Movies Found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                        <button class="btn btn-primary" id="reset-movies-filters">
+                            Reset Filters
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="load-more-container">
-                    <button class="btn btn-outline load-more" id="loadMoreBtn">
-                        <i class="fas fa-plus"></i>
+                    <button class="btn btn-load-more" id="load-more-movies">
                         Load More Movies
                     </button>
                 </div>
             </section>
 
-            <!-- Movie Collections -->
-            <section class="collections-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-layer-group"></i> Movie Collections</h2>
-                </div>
-                
-                <div class="collections-grid">
-                    <div class="collection-card">
-                        <div class="collection-header">
-                            <i class="fas fa-crown"></i>
-                            <h3>Premium VIP HD</h3>
+            <!-- Movie Features -->
+            <section class="movie-features">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-4k"></i>
                         </div>
-                        <div class="collection-content">
-                            <p>Exclusive high-definition movies</p>
-                            <a href="category.html?type=premium-vip" class="collection-link">
-                                Browse Collection
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
+                        <h3>4K Ultra HD</h3>
+                        <p>Crystal clear picture quality</p>
                     </div>
-                    
-                    <div class="collection-card">
-                        <div class="collection-header">
-                            <i class="fas fa-ghost"></i>
-                            <h3>Halloween Special</h3>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-download"></i>
                         </div>
-                        <div class="collection-content">
-                            <p>Spooky movies for horror fans</p>
-                            <a href="category.html?type=halloween-special" class="collection-link">
-                                Browse Collection
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
+                        <h3>Offline Viewing</h3>
+                        <p>Download and watch anywhere</p>
                     </div>
-                    
-                    <div class="collection-card">
-                        <div class="collection-header">
-                            <i class="fas fa-heart"></i>
-                            <h3>Teen Romance</h3>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-closed-captioning"></i>
                         </div>
-                        <div class="collection-content">
-                            <p>Romantic movies for teens</p>
-                            <a href="category.html?type=teen-romance" class="collection-link">
-                                Browse Collection
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
+                        <h3>Multiple Subtitles</h3>
+                        <p>Available in 50+ languages</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headphones"></i>
                         </div>
+                        <h3>Dolby Audio</h3>
+                        <p>Immersive sound experience</p>
                     </div>
                 </div>
             </section>
 
-            <!-- WhatsApp Channels -->
-            <section class="whatsapp-movies">
+            <!-- Upcoming Movies -->
+            <section class="upcoming-section">
                 <div class="section-header">
-                    <h2><i class="fab fa-whatsapp"></i> Movie Updates</h2>
-                    <p>Get daily movie recommendations on WhatsApp</p>
+                    <h2>
+                        <i class="fas fa-calendar-plus"></i>
+                        Coming Soon
+                    </h2>
+                    <p>Highly anticipated movies releasing soon</p>
                 </div>
                 
-                <div class="whatsapp-movies-content">
-                    <div class="movies-channel-card">
-                        <div class="channel-header">
-                            <i class="fab fa-whatsapp"></i>
-                            <h3>SilvaStream Movies</h3>
-                        </div>
-                        <div class="channel-content">
-                            <p>Receive daily movie recommendations, new releases, and exclusive content updates</p>
-                            <div class="channel-features">
-                                <span><i class="fas fa-check"></i> Daily Recommendations</span>
-                                <span><i class="fas fa-check"></i> New Releases</span>
-                                <span><i class="fas fa-check"></i> Exclusive Content</span>
-                            </div>
-                            <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="movies-join-btn">
-                                <i class="fab fa-whatsapp"></i>
-                                Join Movie Channel
-                            </a>
-                        </div>
-                    </div>
+                <div class="upcoming-grid" id="upcoming-grid">
+                    <!-- Upcoming movies will be populated here -->
                 </div>
             </section>
         </div>
     </main>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loader">
-                <div class="loader-film">
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
+    <!-- Filter Panel -->
+    <div class="filter-panel" id="movies-filter-panel">
+        <div class="panel-header">
+            <h3>Filter Movies</h3>
+            <button class="close-panel">&times;</button>
+        </div>
+        
+        <div class="panel-content">
+            <div class="filter-group">
+                <h4>Genre</h4>
+                <div class="genre-filters" id="movie-genre-filters">
+                    <!-- Genre filters will be populated here -->
                 </div>
             </div>
-            <p>Loading movies...</p>
+            
+            <div class="filter-group">
+                <h4>Year Range</h4>
+                <div class="year-range">
+                    <input type="number" id="movie-year-from" placeholder="From" min="1900" max="2024">
+                    <span>to</span>
+                    <input type="number" id="movie-year-to" placeholder="To" min="1900" max="2024">
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Rating</h4>
+                <div class="rating-filters">
+                    <div class="rating-stars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star active" data-rating="5"></i>
+                    </div>
+                    <span class="rating-text">4+ stars</span>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Duration</h4>
+                <div class="duration-filter">
+                    <select id="duration-select">
+                        <option value="any">Any Duration</option>
+                        <option value="short">Short (< 90 min)</option>
+                        <option value="medium">Medium (90-150 min)</option>
+                        <option value="long">Long (> 150 min)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Quality</h4>
+                <div class="quality-filters">
+                    <label class="quality-option">
+                        <input type="checkbox" name="quality" value="4k">
+                        <span>4K</span>
+                    </label>
+                    <label class="quality-option">
+                        <input type="checkbox" name="quality" value="hd" checked>
+                        <span>HD</span>
+                    </label>
+                    <label class="quality-option">
+                        <input type="checkbox" name="quality" value="sd">
+                        <span>SD</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h4>Awards</h4>
+                <div class="awards-filter">
+                    <label class="award-option">
+                        <input type="checkbox" name="awards" value="oscar">
+                        <span>Oscar Winner</span>
+                    </label>
+                    <label class="award-option">
+                        <input type="checkbox" name="awards" value="nominee">
+                        <span>Oscar Nominee</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-footer">
+            <button class="btn btn-secondary" id="reset-movie-filters">
+                Reset
+            </button>
+            <button class="btn btn-primary" id="apply-movie-filters">
+                Apply Filters
+            </button>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="main-footer">
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="movies-search-overlay">
+        <div class="search-container">
+            <div class="search-header">
+                <h2>Search Movies</h2>
+                <button class="close-search">&times;</button>
+            </div>
+            <div class="search-input-container">
+                <input type="text" 
+                       class="search-input" 
+                       id="movies-search-field"
+                       placeholder="Search movies by title, actor, director...">
+                <button class="search-submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="search-filters">
+                <div class="filter-tags">
+                    <span class="filter-tag" data-filter="2024">2024 Releases</span>
+                    <span class="filter-tag" data-filter="action">Action</span>
+                    <span class="filter-tag" data-filter="comedy">Comedy</span>
+                    <span class="filter-tag" data-filter="oscar">Oscar Winners</span>
+                </div>
+            </div>
+            <div class="search-suggestions" id="movies-suggestions"></div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Channel Banner -->
+    <section class="whatsapp-banner">
         <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
-                <p class="powered-by">
-                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
-                </p>
+            <div class="banner-content">
+                <div class="banner-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="banner-text">
+                    <h3>Get Movie Updates on WhatsApp</h3>
+                    <p>Join our channels for daily movie recommendations and updates</p>
+                </div>
+                <div class="banner-actions">
+                    <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" 
+                       target="_blank" 
+                       class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> SilvaStream Movies
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="movies-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-film"></i>
+                    <span>SilvaStream Movies</span>
+                </div>
+                <p>Your ultimate cinematic experience</p>
+                <div class="footer-links">
+                    <a href="series.html">TV Series</a>
+                    <a href="sports.html">Sports</a>
+                    <a href="categories.html">Categories</a>
+                    <a href="whatsapp.html">WhatsApp Updates</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
     <script src="scripts/api.js"></script>
-    <script src="scripts/cache.js"></script>
-    <script src="scripts/ui-manager.js"></script>
-    <script src="scripts/auth.js"></script>
-    <script src="scripts/theme.js"></script>
     <script src="scripts/movies.js"></script>
-    
+    <script src="scripts/theme.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize theme
-            const theme = new ThemeManager();
-            theme.init();
-            
-            // Initialize movies
-            const movies = new MoviesManager();
-            movies.init();
-            
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileNav = document.getElementById('mobileNav');
-            
-            if (mobileMenuBtn && mobileNav) {
-                mobileMenuBtn.addEventListener('click', () => {
-                    mobileNav.classList.toggle('active');
-                    mobileMenuBtn.classList.toggle('active');
-                });
-            }
-            
-            // Filter buttons
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    btn.classList.add('active');
-                    
-                    // Apply filter
-                    const filter = btn.dataset.filter;
-                    if (movies) {
-                        movies.applyFilter(filter);
-                    }
-                });
-            });
-            
-            // Genre buttons
-            const genreBtns = document.querySelectorAll('.genre-btn');
-            genreBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Toggle active class
-                    btn.classList.toggle('active');
-                    
-                    // Get all active genres
-                    const activeGenres = Array.from(document.querySelectorAll('.genre-btn.active'))
-                        .map(b => b.dataset.genre);
-                    
-                    if (movies) {
-                        movies.filterByGenres(activeGenres);
-                    }
-                });
-            });
-            
-            // Sort select
-            const sortSelect = document.getElementById('sortSelect');
-            if (sortSelect && movies) {
-                sortSelect.addEventListener('change', (e) => {
-                    movies.sortMovies(e.target.value);
-                });
-            }
-            
-            // Load more button
-            const loadMoreBtn = document.getElementById('loadMoreBtn');
-            if (loadMoreBtn && movies) {
-                loadMoreBtn.addEventListener('click', () => {
-                    movies.loadMoreMovies();
-                });
-            }
-            
-            // Hide loading overlay after content loads
-            setTimeout(() => {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                if (loadingOverlay) {
-                    loadingOverlay.style.display = 'none';
-                }
-            }, 1500);
+            const moviesPage = new MoviesPage();
+            moviesPage.loadMovies();
         });
     </script>
 </body>
