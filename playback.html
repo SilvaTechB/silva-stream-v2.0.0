@@ -1,169 +1,221 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-theme">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SilvaStream - Now Playing</title>
+    <title>Now Playing - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Watch your favorite content on SilvaStream">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/player.css" as="style">
+    
+    <!-- Fonts & Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Video.js -->
+    <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/playback.css">
+    <link rel="stylesheet" href="styles/player.css">
 </head>
-<body>
-    <header id="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">
-                    <i class="fas fa-play-circle logo-icon"></i>
-                    <span class="logo-text">SilvaStream</span>
-                </a>
-                <div class="nav-links">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Movies</a>
-                    <a href="#" class="nav-link">TV Shows</a>
-                     <a href="sports.html" class="nav-link">sports</a>
+<body class="player-mode">
+    <!-- Player Container -->
+    <div class="player-wrapper" id="player-wrapper">
+        <!-- Video Player -->
+        <div class="video-container" id="video-container">
+            <video id="silva-player" class="video-js vjs-default-skin" crossorigin="anonymous">
+                <source src="" type="video/mp4">
+                <p class="vjs-no-js">
+                    Please enable JavaScript to watch this video.
+                </p>
+            </video>
+        </div>
+
+        <!-- Player Overlay -->
+        <div class="player-overlay" id="player-overlay">
+            <!-- Top Bar -->
+            <div class="player-top-bar">
+                <button class="back-btn" id="player-back">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="player-title" id="player-video-title">
+                    <span>Now Playing</span>
+                </div>
+                <div class="top-actions">
+                    <button class="action-btn" id="mini-player-btn">
+                        <i class="fas fa-window-minimize"></i>
+                    </button>
+                    <button class="action-btn" id="picture-in-picture-btn">
+                        <i class="fas fa-picture-in-picture"></i>
+                    </button>
+                    <button class="action-btn" id="fullscreen-btn">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center Controls -->
+            <div class="player-center-controls">
+                <button class="control-btn big" id="rewind-btn">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button class="control-btn big" id="play-pause-main">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn big" id="forward-btn">
+                    <i class="fas fa-forward"></i>
+                </button>
+            </div>
+
+            <!-- Bottom Controls -->
+            <div class="player-bottom-controls">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <span class="time-current" id="time-current">00:00</span>
+                    <div class="progress-bar-container">
+                        <input type="range" 
+                               id="progress-slider" 
+                               class="progress-slider" 
+                               min="0" 
+                               max="100" 
+                               value="0">
+                        <div class="progress-buffer" id="progress-buffer"></div>
+                    </div>
+                    <span class="time-total" id="time-total">00:00</span>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-buttons">
+                    <button class="control-btn" id="subtitles-btn">
+                        <i class="fas fa-closed-captioning"></i>
+                    </button>
+                    <button class="control-btn" id="quality-btn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="control-btn" id="volume-btn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="volume-slider-container" id="volume-slider-container">
+                        <input type="range" 
+                               id="volume-slider" 
+                               class="volume-slider" 
+                               min="0" 
+                               max="100" 
+                               value="100">
+                    </div>
+                    <button class="control-btn" id="playback-speed-btn">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </button>
+                    <button class="control-btn" id="download-btn">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="control-btn" id="share-btn">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
                 </div>
             </div>
         </div>
-    </header>
 
-    <main class="container">
-        <div class="playback-container">
-            <div class="video-player-column">
-                <div class="video-player-wrapper">
-                    <video id="video-player"></video>
-                    
-                    <!-- Custom Video Controls -->
-                    <div class="custom-controls">
-                        <!-- Loading Spinner -->
-                        <div class="loading-spinner" id="loading-spinner">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </div>
-                        
-                        <!-- Progress Bar -->
-                        <div class="progress-container">
-                            <input type="range" id="progress-bar" class="progress-bar" min="0" max="100" value="0" step="0.1">
-                            <div class="progress-time" id="progress-time">00:00 / 00:00</div>
-                        </div>
-                        
-                        <!-- Control Buttons -->
-                        <div class="control-buttons">
-                            <div class="left-controls">
-                                <button id="play-pause-btn" class="control-btn">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button id="rewind-btn" class="control-btn" title="Rewind 10s">
-                                    <i class="fas fa-backward"></i>
-                                </button>
-                                <button id="forward-btn" class="control-btn" title="Forward 10s">
-                                    <i class="fas fa-forward"></i>
-                                </button>
-                                
-                                <!-- Volume Control -->
-                                <div class="volume-control">
-                                    <button id="volume-btn" class="control-btn" title="Volume">
-                                        <i class="fas fa-volume-up"></i>
-                                    </button>
-                                    <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.1" value="1">
-                                </div>
-                                
-                                <div class="time-display" id="time-display">00:00 / 00:00</div>
-                            </div>
-                            
-                            <div class="right-controls">
-                                <!-- Subtitles Button -->
-                                <button id="subtitles-btn" class="control-btn" title="Subtitles">
-                                    <i class="fas fa-closed-captioning"></i>
-                                </button>
-                                
-                                <!-- Share Button -->
-                                <button id="share-btn" class="control-btn" title="Share">
-                                    <i class="fas fa-share"></i>
-                                </button>
-                                
-                                <button id="download-btn" class="control-btn" title="Download">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button id="prev-btn" class="control-btn" title="Previous">
-                                    <i class="fas fa-step-backward"></i>
-                                </button>
-                                <button id="next-btn" class="control-btn" title="Next">
-                                    <i class="fas fa-step-forward"></i>
-                                </button>
-                                <button id="fullscreen-btn" class="control-btn" title="Fullscreen">
-                                    <i class="fas fa-expand"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cast Section -->
-                <div class="cast-section">
-                    <h2>Cast</h2>
-                    <div id="cast-list" class="cast-list">
-                        <!-- Cast members will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Similar Content Section -->
-                <div class="similar-content">
-                    <h2>Similar Content</h2>
-                    <div id="similar-list" class="similar-list">
-                        <!-- Similar movies/series will be populated here -->
-                    </div>
-                </div>
+        <!-- Player Sidebar -->
+        <div class="player-sidebar" id="player-sidebar">
+            <div class="sidebar-header">
+                <h3>Up Next</h3>
+                <button class="close-sidebar" id="close-sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <div class="details-column">
-                <div class="video-info">
-                    <h1 id="video-title"></h1>
-                    <div class="video-meta">
-                        <span id="video-year" class="video-meta-item"></span>
-                        <span id="video-rating" class="video-meta-item"></span>
-                        <span id="video-duration" class="video-meta-item"></span>
-                        <span id="video-genre" class="video-meta-item"></span>
+            <div class="upnext-list" id="upnext-list">
+                <!-- Up next items will be populated here -->
+            </div>
+            
+            <div class="sidebar-info">
+                <h4>Video Info</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Quality:</span>
+                        <span class="info-value" id="current-quality">HD</span>
                     </div>
-                    <p id="video-description" class="video-description"></p>
-                    <div id="current-episode-info" class="current-episode-info"></div>
-                    <div class="video-actions">
-                        <button id="quality-selector-btn" class="btn"><i class="fas fa-cog"></i> Quality</button>
-                        <button id="back-btn" class="btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <div class="info-item">
+                        <span class="info-label">Buffer:</span>
+                        <span class="info-value" id="buffer-status">Good</span>
                     </div>
-                </div>
-                <div class="playlist-wrapper" id="playlist-wrapper">
-                    <h2>Episodes</h2>
-                    <div id="episode-list"></div>
+                    <div class="info-item">
+                        <span class="info-label">Speed:</span>
+                        <span class="info-value" id="playback-speed">1.0x</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quality Selection Modal -->
-        <div class="modal" id="quality-modal">
+        <!-- Loading Spinner -->
+        <div class="player-loading" id="player-loading">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+                <p>Buffering...</p>
+                <div class="buffer-stats">
+                    <span id="buffer-percent">0%</span>
+                    <span id="connection-speed">0 Mbps</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div class="player-error" id="player-error" style="display: none;">
+            <div class="error-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Playback Error</h3>
+                <p id="error-message">Unable to load video</p>
+                <div class="error-actions">
+                    <button class="btn btn-primary" id="retry-btn">
+                        Retry
+                    </button>
+                    <button class="btn btn-secondary" id="quality-switch-btn">
+                        Switch Quality
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Modals -->
+    <div class="player-modals">
+        <!-- Quality Selection -->
+        <div class="modal player-modal" id="quality-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Select Quality</h3>
-                    <button class="close-modal" data-modal="quality-modal">&times;</button>
+                    <button class="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="quality-options" id="quality-options">
+                    <div class="quality-list" id="quality-list">
                         <!-- Quality options will be populated here -->
+                    </div>
+                    <div class="auto-quality">
+                        <label>
+                            <input type="checkbox" id="auto-quality-check" checked>
+                            Auto-select best quality
+                        </label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Subtitles Selection Modal -->
-        <div class="modal" id="subtitles-modal">
+        <!-- Subtitles Selection -->
+        <div class="modal player-modal" id="subtitles-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Select Subtitles</h3>
-                    <button class="close-modal" data-modal="subtitles-modal">&times;</button>
+                    <h3>Subtitles</h3>
+                    <button class="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="subtitles-options" id="subtitles-options">
-                        <div class="subtitle-option" data-lan="off">
-                            <span class="subtitle-lan">Subtitles Off</span>
+                    <div class="subtitle-list" id="subtitle-list">
+                        <div class="subtitle-option active" data-lang="off">
+                            <span>Subtitles Off</span>
                         </div>
                         <!-- Subtitle options will be populated here -->
                     </div>
@@ -171,59 +223,145 @@
             </div>
         </div>
 
-        <!-- Share Modal -->
-        <div class="modal" id="share-modal">
+        <!-- Playback Speed -->
+        <div class="modal player-modal" id="speed-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Share</h3>
-                    <button class="close-modal" data-modal="share-modal">&times;</button>
+                    <h3>Playback Speed</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="speed-list" id="speed-list">
+                        <button class="speed-option" data-speed="0.25">0.25x</button>
+                        <button class="speed-option" data-speed="0.5">0.5x</button>
+                        <button class="speed-option" data-speed="0.75">0.75x</button>
+                        <button class="speed-option active" data-speed="1">1x (Normal)</button>
+                        <button class="speed-option" data-speed="1.25">1.25x</button>
+                        <button class="speed-option" data-speed="1.5">1.5x</button>
+                        <button class="speed-option" data-speed="2">2x</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Share Modal -->
+        <div class="modal player-modal" id="share-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Share Video</h3>
+                    <button class="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="share-options">
-                        <div class="share-option" id="copy-link">
-                            <i class="fas fa-link"></i>
-                            <span>Copy Link</span>
-                        </div>
-                        <div class="share-option" id="share-whatsapp">
+                        <button class="share-option" data-platform="whatsapp">
                             <i class="fab fa-whatsapp"></i>
-                            <span>WhatsApp</span>
-                        </div>
-                        <div class="share-option" id="share-facebook">
-                            <i class="fab fa-facebook"></i>
-                            <span>Facebook</span>
-                        </div>
-                        <div class="share-option" id="share-twitter">
-                            <i class="fab fa-twitter"></i>
-                            <span>Twitter</span>
-                        </div>
-                        <div class="share-option" id="share-telegram">
-                            <i class="fab fa-telegram"></i>
-                            <span>Telegram</span>
-                        </div>
-                    </div>
-                    <div class="share-url">
-                        <input type="text" id="share-url-input" readonly>
-                        <button id="copy-url-btn" class="btn">
-                            <i class="fas fa-copy"></i>
                         </button>
+                        <button class="share-option" data-platform="facebook">
+                            <i class="fab fa-facebook"></i>
+                        </button>
+                        <button class="share-option" data-platform="twitter">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="share-option" data-platform="telegram">
+                            <i class="fab fa-telegram"></i>
+                        </button>
+                        <button class="share-option" data-platform="copy">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                    <div class="share-timestamp">
+                        <label>
+                            <input type="checkbox" id="include-timestamp">
+                            Include current timestamp
+                        </label>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
 
-    <footer>
-        <div class="container">
-            <div class="copyright">
-                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+        <!-- Download Options -->
+        <div class="modal player-modal" id="download-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Download Video</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="download-options" id="download-options">
+                        <!-- Download options will be populated here -->
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <button id="install-prompt">📲 Install SilvaStream</button>
+    <!-- Mini Player -->
+    <div class="mini-player" id="mini-player" style="display: none;">
+        <div class="mini-player-content">
+            <div class="mini-video" id="mini-video">
+                <video id="mini-player-video" muted></video>
+            </div>
+            <div class="mini-info">
+                <h4 id="mini-title">Now Playing</h4>
+                <div class="mini-controls">
+                    <button class="mini-control" id="mini-play">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="mini-control" id="mini-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Player Info Bar -->
+    <div class="player-info-bar" id="player-info-bar">
+        <div class="info-bar-content">
+            <div class="info-left">
+                <h4 id="info-title">Movie Title</h4>
+                <div class="info-meta">
+                    <span id="info-year">2024</span>
+                    <span id="info-rating">8.5/10</span>
+                </div>
+            </div>
+            <div class="info-right">
+                <button class="info-action" id="info-bookmark">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+                <button class="info-action" id="info-like">
+                    <i class="fas fa-thumbs-up"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
     <script src="scripts/api.js"></script>
+    <script src="scripts/player.js"></script>
     <script src="scripts/playback.js"></script>
-    <script src="scripts/pwa.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const playback = new Playback();
+            
+            // Handle URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const type = urlParams.get('type') || 'movie';
+            const season = urlParams.get('season');
+            const episode = urlParams.get('episode');
+            
+            if (id) {
+                playback.loadContent(id, type, season, episode);
+            } else {
+                // Redirect to home if no ID
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
 </body>
 </html>
