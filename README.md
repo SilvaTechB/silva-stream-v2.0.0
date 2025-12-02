@@ -1,37 +1,7 @@
 # SilvaStream - Movie Streaming Platform
 
-A modern, responsive movie streaming platform powered by the Gifted Tech API.  
-```
-styles/
-├── main.css              (you already have)
-├── animations.css        (you already have)
-├── details.css           (you already have)
-├── player.css            (you already have)
-├── profile.css           (you already have)
-├── responsive.css        (you already have)
-├── search.css            (you already have)
-└── components.css       ← NEW (missing components)
-└── theme.css             ← NEW (theme & dark mode fixes)
-└── utilities.css         ← NEW (utility classes)
+A modern, responsive movie streaming platform powered by the Gifted Tech API.   
 
-scripts/
-├── config.js             ← NEW
-├── utils.js              ← NEW
-├── api.js                (you already have)
-├── app.js                (you already have)
-├── movie-details.js      (you already have)
-├── series-details.js     (you already have)
-├── playback.js           (you already have)
-├── categories.js         ← NEW
-├── movies.js             ← NEW
-├── series.js             ← NEW
-├── sports.js             (you already have)
-├── profile.js            ← NEW
-├── watchlist.js          ← NEW
-├── theme.js              ← NEW
-├── ui.js                 ← NEW
-└── pwa.js                ← NEW
-```
 ## Features
 
 - 🎬 Modern, responsive design

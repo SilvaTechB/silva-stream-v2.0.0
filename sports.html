@@ -2,387 +2,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Live Sports - SilvaStream</title>
-    
-    <!-- Meta Tags -->
-    <meta property="og:title" content="Live Sports - SilvaStream">
-    <meta property="og:description" content="Watch live sports streaming on SilvaStream">
-    <meta property="og:image" content="https://imgur.com/a/AogAcnj.png">
-    <meta property="og:url" content="https://stream.silvatech.top/sports.html">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilvaStream - AI Sports</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/sports.css">
 </head>
-<body class="dark-mode">
-    <!-- Theme Toggle -->
-    <div class="theme-toggle">
-        <button id="themeToggle" class="theme-btn">
-            <i class="fas fa-moon"></i>
-            <i class="fas fa-sun"></i>
-        </button>
-    </div>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-play-circle logo-icon"></i>
+                    <span class="logo-text">SilvaStream</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">Movies</a>
+                    <a href="#" class="nav-link">TV Shows</a>
+                    <a href="sports.html" class="nav-link active">Sports</a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    <!-- Navigation -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-play-circle"></i>
+    <main class="container">
+        <div class="sports-header">
+            <div class="header-content">
+                <h1><i class="fas fa-ball"></i> Silva Sports <span class="ai-badge">Live Integration</span></h1>
+                <p>Direct access to AI Sports live streaming platform</p>
+                <div class="header-stats">
+                    <div class="stat">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <span>Live Streaming</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-globe"></i>
+                        <span>Real-time Updates</span>
+                    </div>
                 </div>
-                <div class="logo-text">
-                    <span class="logo-primary">Silva</span>
-                    <span class="logo-secondary">Stream</span>
-                </div>
-            </a>
-            
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">
+            </div>
+        </div>
+
+        <nav class="sports-nav">
+            <div class="nav-container">
+                <button class="nav-item active" data-page="home">
                     <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="movies.html" class="nav-link">
-                    <i class="fas fa-film"></i>
-                    <span>Movies</span>
-                </a>
-                <a href="series.html" class="nav-link">
-                    <i class="fas fa-tv"></i>
-                    <span>TV Series</span>
-                </a>
-                <a href="sports.html" class="nav-link active">
+                    <span>AI Sports Home</span>
+                </button>
+                <button class="nav-item" data-page="football">
                     <i class="fas fa-futbol"></i>
-                    <span>Sports</span>
-                </a>
-            </div>
-            
-            <div class="user-actions">
-                <button class="user-notification">
-                    <i class="fas fa-bell"></i>
+                    <span>Live Football</span>
                 </button>
-                
-                <div class="user-profile">
-                    <div class="profile-avatar" id="userAvatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav" id="mobileNav">
-        <div class="mobile-nav-content">
-            <a href="index.html" class="mobile-nav-link">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="movies.html" class="mobile-nav-link">
-                <i class="fas fa-film"></i>
-                <span>Movies</span>
-            </a>
-            <a href="series.html" class="mobile-nav-link">
-                <i class="fas fa-tv"></i>
-                <span>TV Series</span>
-            </a>
-            <a href="sports.html" class="mobile-nav-link active">
-                <i class="fas fa-futbol"></i>
-                <span>Sports</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Sports Hero -->
-    <section class="sports-hero">
-        <div class="container">
-            <div class="sports-hero-content">
-                <h1 class="animate-pop"><i class="fas fa-futbol"></i> Live Sports</h1>
-                <p class="hero-subtitle animate-fade-in">Watch live matches, highlights, and sports analysis</p>
-                <div class="live-indicator animate-pulse">
-                    <i class="fas fa-circle"></i>
-                    <span>LIVE NOW</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sports Navigation -->
-    <nav class="sports-nav">
-        <div class="container">
-            <div class="sports-nav-container">
-                <button class="sports-nav-btn active" data-sport="all">
-                    <i class="fas fa-globe"></i>
-                    <span>All Sports</span>
+                <button class="nav-item" data-page="cricket">
+                    <i class="fas fa-baseball-ball"></i>
+                    <span>Live Cricket</span>
                 </button>
-                <button class="sports-nav-btn" data-sport="football">
-                    <i class="fas fa-futbol"></i>
-                    <span>Football</span>
-                </button>
-                <button class="sports-nav-btn" data-sport="basketball">
+                <button class="nav-item" data-page="basketball">
                     <i class="fas fa-basketball-ball"></i>
-                    <span>Basketball</span>
+                    <span>Live Basketball</span>
                 </button>
-                <button class="sports-nav-btn" data-sport="cricket">
-                    <i class="fas fa-baseball-ball"></i>
-                    <span>Cricket</span>
-                </button>
-                <button class="sports-nav-btn" data-sport="tennis">
-                    <i class="fas fa-baseball-ball"></i>
-                    <span>Tennis</span>
-                </button>
-                <button class="sports-nav-btn" data-sport="boxing">
-                    <i class="fas fa-fist-raised"></i>
-                    <span>Boxing</span>
+                <button class="nav-item" data-page="news">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Sports News</span>
                 </button>
             </div>
+        </nav>
+
+        <div class="embed-container">
+            <div class="embed-controls">
+                <div class="control-group">
+                    <button id="refresh-btn" class="control-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button id="fullscreen-btn" class="control-btn">
+                        <i class="fas fa-expand"></i> Fullscreen
+                    </button>
+                    <button id="back-btn" class="control-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div class="control-group">
+                    <span id="live-indicator" class="live-indicator">
+                        <i class="fas fa-circle"></i> Live
+                    </span>
+                    <span id="match-timer" class="match-timer">00:00</span>
+            </div>
+
+            <div class="embed-wrapper">
+                <iframe 
+                    id="aisports-frame"
+                    src="https://aisports.cc/"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; fullscreen"
+                    allowfullscreen
+                    loading="lazy"
+                ></iframe>
+                
+                <div class="embed-overlay" id="embed-overlay">
+                    <div class="overlay-content">
+                        <div class="loading-spinner"></div>
+                        <p>Loading AI Sports...</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </nav>
 
-    <!-- Live Matches -->
-    <main class="sports-content">
-        <div class="container">
-            <!-- Live Now Section -->
-            <section class="live-now-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-broadcast-tower"></i> Live Now</h2>
-                    <div class="live-count" id="liveCount">0 matches live</div>
+        <div class="embed-info">
+            <div class="info-card">
+                <i class="fas fa-info-circle"></i>
+                <div class="info-content">
+                    <h3>AI Sports Integration</h3>
+                    <p>You are viewing the official AI Sports website embedded within SilvaStream. All live streams and content are provided directly by AI Sports.</p>
                 </div>
-                
-                <div class="live-matches" id="liveMatches">
-                    <!-- Live matches will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Upcoming Matches -->
-            <section class="upcoming-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-calendar-alt"></i> Upcoming Matches</h2>
-                </div>
-                
-                <div class="upcoming-matches" id="upcomingMatches">
-                    <!-- Upcoming matches will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Sports Channels -->
-            <section class="channels-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-satellite-dish"></i> Sports Channels</h2>
-                </div>
-                
-                <div class="sports-channels">
-                    <div class="channel-card">
-                        <div class="channel-logo">
-                            <i class="fas fa-tv"></i>
-                        </div>
-                        <div class="channel-info">
-                            <h3>ESPN</h3>
-                            <p>Live sports and highlights</p>
-                            <span class="channel-status live">LIVE</span>
-                        </div>
-                    </div>
-                    
-                    <div class="channel-card">
-                        <div class="channel-logo">
-                            <i class="fas fa-tv"></i>
-                        </div>
-                        <div class="channel-info">
-                            <h3>Sky Sports</h3>
-                            <p>Premier League & more</p>
-                            <span class="channel-status live">LIVE</span>
-                        </div>
-                    </div>
-                    
-                    <div class="channel-card">
-                        <div class="channel-logo">
-                            <i class="fas fa-tv"></i>
-                        </div>
-                        <div class="channel-info">
-                            <h3>BeIN Sports</h3>
-                            <p>International sports</p>
-                            <span class="channel-status">OFFLINE</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- WhatsApp Integration -->
-            <section class="whatsapp-sports">
-                <div class="section-header">
-                    <h2><i class="fab fa-whatsapp"></i> Sports Updates</h2>
-                    <p>Get live scores and updates on WhatsApp</p>
-                </div>
-                
-                <div class="whatsapp-sports-content">
-                    <div class="sports-channel-card">
-                        <div class="channel-header">
-                            <i class="fab fa-whatsapp"></i>
-                            <h3>Silva Sports Updates</h3>
-                        </div>
-                        <div class="channel-content">
-                            <p>Get live scores, match updates, and sports news directly on WhatsApp</p>
-                            <div class="channel-features">
-                                <span><i class="fas fa-check"></i> Live Scores</span>
-                                <span><i class="fas fa-check"></i> Match Highlights</span>
-                                <span><i class="fas fa-check"></i> Team News</span>
-                            </div>
-                            <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="sports-join-btn">
-                                <i class="fab fa-whatsapp"></i>
-                                Join Sports Channel
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AI Sports Integration -->
-            <section class="aisports-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-robot"></i> AI Sports Live Streaming</h2>
-                    <p>Powered by advanced AI streaming technology</p>
-                </div>
-                
-                <div class="aisports-container">
-                    <div class="aisports-info">
-                        <h3>Direct AI Sports Access</h3>
-                        <p>Access live sports streaming through our AI-powered platform with real-time updates and multiple quality options.</p>
-                        <div class="aisports-features">
-                            <div class="feature">
-                                <i class="fas fa-bolt"></i>
-                                <span>Real-time Streaming</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-hd"></i>
-                                <span>HD Quality</span>
-                            </div>
-                            <div class="feature">
-                                <i class="fas fa-language"></i>
-                                <span>Multiple Languages</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" id="openAISports">
-                            <i class="fas fa-external-link-alt"></i>
-                            Open AI Sports
-                        </button>
-                    </div>
-                    
-                    <div class="aisports-preview">
-                        <div class="preview-placeholder">
-                            <i class="fas fa-play-circle"></i>
-                            <p>Live Sports Streaming</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            </div>
         </div>
     </main>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loader">
-                <div class="loader-film">
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
-                </div>
-            </div>
-            <p>Loading sports content...</p>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="main-footer">
+    <footer>
         <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
-                <p class="powered-by">
-                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
-                </p>
-                <p class="sports-note">Sports content provided by AI Sports integration</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SilvaStream Sports</h4>
+                    <p>Powered by AI Sports live streaming platform</p>
+                </div>
+                <div class="footer-section">
+                    <p>&copy; 2025 SilvaStream. All rights reserved.</p>
+                    <p class="footer-note">Live content provided by <a href="https://silvatech.top/" target="_blank">AI Sports</a></p>
+                </div>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="scripts/config.js"></script>
-    <script src="scripts/api.js"></script>
-    <script src="scripts/cache.js"></script>
-    <script src="scripts/ui-manager.js"></script>
-    <script src="scripts/auth.js"></script>
-    <script src="scripts/theme.js"></script>
+    <button id="install-prompt">📲 Install SilvaStream</button>
+
     <script src="scripts/sports.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize theme
-            const theme = new ThemeManager();
-            theme.init();
-            
-            // Initialize sports
-            const sports = new SportsManager();
-            sports.init();
-            
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileNav = document.getElementById('mobileNav');
-            
-            if (mobileMenuBtn && mobileNav) {
-                mobileMenuBtn.addEventListener('click', () => {
-                    mobileNav.classList.toggle('active');
-                    mobileMenuBtn.classList.toggle('active');
-                });
-            }
-            
-            // Sports navigation
-            const sportsNavBtns = document.querySelectorAll('.sports-nav-btn');
-            sportsNavBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    sportsNavBtns.forEach(b => b.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    btn.classList.add('active');
-                    
-                    // Filter sports by category
-                    const sport = btn.dataset.sport;
-                    if (sports) {
-                        sports.filterSports(sport);
-                    }
-                });
-            });
-            
-            // Open AI Sports button
-            const openAISportsBtn = document.getElementById('openAISports');
-            if (openAISportsBtn) {
-                openAISportsBtn.addEventListener('click', () => {
-                    window.open('https://aisports.cc/', '_blank');
-                });
-            }
-            
-            // Simulate live matches loading
-            setTimeout(() => {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                if (loadingOverlay) {
-                    loadingOverlay.style.display = 'none';
-                }
-                
-                // Update live count
-                const liveCount = document.getElementById('liveCount');
-                if (liveCount) {
-                    liveCount.textContent = '3 matches live';
-                }
-            }, 2000);
-        });
-    </script>
+    <script src="scripts/pwa.js"></script>
 </body>
+
 </html>
+
