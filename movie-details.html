@@ -1,301 +1,414 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark-theme">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Details - SilvaStream</title>
     
     <!-- Meta Tags -->
-    <meta property="og:title" content="Movie Details - SilvaStream">
-    <meta property="og:description" content="Watch this movie now on SilvaStream">
+    <meta property="og:title" content="Movie Title - SilvaStream">
+    <meta property="og:description" content="Watch [Movie Title] now on SilvaStream">
     <meta property="og:image" content="">
-    <meta property="og:url" content="">
+    <meta property="og:type" content="video.movie">
     
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap">
+    <!-- Preload -->
+    <link rel="preload" href="styles/details.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/details.css">
+    <link rel="stylesheet" href="styles/player.css">
 </head>
-<body class="dark-mode">
+<body>
     <!-- Theme Toggle -->
     <div class="theme-toggle">
-        <button id="themeToggle" class="theme-btn">
+        <button id="theme-switch" class="theme-btn">
             <i class="fas fa-moon"></i>
             <i class="fas fa-sun"></i>
         </button>
     </div>
 
-    <!-- Navigation -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <div class="logo-text">
-                    <span class="logo-primary">Silva</span>
-                    <span class="logo-secondary">Stream</span>
-                </div>
-            </a>
-            
-            <a href="index.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Back to Home</span>
-            </a>
-            
-            <div class="user-actions">
-                <button class="user-notification">
-                    <i class="fas fa-bell"></i>
-                </button>
+    <!-- Header -->
+    <header class="details-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
                 
-                <div class="user-profile">
-                    <div class="profile-avatar" id="userAvatar">
-                        <i class="fas fa-user"></i>
-                    </div>
+                <div class="header-actions">
+                    <button class="header-action" id="share-btn">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    <button class="header-action" id="bookmark-btn">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    <button class="header-action" id="download-btn">
+                        <i class="fas fa-download"></i>
+                    </button>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Movie Details -->
-    <main class="movie-details-page">
-        <div class="movie-hero" id="movieHero">
-            <div class="hero-backdrop" id="heroBackdrop"></div>
-            <div class="hero-overlay"></div>
-            
-            <div class="container">
-                <div class="movie-header">
-                    <div class="movie-poster" id="moviePoster">
-                        <div class="poster-shimmer shimmer"></div>
+    <!-- Movie Hero Section -->
+    <section class="movie-hero" id="movie-hero">
+        <div class="hero-backdrop">
+            <img id="backdrop-image" src="" alt="Backdrop">
+            <div class="backdrop-overlay"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="movie-poster">
+                    <img id="poster-image" src="" alt="Poster">
+                    <div class="poster-badges">
+                        <span class="badge hd">HD</span>
+                        <span class="badge premium" id="premium-badge">
+                            <i class="fas fa-crown"></i> Premium
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="movie-info">
+                    <div class="movie-header">
+                        <h1 id="movie-title">Movie Title</h1>
+                        <div class="movie-tags">
+                            <span class="tag" id="movie-year">2024</span>
+                            <span class="tag" id="movie-runtime">120 min</span>
+                            <span class="tag" id="movie-rating">
+                                <i class="fas fa-star"></i> 8.5/10
+                            </span>
+                        </div>
                     </div>
                     
-                    <div class="movie-info">
-                        <h1 class="movie-title" id="movieTitle">Loading...</h1>
-                        
-                        <div class="movie-meta" id="movieMeta">
-                            <span class="meta-item"><i class="fas fa-calendar"></i> <span id="movieYear">-</span></span>
-                            <span class="meta-item"><i class="fas fa-clock"></i> <span id="movieDuration">-</span></span>
-                            <span class="meta-item"><i class="fas fa-star"></i> <span id="movieRating">-</span></span>
-                            <span class="meta-item"><i class="fas fa-film"></i> <span id="movieType">Movie</span></span>
+                    <div class="movie-genres" id="movie-genres"></div>
+                    
+                    <p class="movie-description" id="movie-description"></p>
+                    
+                    <div class="movie-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-globe"></i>
+                            <span id="movie-language">English</span>
                         </div>
-                        
-                        <div class="movie-genres" id="movieGenres">
-                            <!-- Genres will be loaded here -->
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span id="movie-release">2024</span>
                         </div>
-                        
-                        <p class="movie-description" id="movieDescription">Loading description...</p>
-                        
-                        <div class="movie-actions">
-                            <button class="btn btn-primary btn-lg" id="playMovie">
-                                <i class="fas fa-play"></i>
-                                <span>Play Movie</span>
-                            </button>
-                            
-                            <button class="btn btn-outline btn-lg" id="trailerBtn">
-                                <i class="fas fa-play-circle"></i>
-                                <span>Trailer</span>
-                            </button>
-                            
-                            <button class="btn btn-outline btn-lg" id="addToListBtn">
-                                <i class="fas fa-plus"></i>
-                                <span>My List</span>
-                            </button>
-                            
-                            <button class="btn btn-outline btn-lg" id="downloadBtn">
-                                <i class="fas fa-download"></i>
-                                <span>Download</span>
-                            </button>
+                        <div class="meta-item">
+                            <i class="fas fa-film"></i>
+                            <span id="movie-quality">HD</span>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Movie Content -->
-        <div class="container">
-            <!-- Cast Section -->
-            <section class="section-cast">
-                <div class="section-header">
-                    <h2><i class="fas fa-users"></i> Cast</h2>
-                </div>
-                <div class="cast-grid" id="castGrid">
-                    <!-- Cast members will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Trailers Section -->
-            <section class="section-trailers" id="trailersSection" style="display: none;">
-                <div class="section-header">
-                    <h2><i class="fas fa-film"></i> Trailers & Clips</h2>
-                </div>
-                <div class="trailers-grid" id="trailersGrid">
-                    <!-- Trailers will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Similar Movies -->
-            <section class="section-similar">
-                <div class="section-header">
-                    <h2><i class="fas fa-thumbs-up"></i> More Like This</h2>
-                </div>
-                <div class="similar-grid" id="similarGrid">
-                    <!-- Similar movies will be loaded here -->
-                </div>
-            </section>
-
-            <!-- Download Options -->
-            <section class="section-downloads" id="downloadsSection" style="display: none;">
-                <div class="section-header">
-                    <h2><i class="fas fa-download"></i> Download Options</h2>
-                </div>
-                <div class="download-options" id="downloadOptions">
-                    <!-- Download options will be loaded here -->
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- WhatsApp Section -->
-    <section class="whatsapp-section">
-        <div class="container">
-            <div class="section-header">
-                <h2><i class="fab fa-whatsapp"></i> Stay Updated</h2>
-                <p>Join our WhatsApp channels for exclusive content</p>
-            </div>
-            
-            <div class="whatsapp-channels">
-                <div class="channel-card">
-                    <div class="channel-header">
-                        <div class="channel-icon">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                        <span class="channel-badge">Official</span>
+                    
+                    <div class="movie-actions">
+                        <button class="btn btn-primary btn-watch" id="watch-now-btn">
+                            <i class="fas fa-play"></i> Watch Now
+                        </button>
+                        <button class="btn btn-secondary" id="watch-trailer-btn">
+                            <i class="fas fa-play-circle"></i> Trailer
+                        </button>
+                        <button class="btn btn-outline" id="add-to-list-btn">
+                            <i class="fas fa-plus"></i> Add to List
+                        </button>
                     </div>
-                    <div class="channel-content">
-                        <h3>SilvaStream Main Channel</h3>
-                        <p>Get daily movie recommendations and updates</p>
-                        <a href="https://whatsapp.com/channel/0029VaAgJ8PAe5ViH81LR41u" target="_blank" class="channel-join">
-                            <i class="fab fa-whatsapp"></i>
-                            Join Channel
-                        </a>
+                    
+                    <div class="quick-info">
+                        <div class="info-item">
+                            <i class="fas fa-eye"></i>
+                            <span>1.2M Views</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-heart"></i>
+                            <span>85K Likes</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Modals -->
-    <div class="modal" id="trailerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Watch Trailer</h3>
-                <button class="modal-close">&times;</button>
+    <!-- Content Tabs -->
+    <section class="content-tabs">
+        <div class="container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="overview">Overview</button>
+                <button class="tab-btn" data-tab="cast">Cast & Crew</button>
+                <button class="tab-btn" data-tab="trailers">Trailers</button>
+                <button class="tab-btn" data-tab="similar">Similar</button>
+                <button class="tab-btn" data-tab="downloads">Downloads</button>
             </div>
-            <div class="modal-body">
-                <div class="video-container" id="trailerVideo">
-                    <video controls id="trailerPlayer" width="100%">
-                        Your browser does not support the video tag.
-                    </video>
+        </div>
+    </section>
+
+    <!-- Tab Content -->
+    <main class="tab-content">
+        <div class="container">
+            <!-- Overview Tab -->
+            <div class="tab-pane active" id="overview-tab">
+                <div class="overview-grid">
+                    <div class="overview-main">
+                        <h3>Synopsis</h3>
+                        <p id="movie-synopsis"></p>
+                        
+                        <div class="movie-details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Director</span>
+                                <span id="movie-director" class="detail-value">John Doe</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Writers</span>
+                                <span id="movie-writers" class="detail-value">Jane Smith, Bob Johnson</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Studio</span>
+                                <span id="movie-studio" class="detail-value">Hollywood Studios</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Awards</span>
+                                <span id="movie-awards" class="detail-value">Oscar Winner</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-sidebar">
+                        <div class="sidebar-card">
+                            <h4>Quick Stats</h4>
+                            <div class="stats-grid">
+                                <div class="stat">
+                                    <i class="fas fa-users"></i>
+                                    <div>
+                                        <span class="stat-value">85%</span>
+                                        <span class="stat-label">Audience Score</span>
+                                    </div>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-clock"></i>
+                                    <div>
+                                        <span class="stat-value">120</span>
+                                        <span class="stat-label">Minutes</span>
+                                    </div>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <div>
+                                        <span class="stat-value">200M</span>
+                                        <span class="stat-label">Box Office</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-card">
+                            <h4>Content Advisory</h4>
+                            <div class="advisory-tags">
+                                <span class="advisory-tag violence">Violence</span>
+                                <span class="advisory-tag language">Language</span>
+                                <span class="advisory-tag nudity">Nudity</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cast Tab -->
+            <div class="tab-pane" id="cast-tab">
+                <div class="cast-section">
+                    <h3>Cast</h3>
+                    <div class="cast-grid" id="cast-grid">
+                        <!-- Cast members will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="crew-section">
+                    <h3>Crew</h3>
+                    <div class="crew-grid" id="crew-grid">
+                        <!-- Crew members will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trailers Tab -->
+            <div class="tab-pane" id="trailers-tab">
+                <div class="trailers-section">
+                    <h3>Official Trailers</h3>
+                    <div class="trailers-grid" id="trailers-grid">
+                        <!-- Trailers will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="clips-section">
+                    <h3>Movie Clips</h3>
+                    <div class="clips-grid" id="clips-grid">
+                        <!-- Clips will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Tab -->
+            <div class="tab-pane" id="similar-tab">
+                <div class="similar-section">
+                    <h3>You Might Also Like</h3>
+                    <div class="similar-grid" id="similar-grid">
+                        <!-- Similar movies will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Downloads Tab -->
+            <div class="tab-pane" id="downloads-tab">
+                <div class="downloads-section">
+                    <h3>Download Options</h3>
+                    <p class="download-info">Choose your preferred quality and format</p>
+                    
+                    <div class="quality-selector">
+                        <div class="quality-options" id="quality-options">
+                            <!-- Quality options will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="download-instructions">
+                        <h4>How to Download</h4>
+                        <ol class="steps-list">
+                            <li>Select your preferred quality</li>
+                            <li>Click the download button</li>
+                            <li>Save the file to your device</li>
+                            <li>Enjoy offline viewing</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Player Modal -->
+    <div class="player-modal" id="player-modal">
+        <div class="player-container">
+            <div class="player-header">
+                <h3 id="player-title">Now Playing</h3>
+                <button class="close-player" id="close-player">&times;</button>
+            </div>
+            <div class="video-wrapper">
+                <video id="main-player" controls crossorigin="anonymous">
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="player-overlay">
+                    <div class="player-controls">
+                        <button class="control-btn" id="play-pause-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="progress-container">
+                            <input type="range" id="progress-bar" min="0" max="100" value="0">
+                            <div class="time-display">
+                                <span id="current-time">00:00</span>
+                                <span id="duration">00:00</span>
+                            </div>
+                        </div>
+                        <button class="control-btn" id="fullscreen-btn">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="downloadModal">
+    <!-- Quality Selection Modal -->
+    <div class="modal" id="quality-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Select Quality</h3>
-                <button class="modal-close">&times;</button>
+                <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="quality-options" id="qualityOptions">
-                    <!-- Quality options will be loaded here -->
-                </div>
+                <div class="quality-list" id="quality-list"></div>
             </div>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loader">
-                <div class="loader-film">
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
-                    <div class="film-strip"></div>
+    <!-- Share Modal -->
+    <div class="modal" id="share-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Movie</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <button class="share-option" data-platform="whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </button>
+                    <button class="share-option" data-platform="facebook">
+                        <i class="fab fa-facebook"></i>
+                        <span>Facebook</span>
+                    </button>
+                    <button class="share-option" data-platform="twitter">
+                        <i class="fab fa-twitter"></i>
+                        <span>Twitter</span>
+                    </button>
+                    <button class="share-option" data-platform="telegram">
+                        <i class="fab fa-telegram"></i>
+                        <span>Telegram</span>
+                    </button>
+                    <button class="share-option" data-platform="copy">
+                        <i class="fas fa-link"></i>
+                        <span>Copy Link</span>
+                    </button>
+                </div>
+                <div class="share-link">
+                    <input type="text" id="share-url" readonly>
+                    <button class="btn-copy" id="copy-url-btn">
+                        <i class="fas fa-copy"></i>
+                    </button>
                 </div>
             </div>
-            <p>Loading movie details...</p>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="main-footer">
+    <footer class="details-footer">
         <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 SilvaStream. All rights reserved.</p>
-                <p class="powered-by">
-                    Powered by <span class="tech-name">Gifted Tech</span> & <span class="author-name">Ibrahim Adams</span>
-                </p>
+            <div class="footer-content">
+                <p>© 2024 SilvaStream • Premium Entertainment Platform</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                    <a href="contact.html">Contact</a>
+                </div>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
     <script src="scripts/api.js"></script>
-    <script src="scripts/cache.js"></script>
-    <script src="scripts/ui-manager.js"></script>
-    <script src="scripts/auth.js"></script>
+    <script src="scripts/details.js"></script>
+    <script src="scripts/player.js"></script>
     <script src="scripts/theme.js"></script>
-    <script src="scripts/movie-details.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize theme
-            const theme = new ThemeManager();
-            theme.init();
-            
-            // Initialize movie details
             const movieDetails = new MovieDetails();
-            movieDetails.init();
             
-            // Modal close buttons
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
+            // Handle URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
             
-            // Close modal when clicking outside
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
-                    }
-                });
-            });
-            
-            // Close modal with Escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('.modal').forEach(modal => {
-                        modal.style.display = 'none';
-                    });
-                }
-            });
-            
-            // Back button
-            const backBtn = document.querySelector('.back-btn');
-            if (backBtn) {
-                backBtn.addEventListener('click', () => {
-                    window.history.back();
-                });
+            if (id) {
+                movieDetails.loadMovie(id);
+            } else {
+                window.location.href = 'index.html';
             }
         });
     </script>
