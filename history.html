@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch History - SilvaStream</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="Your watch history on SilvaStream">
+    
+    <!-- Preload -->
+    <link rel="preload" href="styles/history.css" as="style">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/history.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-switch" class="theme-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="history-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>Watch History</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="clear-history">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="action-btn" id="export-history">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="history-main">
+        <div class="container">
+            <!-- Statistics -->
+            <section class="history-stats">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="total-hours">0</span>
+                            <span class="stat-label">Hours Watched</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="total-watched">0</span>
+                            <span class="stat-label">Titles Watched</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="streak-days">0</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="completion-rate">0%</span>
+                            <span class="stat-label">Completion Rate</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Timeline -->
+            <section class="history-timeline">
+                <div class="timeline-header">
+                    <h2>Your Viewing Journey</h2>
+                    <div class="timeline-filters">
+                        <select class="filter-select" id="timeline-filter">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="timeline-container">
+                    <div class="timeline-navigation">
+                        <button class="nav-btn prev-day" id="prev-day">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="current-date" id="current-date">
+                            Today
+                        </div>
+                        <button class="nav-btn next-day" id="next-day">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="timeline-content" id="timeline-content">
+                        <!-- Timeline items will be populated here -->
+                    </div>
+
+                    <div class="empty-timeline" id="empty-timeline">
+                        <div class="empty-content">
+                            <i class="fas fa-history fa-4x"></i>
+                            <h3>No Watch History Yet</h3>
+                            <p>Start watching movies and shows to build your history</p>
+                            <a href="movies.html" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Start Watching
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Insights -->
+            <section class="history-insights">
+                <div class="insights-header">
+                    <h2>Your Viewing Insights</h2>
+                    <p>Discover your watching patterns and preferences</p>
+                </div>
+
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Favorite Genre</h3>
+                            <div class="insight-value" id="fav-genre">Action</div>
+                            <div class="insight-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <span class="progress-percent">75%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Peak Watching Time</h3>
+                            <div class="insight-value" id="peak-time">8:00 PM</div>
+                            <p class="insight-desc">You watch most during evenings</p>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Average Rating</h3>
+                            <div class="insight-value" id="avg-rating">7.8/10</div>
+                            <div class="rating-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Weekly Average</h3>
+                            <div class="insight-value" id="weekly-avg">12 hours</div>
+                            <p class="insight-desc">Consistent viewer</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recently Watched -->
+            <section class="recently-watched">
+                <div class="section-header">
+                    <h2>Recently Watched</h2>
+                    <a href="watchlist.html" class="view-all">
+                        Add to Watchlist <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="recent-grid" id="recent-grid">
+                    <!-- Recently watched items will be populated here -->
+                </div>
+            </section>
+
+            <!-- Continue Watching -->
+            <section class="continue-watching">
+                <div class="section-header">
+                    <h2>Continue Watching</h2>
+                    <a href="watchlist.html" class="view-all">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="continue-grid" id="continue-grid">
+                    <!-- Continue watching items will be populated here -->
+                </div>
+            </section>
+
+            <!-- Recommendations Based on History -->
+            <section class="history-recommendations">
+                <div class="section-header">
+                    <h2>Recommended For You</h2>
+                    <p>Based on your viewing history</p>
+                </div>
+
+                <div class="recommendations-slider" id="history-recommendations">
+                    <!-- Recommendations will be populated here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Clear History Modal -->
+    <div class="modal" id="clear-history-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Clear Watch History</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to clear all your watch history? This action cannot be undone.</p>
+                <div class="clear-options">
+                    <label class="clear-option">
+                        <input type="checkbox" id="keep-recommendations">
+                        <span>Keep data for recommendations</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-clear">
+                    Cancel
+                </button>
+                <button class="btn btn-danger" id="confirm-clear">
+                    Clear History
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export History Modal -->
+    <div class="modal" id="export-history-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Export History</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <label class="export-option">
+                        <input type="radio" name="export-format" value="csv" checked>
+                        <span>CSV Format</span>
+                        <small>Spreadsheet compatible</small>
+                    </label>
+                    <label class="export-option">
+                        <input type="radio" name="export-format" value="json">
+                        <span>JSON Format</span>
+                        <small>Developer friendly</small>
+                    </label>
+                    <label class="export-option">
+                        <input type="radio" name="export-format" value="pdf">
+                        <span>PDF Report</span>
+                        <small>Printable summary</small>
+                    </label>
+                </div>
+                <div class="export-range">
+                    <h4>Time Range</h4>
+                    <div class="range-options">
+                        <label>
+                            <input type="radio" name="export-range" value="all" checked>
+                            All History
+                        </label>
+                        <label>
+                            <input type="radio" name="export-range" value="custom">
+                            Custom Range
+                        </label>
+                    </div>
+                    <div class="custom-range" id="custom-range" style="display: none;">
+                        <input type="date" id="export-start">
+                        <span>to</span>
+                        <input type="date" id="export-end">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-export">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="confirm-export">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="history-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>Track your entertainment journey</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy</a>
+                    <a href="profile.html">Profile</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/history.js"></script>
+    <script src="scripts/theme.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const history = new WatchHistory();
+            history.loadHistory();
+        });
+    </script>
+</body>
+</html>
