@@ -1,438 +1,219 @@
-// Enhanced API Service with Caching and Performance Optimizations
+// Enhanced Movie API Class
 class MovieAPI {
     constructor() {
+        this.baseUrl = 'https://movieapi.giftedtech.co.ke/api';
         this.cache = new Map();
-        this.pendingRequests = new Map();
         this.requestQueue = [];
-        this.maxConcurrentRequests = 6;
-        this.activeRequests = 0;
-        this.offlineMode = false;
-        this.retryDelays = [1000, 3000, 5000];
-        
-        // Initialize Service Worker for caching
-        this.initServiceWorker();
-        
-        // Setup offline detection
-        this.setupOfflineDetection();
+        this.isProcessingQueue = false;
     }
 
-    async initServiceWorker() {
-        if ('serviceWorker' in navigator) {
+    // Utility method to get movie ID from URL
+    getMovieIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
+
+    // Utility method to get content type
+    getContentType() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('type') || 'movie';
+    }
+
+    // Queue management for rate limiting
+    async processQueue() {
+        if (this.isProcessingQueue || this.requestQueue.length === 0) return;
+        
+        this.isProcessingQueue = true;
+        
+        while (this.requestQueue.length > 0) {
+            const request = this.requestQueue.shift();
             try {
-                const registration = await navigator.serviceWorker.register('/service-worker.js');
-                console.log('Service Worker registered:', registration);
-                
-                // Listen for messages from service worker
-                navigator.serviceWorker.addEventListener('message', (event) => {
-                    if (event.data.type === 'CACHE_UPDATED') {
-                        this.clearCache(event.data.key);
-                    }
-                });
+                const response = await fetch(request.url, request.options);
+                request.resolve(response);
             } catch (error) {
-                console.warn('Service Worker registration failed:', error);
+                request.reject(error);
             }
+            
+            // Rate limiting delay
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
+        
+        this.isProcessingQueue = false;
     }
 
-    setupOfflineDetection() {
-        this.offlineMode = !navigator.onLine;
-        
-        window.addEventListener('online', () => {
-            this.offlineMode = false;
-            this.processQueue();
-        });
-        
-        window.addEventListener('offline', () => {
-            this.offlineMode = true;
-        });
-    }
-
-    async makeRequest(url, options = {}) {
-        const cacheKey = this.generateCacheKey(url, options);
+    // Generic fetch with caching and queue
+    async fetchWithCache(endpoint, options = {}, cacheTime = 300000) { // 5 minutes cache
+        const cacheKey = `${endpoint}-${JSON.stringify(options)}`;
         
         // Check cache first
-        const cached = this.getFromCache(cacheKey);
-        if (cached && !options.forceRefresh) {
-            return cached;
+        if (this.cache.has(cacheKey)) {
+            const cached = this.cache.get(cacheKey);
+            if (Date.now() - cached.timestamp < cacheTime) {
+                return cached.data;
+            }
         }
 
-        // Check if request is already pending
-        if (this.pendingRequests.has(cacheKey)) {
-            return this.pendingRequests.get(cacheKey);
-        }
-
-        // Create request promise
-        const requestPromise = this.executeRequest(url, options, cacheKey);
-        this.pendingRequests.set(cacheKey, requestPromise);
-
-        try {
-            const result = await requestPromise;
-            this.cache.set(cacheKey, {
-                data: result,
-                timestamp: Date.now(),
-                ttl: Config.API_CONFIG.CACHE_TTL
+        return new Promise((resolve, reject) => {
+            this.requestQueue.push({
+                url: `${this.baseUrl}${endpoint}`,
+                options,
+                resolve: async (response) => {
+                    try {
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        // Cache the response
+                        this.cache.set(cacheKey, {
+                            data,
+                            timestamp: Date.now()
+                        });
+                        
+                        resolve(data);
+                    } catch (error) {
+                        reject(error);
+                    }
+                },
+                reject
             });
-            return result;
-        } finally {
-            this.pendingRequests.delete(cacheKey);
+            
+            this.processQueue();
+        });
+    }
+
+    // Search movies
+    async searchMovies(query, page = 1, limit = 20) {
+        try {
+            const encodedQuery = encodeURIComponent(query);
+            return await this.fetchWithCache(`/search/${encodedQuery}?page=${page}&limit=${limit}`, {}, 60000); // 1 minute cache
+        } catch (error) {
+            console.error('Search error:', error);
+            throw error;
         }
     }
 
-    async executeRequest(url, options, cacheKey) {
-        // Queue management for rate limiting
-        if (this.activeRequests >= this.maxConcurrentRequests) {
-            await new Promise(resolve => {
-                this.requestQueue.push(resolve);
-            });
-        }
-
-        this.activeRequests++;
-
+    // Get movie info
+    async getMovieInfo(movieId) {
         try {
-            let lastError;
+            return await this.fetchWithCache(`/info/${movieId}`);
+        } catch (error) {
+            console.error('Movie info error:', error);
+            throw error;
+        }
+    }
+
+    // Get download sources
+    async getDownloadSources(movieId, season = null, episode = null) {
+        try {
+            let endpoint = `/sources/${movieId}`;
+            if (season !== null && episode !== null) {
+                endpoint += `?season=${season}&episode=${episode}`;
+            }
+            return await this.fetchWithCache(endpoint);
+        } catch (error) {
+            console.error('Download sources error:', error);
+            throw error;
+        }
+    }
+
+    // Get series episodes
+    async getSeriesEpisodes(seriesId) {
+        try {
+            // First get series info
+            const seriesInfo = await this.getMovieInfo(seriesId);
             
-            for (let attempt = 0; attempt <= Config.API_CONFIG.RETRY_ATTEMPTS; attempt++) {
-                try {
-                    if (attempt > 0) {
-                        // Exponential backoff with jitter
-                        const delay = this.retryDelays[attempt - 1] || 5000;
-                        const jitter = Math.random() * 1000;
-                        await new Promise(resolve => setTimeout(resolve, delay + jitter));
-                    }
+            // Parse episodes from series info
+            const episodes = this.parseEpisodesFromSeriesInfo(seriesInfo);
+            return episodes;
+        } catch (error) {
+            console.error('Series episodes error:', error);
+            throw error;
+        }
+    }
 
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), Config.API_CONFIG.TIMEOUT);
-
-                    const response = await fetch(url, {
-                        ...options,
-                        signal: controller.signal,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-App-Version': Config.APP_CONFIG.VERSION,
-                            ...options.headers
-                        }
-                    });
-
-                    clearTimeout(timeoutId);
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    const data = await response.json();
-                    
-                    // Send to service worker for caching
-                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({
-                            type: 'CACHE_API_RESPONSE',
-                            key: cacheKey,
-                            data: data,
-                            url: url
+    // Parse episodes from series info
+    parseEpisodesFromSeriesInfo(seriesInfo) {
+        const episodes = [];
+        
+        if (seriesInfo.results?.resource?.seasons) {
+            seriesInfo.results.resource.seasons.forEach((season, seasonIndex) => {
+                const seasonNumber = seasonIndex + 1;
+                
+                // Generate episodes based on season data
+                if (season.maxEp) {
+                    for (let ep = 1; ep <= season.maxEp; ep++) {
+                        episodes.push({
+                            id: `${seriesInfo.results.subject.subjectId}-s${seasonNumber}e${ep}`,
+                            season: seasonNumber,
+                            episode: ep,
+                            title: `Episode ${ep}`,
+                            description: `Season ${seasonNumber}, Episode ${ep}`,
+                            duration: 2400, // 40 minutes default
+                            thumbnail: seriesInfo.results.subject.cover?.url || '',
+                            releaseDate: new Date().toISOString().split('T')[0]
                         });
                     }
-
-                    return data;
-                } catch (error) {
-                    lastError = error;
-                    
-                    if (error.name === 'AbortError') {
-                        console.warn(`Request timed out (attempt ${attempt + 1})`);
-                    } else if (error.message.includes('Failed to fetch')) {
-                        console.warn(`Network error (attempt ${attempt + 1})`);
-                    } else {
-                        throw error;
-                    }
-                }
-            }
-
-            throw lastError || new Error('Request failed after all retry attempts');
-        } finally {
-            this.activeRequests--;
-            
-            // Process next request in queue
-            if (this.requestQueue.length > 0) {
-                const nextResolver = this.requestQueue.shift();
-                nextResolver();
-            }
-        }
-    }
-
-    async searchMovies(query, options = {}) {
-        const url = Config.getApiUrl(Config.API_CONFIG.ENDPOINTS.SEARCH, { 
-            q: query,
-            limit: options.limit || 20,
-            page: options.page || 1
-        });
-        
-        return this.makeRequest(url, {
-            method: 'GET',
-            ...options
-        });
-    }
-
-    async getMovieInfo(movieId, options = {}) {
-        const url = Config.getApiUrl(`${Config.API_CONFIG.ENDPOINTS.MOVIE_INFO}/${movieId}`);
-        
-        return this.makeRequest(url, {
-            method: 'GET',
-            ...options
-        });
-    }
-
-    async getDownloadSources(movieId, season = null, episode = null) {
-        let url = Config.getApiUrl(`${Config.API_CONFIG.ENDPOINTS.DOWNLOAD_SOURCES}/${movieId}`);
-        
-        if (season !== null && episode !== null) {
-            url += `?season=${season}&episode=${episode}`;
-        }
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    async getMovieTrailers(movieId) {
-        const url = Config.getApiUrl(`${Config.API_CONFIG.ENDPOINTS.TRAILERS}/${movieId}`);
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    async getMovieCast(movieId) {
-        const url = Config.getApiUrl(`${Config.API_CONFIG.ENDPOINTS.CAST}/${movieId}`);
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    async getSimilarMovies(movieId) {
-        const url = Config.getApiUrl(`${Config.API_CONFIG.ENDPOINTS.SIMILAR}/${movieId}`);
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    async getTrendingMovies(category = 'all', limit = 20) {
-        const url = Config.getApiUrl(Config.API_CONFIG.ENDPOINTS.TRENDING, {
-            category: category,
-            limit: limit
-        });
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    async getPopularMovies(limit = 20) {
-        const url = Config.getApiUrl(Config.API_CONFIG.ENDPOINTS.POPULAR, {
-            limit: limit
-        });
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    async getUpcomingMovies(limit = 10) {
-        const url = Config.getApiUrl(Config.API_CONFIG.ENDPOINTS.UPCOMING, {
-            limit: limit
-        });
-        
-        return this.makeRequest(url, {
-            method: 'GET'
-        });
-    }
-
-    // Batch requests for performance
-    async batchRequests(requests) {
-        const results = [];
-        
-        for (const request of requests) {
-            try {
-                const result = await this.makeRequest(request.url, request.options);
-                results.push(result);
-            } catch (error) {
-                console.warn('Batch request failed:', error);
-                results.push(null);
-            }
-        }
-        
-        return results;
-    }
-
-    // Prefetch data for better UX
-    prefetch(url) {
-        if ('connection' in navigator && navigator.connection.saveData) {
-            return; // Don't prefetch if data saver is enabled
-        }
-        
-        this.makeRequest(url, {
-            method: 'GET',
-            priority: 'low'
-        }).catch(() => {
-            // Silently fail for prefetch requests
-        });
-    }
-
-    // Cache management
-    getFromCache(key) {
-        const cached = this.cache.get(key);
-        
-        if (!cached) return null;
-        
-        const now = Date.now();
-        const age = now - cached.timestamp;
-        
-        if (age > cached.ttl) {
-            this.cache.delete(key);
-            return null;
-        }
-        
-        return cached.data;
-    }
-
-    clearCache(key = null) {
-        if (key) {
-            this.cache.delete(key);
-        } else {
-            this.cache.clear();
-        }
-    }
-
-    generateCacheKey(url, options) {
-        const sortedOptions = Object.keys(options)
-            .sort()
-            .reduce((obj, key) => {
-                obj[key] = options[key];
-                return obj;
-            }, {});
-        
-        return `${url}:${JSON.stringify(sortedOptions)}`;
-    }
-
-    // Image optimization
-    getOptimizedImageUrl(originalUrl, size = 'medium') {
-        if (!originalUrl) return null;
-        
-        const sizes = {
-            'small': 'w300',
-            'medium': 'w500',
-            'large': 'w780',
-            'original': 'original'
-        };
-        
-        const sizeParam = sizes[size] || sizes.medium;
-        
-        // For placeholder images
-        if (originalUrl.includes('placeholder.com')) {
-            return originalUrl;
-        }
-        
-        // Add image optimization parameters
-        return `${originalUrl}?format=webp&quality=80&width=${sizeParam}`;
-    }
-
-    // Lazy load helper
-    lazyLoadImage(imgElement, imageUrl, placeholder = null) {
-        if (!imgElement) return;
-        
-        const placeholderUrl = placeholder || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzFhMWEyZSIvPjxwYXRoIGQ9Ik0yMCA0MEg4MFY2MEgyMFY0MFoiIGZpbGw9IiMyMjIyM2QiLz48L3N2Zz4K';
-        
-        imgElement.src = placeholderUrl;
-        imgElement.dataset.src = this.getOptimizedImageUrl(imageUrl, Config.getImageQuality());
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.add('loaded');
-                    observer.unobserve(img);
                 }
             });
-        }, {
-            rootMargin: `${Config.APP_CONFIG.PERFORMANCE.LAZY_LOAD_THRESHOLD}px`
-        });
+        }
         
-        observer.observe(imgElement);
+        return episodes;
     }
 
-    // Performance monitoring
-    async measurePerformance(url) {
-        const startTime = performance.now();
-        
+    // Get trending movies
+    async getTrendingMovies(limit = 20) {
         try {
-            await this.makeRequest(url, { method: 'GET' });
-            const endTime = performance.now();
-            const duration = endTime - startTime;
-            
-            // Log performance metrics
-            if (Config.APP_CONFIG.ANALYTICS.ENABLED) {
-                console.log(`API Performance: ${url} - ${duration.toFixed(2)}ms`);
-            }
-            
-            return duration;
+            // Search for popular movies
+            return await this.searchMovies('popular', 1, limit);
         } catch (error) {
-            console.error('Performance measurement failed:', error);
-            return null;
+            console.error('Trending movies error:', error);
+            throw error;
         }
     }
 
-    // Queue management for offline mode
-    processQueue() {
-        if (!this.offlineMode && this.requestQueue.length > 0) {
-            while (this.requestQueue.length > 0 && this.activeRequests < this.maxConcurrentRequests) {
-                const resolve = this.requestQueue.shift();
-                resolve();
+    // Get movie recommendations
+    async getRecommendations(movieId, limit = 10) {
+        try {
+            // Get movie info first
+            const movieInfo = await this.getMovieInfo(movieId);
+            const genre = movieInfo.results?.subject?.genre?.split(',')[0];
+            
+            if (genre) {
+                return await this.searchMovies(genre, 1, limit);
             }
+            
+            return { results: { items: [] } };
+        } catch (error) {
+            console.error('Recommendations error:', error);
+            throw error;
         }
     }
 
-    // Utility methods
-    static isMovie(content) {
+    // Check if content is a movie
+    isMovie(content) {
         return content.subjectType === 1;
     }
 
-    static isSeries(content) {
+    // Check if content is a series
+    isSeries(content) {
         return content.subjectType === 2;
     }
 
-    static formatDuration(minutes) {
-        if (!minutes) return 'N/A';
-        
-        const hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        
-        if (hours > 0) {
-            return `${hours}h ${mins}m`;
-        }
-        return `${mins}m`;
+    // Clear cache
+    clearCache() {
+        this.cache.clear();
     }
 
-    static formatFileSize(bytes) {
-        if (!bytes) return 'Unknown';
-        
-        const units = ['B', 'KB', 'MB', 'GB'];
-        let size = bytes;
-        let unitIndex = 0;
-        
-        while (size >= 1024 && unitIndex < units.length - 1) {
-            size /= 1024;
-            unitIndex++;
-        }
-        
-        return `${size.toFixed(1)} ${units[unitIndex]}`;
+    // Get cache statistics
+    getCacheStats() {
+        return {
+            size: this.cache.size,
+            entries: Array.from(this.cache.entries())
+        };
     }
 }
 
-// Create singleton instance
-const movieAPI = new MovieAPI();
-
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { MovieAPI, movieAPI };
-}
+// Global API instance
+window.movieAPI = new MovieAPI();
